@@ -5,12 +5,14 @@ A Python-based environment to explore and experiment with partial
 recursive functions; naturally doubles as a (purely functional) 
 programming language, but it is not intended to be used as such.
 
-Each function in a script has associated Gödel number, internal
-name (string with the Gödel number), nickname, comments, and code.
-The Gödel number is stored together with the last operation used 
-to construct it.
+Each function in a script has associated Gödel number, nickname, 
+comments, and code. The Gödel number is stored together with the 
+last operation used to construct it.
 
-Intended usage as of April 6, 2023:
+Intended usage as of April 6, 2023 (for the names dp, pr_l, pr_r,
+tup_e, tup_i, s_tup, pr see the companion repository 
+`https://github.com/balqui/cantorpairs`):
+
 
 ```
 >>> from prefscript import PReFScript
@@ -19,17 +21,18 @@ Intended usage as of April 6, 2023:
 
 id
  The identity function
- 1 = <0.0>, prf_1
+ 1 = <0.0>
  lambda x: x
 
 constant_1 
  The constant 1 function
- 2 = <0.1>, prf_2
+ 2 = <0.1>
  lambda x: 1
 
 add
- Addition of both components of input pair
- 4 = <0.2>, 
+ Addition of both components of input pair, lambda <x.y>: x + y
+ 4 = <0.2>
+ lambda z: pr_l(z) + pr_r(x) 
 
 [...] shows the basic functions that are available from the beginning
 
