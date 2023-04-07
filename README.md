@@ -13,7 +13,7 @@ programming language, but it is not intended to be used as such.
 Each function in a script has associated Gödel number, nickname, 
 comments, and code; also, the last operation used to construct it.
 
-Intended usage as of April 6, 2023 (for the names dp, pr_l, pr_r,
+Intended usage as of April 7, 2023 (for the names dp, pr_l, pr_r,
 tup_e, tup_i, s_tup, pr see the companion repository 
 `https://github.com/balqui/cantorpairs`):
 
@@ -40,9 +40,7 @@ add
  lambda z: cp.pr_l(z) + cp.pr_r(x) 
  Gödel number: 11 = <0.4>
 
-[...] 
-
-shows the basic functions that are available from the beginning
+[...] shows the basic functions that are always available from the beginning
 
 >>> my_fs.define("pair", ("k_1", "k_1"), "const_pair_1", "The constant <1.1> function")
 >>> my_fs.define("comp", ("add", "const_pair_1"), "k_2", "The constant 2 function")
@@ -59,7 +57,6 @@ k_2
  The constant 2 function
  lambda x: add(const_pair_1(x))
  Gödel number: 419988 = <1.915>
-
 
 >>> my_fs.list("k_2")
 
