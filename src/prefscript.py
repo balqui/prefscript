@@ -121,3 +121,6 @@ class PReFScript:
             return None
         return self.pycode[what]
 
+    def load(self, filename):
+        'load definitions from file, clarify the format'
+        pass

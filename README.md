@@ -11,11 +11,16 @@ A Python-based environment to explore and experiment with partial
 recursive functions; naturally doubles as a (purely functional) 
 programming language, but it is not intended to be used as such.
 
-Each function in a script has associated Gödel number, nickname, 
-comments, and code; also, the last operation used to construct it.
+Incomplete as of today, hence not pip-installable yet. Please
+download the sources from `src` folder; file `uses_prefscript.py`
+contains the examples below.
+
+Each function in a PReFScript has associated a Gödel number, 
+a nickname, a comment, and code; also, the last operation used 
+to construct it.
 
 Intended usage as of April 7, 2023 (for the names dp, pr_l, pr_r,
-tup_e, tup_i, s_tup, pr see the companion repository 
+tup_e, tup_i, s_tup, pr please see the companion repository 
 `https://github.com/balqui/cantorpairs`):
 
 
