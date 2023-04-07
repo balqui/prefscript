@@ -83,7 +83,15 @@ class PReFScript:
             return None            
         if numhow == 3:
             print("Minimization is still unsupported right now. New definition ignored.")
-            return None            
+            return None
+        if on_what[0] not in self.nicks:
+            "CAREFUL: CHANGE WHEN MINIMIZATION GETS AVAILABLE"
+            print("Nickname " + on_what[0] + " unknown. New definition ignored.")
+            return None
+        if on_what[1] not in self.nicks:
+            "CAREFUL: CHANGE WHEN MINIMIZATION GETS AVAILABLE"
+            print("Nickname " + on_what[1] + " unknown. New definition ignored.")
+            return None
         data = FunData()
         data["nick"] = nick
         data["comment"] = comment
