@@ -23,36 +23,49 @@ tup_e, tup_i, s_tup, pr see the companion repository
 >>> my_fs = PReFScript() # to store my functions for this session
 >>> my_fs.list()
 
+k_1 
+ The constant 1 function
+ lambda x: 1
+ Gödel number: 1 = <0.0>
+
 id
  The identity function
- 1 = <0.0>
  lambda x: x
+ Gödel number: 2 = <0.1>
 
-constant_1 
- The constant 1 function
- 2 = <0.1>
- lambda x: 1
+[...]
 
 add
- Addition of both components of input pair, lambda <x.y>: x + y
- 4 = <0.2>
- lambda z: pr_l(z) + pr_r(x) 
+ Addition x+y of the two components of input <x.y>
+ lambda z: cp.pr_l(z) + cp.pr_r(x) 
+ Gödel number: 11 = <0.4>
 
-[...] shows the basic functions that are available from the beginning
+[...] 
 
->>> my_fs.define("pair", ("constant_1", "constant_1"), "const_pair_1",
-                 "The constant <1.1> function")
->>> my_fs.define("comp", ("add", "const_pair_1"), "constant_2",
-                 "The constant 2 function")
+shows the basic functions that are available from the beginning
+
+>>> my_fs.define("pair", ("k_1", "k_1"), "const_pair_1", "The constant <1.1> function")
+>>> my_fs.define("comp", ("add", "const_pair_1"), "k_2", "The constant 2 function")
 >>> my_fs.list()
 
 [...] as before but now includes the two newly defined functions
 
->>> my_fs.list("constant_2")
+const_pair_1
+ The constant <1.1> function
+ lambda x: cp.dp(k_1(x), k_1(x))
+ Gödel number: 31 = <2.5>
 
-[...] lists only the constant_2 function
+k_2
+ The constant 2 function
+ lambda x: add(const_pair_1(x))
+ Gödel number: 419988 = <1.915>
 
->>> f = my_fs.to_python("constant_2")
+
+>>> my_fs.list("k_2")
+
+[...] lists only the constant 2 function (unsupported in the current version!)
+
+>>> f = my_fs.to_python("k_2")
 >>> f(8)
 2
 >>> 
