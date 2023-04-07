@@ -1,13 +1,17 @@
 # PReFScript: 
 ## A Partial Recursive Functions Lab
 
+Rather: Towards a Partial Recursive Functions lab.
+
+Author: Jose L Balcazar, ORCID 0000-0003-4248-4528, april 2023 onwards 
+Copyleft: MIT License (https://en.wikipedia.org/wiki/MIT_License)
+
 A Python-based environment to explore and experiment with partial 
 recursive functions; naturally doubles as a (purely functional) 
 programming language, but it is not intended to be used as such.
 
 Each function in a script has associated Gödel number, nickname, 
-comments, and code. The Gödel number is stored together with the 
-last operation used to construct it.
+comments, and code; also, the last operation used to construct it.
 
 Intended usage as of April 6, 2023 (for the names dp, pr_l, pr_r,
 tup_e, tup_i, s_tup, pr see the companion repository 
