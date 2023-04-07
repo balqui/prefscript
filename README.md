@@ -1,9 +1,10 @@
 # PReFScript: 
-## A Partial Recursive Functions Lab
+## A Partial Recursive Functions Scripts Lab
 
 Rather: Towards a Partial Recursive Functions lab.
 
 Author: Jose L Balcazar, ORCID 0000-0003-4248-4528, april 2023 onwards 
+
 Copyleft: MIT License (https://en.wikipedia.org/wiki/MIT_License)
 
 A Python-based environment to explore and experiment with partial 
