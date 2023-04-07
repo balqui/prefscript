@@ -15,8 +15,8 @@ name (string with the Gödel number), nickname, comments, and code.
 Gödel number stored with last operation used to construct it.
 '''
 
-import scaff.cantorpairs as cpt
-# ~ import cantorpairs as cpt
+import scaff.cantorpairs as cp
+# ~ import cantorpairs as cp
 from fundata import FunData
 
 class PReFScript:
@@ -34,7 +34,7 @@ class PReFScript:
         self.hownums = { "basic": 0, "comp": 1, "pair": 2, "mu": 3 }
         self.add_basic("k_1", "The constant 1 function", "lambda x: 1", 1)
         self.add_basic("add", "Addition x+y of the two components of input <x.y>", 
-                       "lambda x: cpt.pr_l(x) + cpt.pr_r(x)", 2)
+                       "lambda x: cp.pr_l(x) + cp.pr_r(x)", 2)
 
     def add_basic(self, nick, comment, code, num):
         data = FunData()
@@ -43,7 +43,7 @@ class PReFScript:
         data["how_def"] = "basic"
         data["def_on"] = tuple()
         data["code"] = code
-        gnum = cpt.dp(0, num)
+        gnum = cp.dp(0, num)
         self.nicks[nick] = gnum
         self.main[gnum] = data
         self.pycode[nick] = eval(code, globals() | self.pycode)
@@ -66,13 +66,13 @@ class PReFScript:
         if numhow in (1, 2):
             lft = self.nicks[on_what[0]]
             rgt = self.nicks[on_what[1]]
-            gnum = cpt.dp(numhow, cpt.dp(lft, rgt))
+            gnum = cp.dp(numhow, cp.dp(lft, rgt))
             if numhow == 1:
                 'composition'
                 data["code"] = "lambda x: " + on_what[0] + "(" + on_what[1] + "(x))"
             if numhow == 2:
                 'pairing'
-                data["code"] = "lambda x: cpt.dp(" + on_what[0] + "(x), " + on_what[1] + "(x))"
+                data["code"] = "lambda x: cp.dp(" + on_what[0] + "(x), " + on_what[1] + "(x))"
             self.nicks[nick] = gnum
             self.main[gnum] = data
             self.pycode[nick] = eval(data["code"], globals() | self.pycode)
