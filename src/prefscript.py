@@ -20,6 +20,7 @@ import scaff.cantorpairs as cp
 # ~ import cantorpairs as cp
 from fundata import FunData
 
+LIMIT_GNUM = 2**1000 # around 300 decimal digits, omit Gödel numbers higher
 
 def mu(x, test):
     "ancillary linear search function for implementing mu-minimization"
@@ -34,15 +35,16 @@ class PReFScript:
     def __init__(self, store_goedel_numbers = ""):
         '''
         Dicts for storing the functions:
-          main for the function data, key is Gödel number,
-          nicks for connecting the Gödel number to the nick key,
-          pycode for making them runnable, key is nick;
+          main for the function data,
+          gnums for Gödel numbers,
+          pycode for Python runnable code, 
+          key is always nick for all of them;
         include here the basic functions;
         their implementation assumes 'import cantorpairs as cp'
         '''
         self.main = dict()
         self.pycode = dict()
-        self.nicks = dict()
+        self.gnums = dict()
         self.store_gnums = store_goedel_numbers # not in use at the moment
         self.hownums = { "basic": 0, "comp": 1, "pair": 2, "mu": 3 }
         self.add_basic("k_1", "The constant 1 function", "lambda x: 1", 0)
@@ -66,8 +68,8 @@ class PReFScript:
         data["def_on"] = tuple()
         data["code"] = code
         gnum = cp.dp(0, num)
-        self.nicks[nick] = gnum
-        self.main[gnum] = data
+        self.gnums[nick] = gnum
+        self.main[nick] = data
         self.pycode[nick] = eval(code, globals() | self.pycode)
 
     def list(self, what = None, verbose = 0):
@@ -77,14 +79,20 @@ class PReFScript:
          obey verbosity level
         all this still unimplemented, always lists everything fully
         '''
-        for gnum in self.main:
-            print(str(self.main[gnum]))
-            # ~ print(" Gödel number:", gnum, 
-            # ~ "= <" + str(cp.pr_l(gnum)) + "." + str(cp.pr_r(gnum)) + ">\n")
+        for nick in self.main:
+            print(str(self.main[nick]))
+            if self.store_gnums:
+                if nick in self.gnums:
+                    gnum = self.gnums[nick]
+                    print(" Gödel number:", gnum,
+                          "= <" + str(cp.pr_l(gnum)) + "." + str(cp.pr_r(gnum)) + ">\n")
+                else:
+                    print(" Gödel number too large, omitted")
+                    
 
     def define(self, how, on_what, nick, comment):
         'here comes a new function to add to the dicts appropriately'
-        if nick in self.nicks:
+        if nick in self.main:
             print("Nickname " + nick + " already in use. New definition ignored.")
             return None
         numhow = self.hownums[how]
@@ -92,9 +100,9 @@ class PReFScript:
             print("Addition of new basic functions is unsupported as yet. New definition ignored.")
             return None
         wrong = ""
-        if on_what[0] not in self.nicks:
+        if on_what[0] not in self.main:
             wrong = on_what[0]
-        elif numhow < 3 and on_what[1] not in self.nicks:
+        elif numhow < 3 and on_what[1] not in self.main:
             wrong = on_what[1]
         if wrong:
             print("Nickname " + wrong + " unknown. New definition ignored.")
@@ -104,15 +112,20 @@ class PReFScript:
         data["comment"] = comment
         data["how_def"] = how
         data["def_on"] = on_what
-        # ~ if self.store_gnums: # to be checked once keys are moved to nicks
-        lft = self.nicks[on_what[0]]
-        if numhow < 3:
-            'set up gnum for pair or comp'
-            rgt = self.nicks[on_what[1]]
-            gnum = cp.dp(numhow, cp.dp(lft, rgt))
-        else:
-            'set up gnum for minimization'
-            gnum = cp.dp(3, lft)
+        if self.store_gnums and on_what[0] in self.gnums:
+            lft = self.gnums[on_what[0]]
+            if numhow < 3:
+                if on_what[1] in self.gnums:
+                    'set up gnum for pair or comp'
+                    rgt = self.gnums[on_what[1]]
+                    gnum = cp.dp(numhow, cp.dp(lft, rgt))
+                    if gnum < LIMIT_GNUM:
+                        self.gnums[nick] = gnum
+            else:
+                'set up gnum for minimization'
+                gnum = cp.dp(3, lft)
+                if gnum < LIMIT_GNUM:
+                    self.gnums[nick] = gnum
         if numhow == 1:
             'composition'
             data["code"] = "lambda x: " + on_what[0] + "(" + on_what[1] + "(x))"
@@ -122,8 +135,7 @@ class PReFScript:
         if numhow == 3:
             'mu-minimization'
             data["code"] = "lambda x: mu(x, " + on_what[0] + ")"
-        self.nicks[nick] = gnum
-        self.main[gnum] = data
+        self.main[nick] = data
         self.pycode[nick] = eval(data["code"], globals() | self.pycode)
 
     def to_python(self, what):
