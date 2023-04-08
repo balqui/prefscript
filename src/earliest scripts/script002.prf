@@ -1,0 +1,20 @@
+
+my_fs.define("comp", ("pr_l", "pr_l"), "pr_ll", "Iterated pr_l")
+
+my_fs.define("comp", ("pr_r", "pr_l"), "pr_rl", "pr_r on pr_l")
+
+my_fs.define("comp", ("piggyback_1", "pr_r"), "aux_1", "Aux 1 for Test_Quotient")
+
+my_fs.define("comp", ("add", "aux_1"), "aux_2", "Aux 2 for Test_Quotient: pr_r(x)+1")
+
+my_fs.define("pair", ("pr_rl", "aux_2"), "aux_3", "Aux 3 for Test_Quotient")
+
+my_fs.define("comp", ("mul", "aux_3"), "aux_4", "Aux 4 for Test_Quotient: pr_r(pr_l(y))*(pr_r(y)+1)")
+
+my_fs.define("pair", ("aux_4", "pr_ll"), "aux_5", "Aux 5 for Test_Quotient")
+
+my_fs.define("comp", ("gt", "aux_5"), "test_quotient", "Test_Quotient for mu-division")
+
+my_fs.define_mu("test_quotient", "div", "Quotient of division by linear search") 
+
+
