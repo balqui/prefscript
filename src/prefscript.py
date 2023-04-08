@@ -18,9 +18,26 @@ eval calls), a runnable version of the code.
 
 import scaff.cantorpairs as cp
 # ~ import cantorpairs as cp
-from fundata import FunData
+# ~ from fundata import FunData # class FunData added here now
 
-LIMIT_GNUM = 2**1000 # around 300 decimal digits, omit Gödel numbers higher
+LIMIT_GNUM = 2**1000 # around 300 decimal digits, omit Gödel numbers too high
+
+
+class FunData(dict):
+    'Simple class for PReFScript functions data'
+
+    def __init__(self):
+        dict.__init__(self)
+        self["nick"] = None
+        self["comment"] = None
+        self["how_def"] = None
+        self["def_on"] = None
+
+    def __str__(self):
+        return self["nick"] + "\n " + self["comment"] 
+
+    def how_def(self):
+        return self["how_def"] + ": " + str(self["def_on"])
 
 
 def mu(x, test):
@@ -69,7 +86,6 @@ class PReFScript:
         data["comment"] = comment
         data["how_def"] = "basic"
         data["def_on"] = tuple()
-        # ~ data["code"] = code
         gnum = cp.dp(0, num)
         self.gnums[nick] = gnum
         self.main[nick] = data
@@ -77,23 +93,26 @@ class PReFScript:
         self.pycode[nick] = eval(code, globals() | self.pycode)
 
 
-    def list(self, what = None, w_code = False):
+    def list(self, what = None, w_code = 0):
         '''
-        plans:
-         if what == None: list everything, o/w search for what on the dicts
-         obey verbosity level
-        all this still unimplemented, always lists everything fully
+        if what is None: list everything
+        else: search for that what on the dicts
+        w_code 0: no code, 1: how and on what, 2: strcode also
+        Gödel number printed depending on self.store_gnums and how big it is
         '''
         def list_one(nick, w_code):
-            print(str(self.main[nick]))
+            print("\n" + str(self.main[nick]))
             if w_code:
-                'print the Python code in this case only'
+                'print how it is defined'
+                print(" " + self.main[nick].how_def())
+            if w_code == 2:
+                'print also the Python code in this case only'
                 print(" " + self.strcode[nick])
             if self.store_gnums:
                 if nick in self.gnums:
                     gnum = self.gnums[nick]
                     print(" Gödel number:", gnum,
-                          "= <" + str(cp.pr_l(gnum)) + "." + str(cp.pr_r(gnum)) + ">\n")
+                          "= <" + str(cp.pr_l(gnum)) + "." + str(cp.pr_r(gnum)) + ">")
                 else:
                     print(" Gödel number too large, omitted")
 

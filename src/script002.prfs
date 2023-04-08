@@ -5,5 +5,5 @@
 4 | aux_3 | Aux 3 for Test_Quotient | pair | pr_rl aux_2 |
 5 | aux_4 | Aux 4 for Test_Quotient: pr_r(pr_l(y))*(pr_r(y)+1) | comp | mul aux_3 |
 6 | aux_5 | Aux 5 for Test_Quotient | pair | aux_4 pr_ll |
-7 | test_quotient | Test_Quotient for mu-division | comp | gt aux_5 |
+7 | test_quotient | Test_Quotient for mu-division, pr_r(pr_l(y))*(pr_r(y)+1) > pr_l(pr_l(x)) | comp | gt aux_5 |
 8 | div | Quotient of division by linear search | mu | test_quotient |
