@@ -106,14 +106,15 @@ the Python-callable codes is provided with `w_code = 2`.
 
 ### Scripts containing definitions of Partial Recursive Functions
 
-It will (soon, maybe already) be possible to load in a series of
-function definitions from a separate script file; I use them with
-extension .prfs (partial recursive functions script).
+It is possible to load in a series of function definitions 
+from a separate script file; I use these files with
+extension .prfs (standing for "partial recursive functions script").
 
 Function definitions in these scripts follow a format very similar 
 to the one used in listing them. The main differences are the keyword
-"define:" (with the colon") preceded by an optional integer and the
-square brackets marking the comment:
+"define:" (with the colon) preceded by an optional integer, not having
+a colon with the "pair" / "comp" / "mu" indication, and the square 
+brackets encompassing the comment:
 
 ```
 10 define: piggyback_1
@@ -139,4 +140,5 @@ define: piggyback_ant
 
 The well-aligned format exemplified by cases 10 and 50 is not
 compulsory, as can be seen in the other cases, but is highly
-recommended.
+recommended. Such files can be loaded in with the method `load`.
+The repository includes a few examples of such files.
