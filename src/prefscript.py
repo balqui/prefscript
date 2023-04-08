@@ -22,6 +22,7 @@ from fundata import FunData
 
 LIMIT_GNUM = 2**1000 # around 300 decimal digits, omit Gödel numbers higher
 
+
 def mu(x, test):
     "ancillary linear search function for implementing mu-minimization"
     z = 0
@@ -43,6 +44,7 @@ class PReFScript:
         their implementation assumes 'import cantorpairs as cp'
         '''
         self.main = dict()
+        self.strcode = dict()
         self.pycode = dict()
         self.gnums = dict()
         self.store_gnums = store_goedel_numbers # not in use at the moment
@@ -60,27 +62,33 @@ class PReFScript:
         self.add_basic("diff", "Modified difference max(0, x-y) of the two components of input <x.y>", 
                        "lambda x: max(0, cp.pr_l(x) - cp.pr_r(x))", 6)
 
+
     def add_basic(self, nick, comment, code, num):
         data = FunData()
         data["nick"] = nick
         data["comment"] = comment
         data["how_def"] = "basic"
         data["def_on"] = tuple()
-        data["code"] = code
+        # ~ data["code"] = code
         gnum = cp.dp(0, num)
         self.gnums[nick] = gnum
         self.main[nick] = data
+        self.strcode[nick] = code
         self.pycode[nick] = eval(code, globals() | self.pycode)
 
-    def list(self, what = None, verbose = 0):
+
+    def list(self, what = None, w_code = False):
         '''
         plans:
          if what == None: list everything, o/w search for what on the dicts
          obey verbosity level
         all this still unimplemented, always lists everything fully
         '''
-        for nick in self.main:
+        def list_one(nick, w_code):
             print(str(self.main[nick]))
+            if w_code:
+                'print the Python code in this case only'
+                print(" " + self.strcode[nick])
             if self.store_gnums:
                 if nick in self.gnums:
                     gnum = self.gnums[nick]
@@ -88,6 +96,12 @@ class PReFScript:
                           "= <" + str(cp.pr_l(gnum)) + "." + str(cp.pr_r(gnum)) + ">\n")
                 else:
                     print(" Gödel number too large, omitted")
+
+        if what is not None:
+            list_one(what, w_code)
+        else:
+            for nick in self.main:
+                list_one(nick, w_code)
                     
 
     def define(self, how, on_what, nick, comment):
@@ -128,15 +142,20 @@ class PReFScript:
                     self.gnums[nick] = gnum
         if numhow == 1:
             'composition'
-            data["code"] = "lambda x: " + on_what[0] + "(" + on_what[1] + "(x))"
+            # ~ data["code"] = "lambda x: " + on_what[0] + "(" + on_what[1] + "(x))"
+            self.strcode[nick] = "lambda x: " + on_what[0] + "(" + on_what[1] + "(x))"
         if numhow == 2:
             'pairing'
-            data["code"] = "lambda x: cp.dp(" + on_what[0] + "(x), " + on_what[1] + "(x))"
+            # ~ data["code"] = "lambda x: cp.dp(" + on_what[0] + "(x), " + on_what[1] + "(x))"
+            self.strcode[nick] = "lambda x: cp.dp(" + on_what[0] + "(x), " + on_what[1] + "(x))"
         if numhow == 3:
             'mu-minimization'
-            data["code"] = "lambda x: mu(x, " + on_what[0] + ")"
+            # ~ data["code"] = "lambda x: mu(x, " + on_what[0] + ")"
+            self.strcode[nick] = "lambda x: mu(x, " + on_what[0] + ")"
         self.main[nick] = data
-        self.pycode[nick] = eval(data["code"], globals() | self.pycode)
+        # ~ self.pycode[nick] = eval(data["code"], globals() | self.pycode)
+        self.pycode[nick] = eval(self.strcode[nick], globals() | self.pycode)
+
 
     def to_python(self, what):
         'returns the Python-runnable version of the function'
@@ -144,6 +163,7 @@ class PReFScript:
             print("Nickname " + what + " not defined.")
             return None
         return self.pycode[what]
+
 
     def load(self, filename):
         'load definitions from file, temporary current format (inoperative)'
@@ -153,10 +173,11 @@ class PReFScript:
                 on = tuple(line[4].split())
                 self.define(line[3].strip(), on, line[1].strip(), line[2].strip())
 
+
     def dialog(self):
         nick = input("Function nickname? ")
         comment = input("What is it? ")
         how = input("How is it made? [pair or comp or mu] ")
-        on_what = input("Applied to what? [1 or 2 names] ")
+        on_what = input("Applied to what? [1 or 2 space-sep names] ")
         on_what = on_what.split()
         self.define(how.strip(), tuple(on_what), nick.strip(), comment.strip())

@@ -13,10 +13,8 @@ class FunData(dict):
         self["comment"] = None
         self["how_def"] = None
         self["def_on"] = None
-        self["code"] = None
 
     def __str__(self):
         s = self["nick"] + "\n "
-        s += self["comment"] + "\n "
-        s += self["code"]
+        s += self["comment"] 
         return s
