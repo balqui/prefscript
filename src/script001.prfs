@@ -1,0 +1,6 @@
+0 | both_compar | Pair of x < y and x > y  | pair | lt gt |
+1 | ineq | Different x and y in <x.y>? | comp | add both_compar |
+2 | piggyfront_1 | Pairs up 1 with x: <1.x> | pair | k_1 id |
+3 | neg | Negation: 0 from 1, 1 from 0 | comp | diff piggyfront_1 |
+4 | eq | Is it <x.x>? | comp | neg ineq |
+5 | alt_id | Programming id by linear search | mu | eq |

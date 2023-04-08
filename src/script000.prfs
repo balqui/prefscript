@@ -1,0 +1,13 @@
+0 | piggyback_1 | Pairs up x with 1: <x.1> | pair | id k_1 |
+1 | ant | The ant function | comp | diff piggyback_1 |
+2 | piggyback_ant | Pairs up x with its predecessor | pair | id ant |
+3 | sign | Sign: 0 for 0, 1 for the rest | comp | diff piggyback_ant |
+4 | gt | x > y in <x.y> | comp | sign diff |
+5 | const_pair_1 | The constant <1.1> function | pair | k_1 k_1 |
+6 | k_0 | The constant 0 function | comp | diff const_pair_1 |
+7 | piggyback_0 | Pairs up x with 0: <x.0> | pair | id k_0 |
+8 | pr_l | The pr_l function | comp | proj piggyback_0 |
+9 | pr_r | The pr_r function | comp | s_tup piggyback_1 |
+10 | swap | From <x.y> to <y.x> | pair | pr_r pr_l |
+11 | swap_diff | diff(<y.x>) | comp | diff swap |
+12 | lt | x < y in <x.y> | comp | sign swap_diff |

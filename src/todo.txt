@@ -1,0 +1,35 @@
+
+on_what can be one name or a pair of names - should be always a tuple, of length 1 or 2
+
+test mu: seems ok
+
+add the mu linear search at the top, with a docstring - done
+merge the define_mu into the general define - done
+once pushed, delete from scaff - done
+
+find whether file extension .prf is in use - done: MS Outlook profiles!
+
+dict keys must be only nicks, storing Gödel numbers must be an option
+
+consider whether showing the lambda-string code should be an option
+
+the idea of showing the last construction step in the Gödel number is
+ good but it should be stored to start with and not unpaired on the
+ spot at listing time
+
+
+provide some sort of explanation of the quotient test q(y)
+def q(y):
+	return int(pr_r(pr_l(y))*(pr_r(y)+1) > pr_l(pr_l(y)))
+
+d = lambda x: mu(x, q)
+
+
+defining script syntax starts being urgent
+
+see how to incorporate here a notion of dovetailing
+
+
+
+
+
