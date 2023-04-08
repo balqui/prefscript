@@ -16,6 +16,7 @@ construct it. Then, in a separate dict (used as namespace for
 eval calls), a runnable version of the code.
 '''
 
+import re
 import scaff.cantorpairs as cp
 # ~ import cantorpairs as cp
 # ~ from fundata import FunData # class FunData added here now
@@ -138,7 +139,7 @@ class PReFScript:
         elif numhow < 3 and on_what[1] not in self.main:
             wrong = on_what[1]
         if wrong:
-            print("Nickname " + wrong + " unknown. New definition ignored.")
+            print("Nickname " + wrong + " unknown. Definition of " + nick + " ignored.")
             return None
         data = FunData()
         data["nick"] = nick
@@ -182,6 +183,29 @@ class PReFScript:
             print("Nickname " + what + " not defined.")
             return None
         return self.pycode[what]
+
+
+    def load(self, filename):
+        'load in definitions from .prfs file'
+        patt = re.compile("(\d|\s)*define\:\s*(\w+)\s+\[\s*((\w|\s|[.,:;<>\)\(?\-+*]?)+)\]\s+(((pair)\s+(\w*\s+\w+)\s+)|((comp)\s+(\w*\s+\w+)\s+)|((mu)\s+(\w*)\s+))")
+        with open(filename) as infile:
+            script = infile.read()
+        for funct in re.finditer(patt, script):
+            nick = funct.group(2)
+            comment = funct.group(3)
+            if funct.group(7) is not None:
+                how = funct.group(7)
+            if funct.group(10) is not None:
+                how = funct.group(10)
+            if funct.group(13) is not None:
+                how = funct.group(13)
+            if funct.group(8) is not None:
+                on_what = tuple(funct.group(8).split())
+            if funct.group(11) is not None:
+                on_what = tuple(funct.group(11).split())
+            if funct.group(14) is not None:
+                on_what = tuple(funct.group(14).split())
+            self.define(how.strip(), on_what, nick.strip(), comment.strip())
 
 
     def formerload(self, filename):

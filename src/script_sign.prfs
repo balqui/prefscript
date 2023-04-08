@@ -1,0 +1,21 @@
+
+# To reach up to sign: sign(x) = x - (x - 1) where "-" is modified difference
+
+# piggyback_1 repeated in script_proj.prfs
+
+170 define: piggyback_1
+            [Pairs up x with 1: <x.1>]
+            pair id k_1
+
+180 define: ant
+            [The antecessor function]
+            comp diff piggyback_1
+
+190 define: piggyback_ant
+            [Pairs up x with its antecessor]
+            pair id ant
+
+200 define: sign
+            [Sign: 0 for 0, 1 for the rest]
+            comp diff piggyback_ant
+

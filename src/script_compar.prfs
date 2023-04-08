@@ -1,0 +1,31 @@
+
+# Script for comparisons gt / lt / eq / ineq
+
+# Requires bool, proj, sign
+
+210 define: gt
+            [x > y in <x.y>]
+            comp sign diff
+
+290 define: lt
+            [x < y in <x.y>]
+            comp sign swap_diff
+
+300 define: both_compar
+            [Pair of x < y and x > y]
+            pair lt gt
+
+310 define: ineq
+            [Different x and y in <x.y>?]
+            comp add both_compar
+
+340 define: eq
+            [Is it <x.x>?]
+            comp neg ineq
+
+# Example usage of the mu operator and of eq: alternative identity function
+
+350 define: alt_id
+            [Programming id by linear search]
+            mu eq
+
