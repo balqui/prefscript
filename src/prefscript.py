@@ -37,7 +37,7 @@ class FunData(dict):
         return self["nick"] + "\n " + self["comment"] 
 
     def how_def(self):
-        return self["how_def"] + ": " + str(self["def_on"])
+        return self["how_def"] + ": " + ' '.join(on_what for on_what in self["def_on"])
 
 
 def mu(x, test):
@@ -121,7 +121,7 @@ class PReFScript:
         else:
             for nick in self.main:
                 list_one(nick, w_code)
-                    
+
 
     def define(self, how, on_what, nick, comment):
         'here comes a new function to add to the dicts appropriately'
@@ -184,7 +184,7 @@ class PReFScript:
         return self.pycode[what]
 
 
-    def load(self, filename):
+    def formerload(self, filename):
         'load definitions from file, temporary current format (inoperative)'
         with open(filename) as f:
             for line in f:

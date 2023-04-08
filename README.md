@@ -12,16 +12,26 @@ recursive functions; naturally doubles as a (purely functional)
 programming language, but it is not intended to be used as such.
 
 Incomplete as of today, hence not pip-installable yet. Please
-download the sources from `src` folder; file `uses_prefscript.py`
-contains the examples below.
+download the source file `prefscript.py` from the `src` folder.
 
-Each function in a PReFScript has associated a Gödel number, 
-a nickname, a comment, and code; also, the last operation used 
-to construct it.
+### Defining Partial Recursive Functions directly
 
-Intended usage as of April 7, 2023 (for the names dp, pr_l, pr_r,
-tup_e, tup_i, s_tup, pr please see the companion repository 
-`https://github.com/balqui/cantorpairs`):
+Each function in a PReFScript has associated a Gödel number
+(until it becomes too big) with the last operation used 
+to construct it. Then it has as well a nickname, a comment, 
+and code in various forms.
+
+The `define` method allows one to add new functions but 
+I recommend the `dialog` method for a more amiable interface
+(for information about the names dp, pr_l, pr_r, tup_e, 
+tup_i, s_tup, pr please see the companion repository 
+`https://github.com/balqui/cantorpairs`). Further examples of 
+`define` are shown in file `uses_prefscript.py`.
+
+The `list` method without nicknames specified will list all 
+the functions; or the one function matching the nickname if 
+one is provided. Adding `w_code = 1` will give additional 
+information.
 
 
 ```
@@ -31,45 +41,102 @@ tup_e, tup_i, s_tup, pr please see the companion repository
 
 k_1 
  The constant 1 function
- lambda x: 1
- Gödel number: 1 = <0.0>
 
 id
  The identity function
- lambda x: x
- Gödel number: 2 = <0.1>
 
 [...]
 
 add
  Addition x+y of the two components of input <x.y>
- lambda z: cp.pr_l(z) + cp.pr_r(x) 
- Gödel number: 11 = <0.4>
 
 [...] shows the basic functions that are always available from the beginning
 
->>> my_fs.define("pair", ("k_1", "k_1"), "const_pair_1", "The constant <1.1> function")
->>> my_fs.define("comp", ("add", "const_pair_1"), "k_2", "The constant 2 function")
->>> my_fs.list()
+>>> my_fs.dialog()
+Function nickname? const_pair_1
+What is it? The constant <1.1> function
+How is it made? [pair or comp or mu] pair
+Applied to what? [1 or 2 space-sep names] k_1 k_1
+>>>
+>>> my_fs.dialog()
+Function nickname? k_2
+What is it? The constant 2 function
+How is it made? [pair or comp or mu] comp
+Applied to what? [1 or 2 space-sep names] add const_pair_1
+>>>
+>>> my_fs.list("const_pair_1")
+
+const_pair_1
+ The constant <1.1> function
+>>> my_fs.list("const_pair_1", w_code = 1)
+
+const_pair_1
+ The constant <1.1> function
+ pair: ('k_1', 'k_1')
+>>> 
+>>> my_fs.list(w_code = 1)
 
 [...] as before but now includes the two newly defined functions
 
 const_pair_1
  The constant <1.1> function
- lambda x: cp.dp(k_1(x), k_1(x))
- Gödel number: 31 = <2.5>
+ pair: ('k_1', 'k_1')
 
 k_2
  The constant 2 function
- lambda x: add(const_pair_1(x))
- Gödel number: 419988 = <1.915>
+ comp: ('add', 'const_pair_1')
 
->>> my_fs.list("k_2")
-
-[...] lists only the constant 2 function (unsupported in the current version!)
-
->>> f = my_fs.to_python("k_2")
+>>>
+>>> f = my_fs.to_python("k_2") # gets a callable, working implementation
 >>> f(8)
 2
 >>> 
 ```
+
+If the object initialization is made with
+
+```
+>>> my_fs = PReFScript("Store Gödel numbers")
+```
+
+then Gödel numbers of the functions will be provided until they
+skyrocket to over about 300 decimal digits. Additional info about
+the Python-callable codes is provided with `w_code = 2`.
+
+
+### Scripts containing definitions of Partial Recursive Functions
+
+It will (soon, maybe already) be possible to load in a series of
+function definitions from a separate script file; I use them with
+extension .prfs (partial recursive functions script).
+
+Function definitions in these scripts follow a format very similar 
+to the one used in listing them. The main differences are the keyword
+"define:" (with the colon") preceded by an optional integer and the
+square brackets marking the comment:
+
+```
+10 define: piggyback_1
+           [Pairs up x with 1: <x.1> ]
+           pair id k_1
+
+20 define: ant
+ [The ant function]
+ comp diff piggyback_1
+
+define: piggyback_ant
+        [Pairs up x with its predecessor]
+        pair id ant
+
+   40 define: sign
+ [ Sign: 0 for 0, 1 for the rest ]
+     comp diff piggyback_ant
+
+50 define: gt
+           [x > y in <x.y>]
+           comp sign diff
+```
+
+The well-aligned format exemplified by cases 10 and 50 is not
+compulsory, as can be seen in the other cases, but is highly
+recommended.
