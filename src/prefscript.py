@@ -92,15 +92,10 @@ class PReFScript:
             print("Addition of new basic functions is unsupported as yet. New definition ignored.")
             return None
         wrong = ""
-        if numhow == 3:
-            if on_what not in self.nicks:
-                wrong = on_what
-        else:
-            "numhow 1 or 2"
-            if on_what[0] not in self.nicks:
-                wrong = on_what[0]
-            elif on_what[1] not in self.nicks:
-                wrong = on_what[1]
+        if on_what[0] not in self.nicks:
+            wrong = on_what[0]
+        elif numhow < 3 and on_what[1] not in self.nicks:
+            wrong = on_what[1]
         if wrong:
             print("Nickname " + wrong + " unknown. New definition ignored.")
             return None
@@ -110,14 +105,14 @@ class PReFScript:
         data["how_def"] = how
         data["def_on"] = on_what
         # ~ if self.store_gnums: # to be checked once keys are moved to nicks
-        if numhow in (1, 2):
-            'set up gnum'
-            lft = self.nicks[on_what[0]]
+        lft = self.nicks[on_what[0]]
+        if numhow < 3:
+            'set up gnum for pair or comp'
             rgt = self.nicks[on_what[1]]
             gnum = cp.dp(numhow, cp.dp(lft, rgt))
         else:
-            'numhow is 3, minimization'
-            gnum = cp.dp(3, self.nicks[on_what])
+            'set up gnum for minimization'
+            gnum = cp.dp(3, lft)
         if numhow == 1:
             'composition'
             data["code"] = "lambda x: " + on_what[0] + "(" + on_what[1] + "(x))"
@@ -126,7 +121,7 @@ class PReFScript:
             data["code"] = "lambda x: cp.dp(" + on_what[0] + "(x), " + on_what[1] + "(x))"
         if numhow == 3:
             'mu-minimization'
-            data["code"] = "lambda x: mu(x, " + on_what + ")"
+            data["code"] = "lambda x: mu(x, " + on_what[0] + ")"
         self.nicks[nick] = gnum
         self.main[gnum] = data
         self.pycode[nick] = eval(data["code"], globals() | self.pycode)
@@ -143,11 +138,7 @@ class PReFScript:
         with open(filename) as f:
             for line in f:
                 line = line.split('|')
-                on = line[4].split()
-                if len(on) > 1:
-                    on = tuple(on)
-                else:
-                    on = on[0]
+                on = tuple(line[4].split())
                 self.define(line[3].strip(), on, line[1].strip(), line[2].strip())
 
     def dialog(self):
@@ -156,8 +147,4 @@ class PReFScript:
         how = input("How is it made? [pair or comp or mu] ")
         on_what = input("Applied to what? [1 or 2 names] ")
         on_what = on_what.split()
-        if len(on_what) > 1:
-            on_what = tuple(on_what)
-        else:
-            on_what = on_what[0]
-        self.define(how.strip(), on_what, nick.strip(), comment.strip())
+        self.define(how.strip(), tuple(on_what), nick.strip(), comment.strip())
