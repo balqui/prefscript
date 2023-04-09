@@ -72,7 +72,7 @@ const_pair_1
 
 const_pair_1
  The constant <1.1> function
- pair: ('k_1', 'k_1')
+ pair: k_1 k_1
 >>> 
 >>> my_fs.list(w_code = 1)
 
@@ -80,11 +80,11 @@ const_pair_1
 
 const_pair_1
  The constant <1.1> function
- pair: ('k_1', 'k_1')
+ pair: k_1 k_1
 
 k_2
  The constant 2 function
- comp: ('add', 'const_pair_1')
+ comp: add const_pair_1
 
 >>>
 >>> f = my_fs.to_python("k_2") # gets a callable, working implementation
