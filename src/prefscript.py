@@ -21,8 +21,10 @@ import scaff.cantorpairs as cp
 # ~ import cantorpairs as cp
 # ~ from fundata import FunData # class FunData added here now
 
-LIMIT_GNUM = 2**1000 # around 300 decimal digits, omit Gödel numbers too high
+# ~ limit in order to omit Gödel numbers too high, around 300 decimal digits
+# ~ LIMIT_GNUM set to 2**1000 but computed much faster via bit shift
 
+LIMIT_GNUM = 2 << 999
 
 class FunData(dict):
     'Simple class for PReFScript functions data'
