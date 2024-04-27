@@ -40,6 +40,8 @@ class FunData(dict):
         return self["nick"] + "\n " + self["comment"] 
 
     def how_def(self):
+        if self["how_def"] == "basic":
+            return "basic"
         return self["how_def"] + ": " + ' '.join(on_what for on_what in self["def_on"])
 
 
