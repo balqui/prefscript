@@ -16,7 +16,7 @@ construct it. Then, in a separate dict (used as namespace for
 eval calls), a runnable version of the code.
 '''
 
-import re
+from re import compile as re_compile, finditer as re_finditer
 import scaff.cantorpairs as cp
 # ~ import cantorpairs as cp
 # ~ from fundata import FunData # class FunData added here now
@@ -62,6 +62,8 @@ class PReFScript:
           key is always nick for all of them;
         include here the basic functions;
         their implementation assumes 'import cantorpairs as cp'
+        (re compilation moved from load to here so as to avoid
+         recomputing it with several load calls)
         '''
         self.main = dict()
         self.strcode = dict()
@@ -72,15 +74,17 @@ class PReFScript:
         self.add_basic("k_1", "The constant 1 function", "lambda x: 1", 0)
         self.add_basic("id", "The identity function", "lambda x: x", 1)
         self.add_basic("s_tup", "Single-argument version of suffix tuple", 
-                       "lambda x: cp.s_tup(cp.pr_l(x), cp.pr_r(x))", 2)
+                       "lambda x: cp.s_tup(cp.pr_L(x), cp.pr_R(x))", 2)
         self.add_basic("proj", "Single-argument version of projection", 
-                       "lambda x: cp.pr(cp.pr_l(x), cp.pr_r(x))", 3)
+                       "lambda x: cp.pr(cp.pr_L(x), cp.pr_R(x))", 3)
         self.add_basic("add", "Addition x+y of the two components of input <x.y>", 
-                       "lambda x: cp.pr_l(x) + cp.pr_r(x)", 4)
+                       "lambda x: cp.pr_L(x) + cp.pr_R(x)", 4)
         self.add_basic("mul", "Multiplication x*y of the two components of input <x.y>", 
-                       "lambda x: cp.pr_l(x) * cp.pr_r(x)", 5)
+                       "lambda x: cp.pr_L(x) * cp.pr_R(x)", 5)
         self.add_basic("diff", "Modified difference max(0, x-y) of the two components of input <x.y>", 
-                       "lambda x: max(0, cp.pr_l(x) - cp.pr_r(x))", 6)
+                       "lambda x: max(0, cp.pr_L(x) - cp.pr_R(x))", 6)
+        self.patt = re_compile("(\d|\s)*define\:\s*(\w+)\s+\[\s*((\w|\s|[.,:;<>\)\(?\-+*]?)+)\]\s+(((pair)\s+(\w*\s+\w+)\s+)|((comp)\s+(\w*\s+\w+)\s+)|((mu)\s+(\w*)\s+))")
+
 
 
     def add_basic(self, nick, comment, code, num):
@@ -115,7 +119,7 @@ class PReFScript:
                 if nick in self.gnums:
                     gnum = self.gnums[nick]
                     print(" Gödel number:", gnum,
-                          "= <" + str(cp.pr_l(gnum)) + "." + str(cp.pr_r(gnum)) + ">")
+                          "= <" + str(cp.pr_L(gnum)) + "." + str(cp.pr_R(gnum)) + ">")
                 else:
                     print(" Gödel number too large, omitted")
 
@@ -164,18 +168,14 @@ class PReFScript:
                     self.gnums[nick] = gnum
         if numhow == 1:
             'composition'
-            # ~ data["code"] = "lambda x: " + on_what[0] + "(" + on_what[1] + "(x))"
             self.strcode[nick] = "lambda x: " + on_what[0] + "(" + on_what[1] + "(x))"
         if numhow == 2:
             'pairing'
-            # ~ data["code"] = "lambda x: cp.dp(" + on_what[0] + "(x), " + on_what[1] + "(x))"
             self.strcode[nick] = "lambda x: cp.dp(" + on_what[0] + "(x), " + on_what[1] + "(x))"
         if numhow == 3:
             'mu-minimization'
-            # ~ data["code"] = "lambda x: mu(x, " + on_what[0] + ")"
             self.strcode[nick] = "lambda x: mu(x, " + on_what[0] + ")"
         self.main[nick] = data
-        # ~ self.pycode[nick] = eval(data["code"], globals() | self.pycode)
         self.pycode[nick] = eval(self.strcode[nick], globals() | self.pycode)
 
 
@@ -189,10 +189,9 @@ class PReFScript:
 
     def load(self, filename):
         'load in definitions from .prfs file'
-        patt = re.compile("(\d|\s)*define\:\s*(\w+)\s+\[\s*((\w|\s|[.,:;<>\)\(?\-+*]?)+)\]\s+(((pair)\s+(\w*\s+\w+)\s+)|((comp)\s+(\w*\s+\w+)\s+)|((mu)\s+(\w*)\s+))")
         with open(filename) as infile:
             script = infile.read()
-        for funct in re.finditer(patt, script):
+        for funct in re.finditer(self.patt, script):
             nick = funct.group(2)
             comment = funct.group(3)
             if funct.group(7) is not None:
@@ -210,13 +209,13 @@ class PReFScript:
             self.define(how.strip(), on_what, nick.strip(), comment.strip())
 
 
-    def formerload(self, filename):
-        'load definitions from file, temporary current format (inoperative)'
-        with open(filename) as f:
-            for line in f:
-                line = line.split('|')
-                on = tuple(line[4].split())
-                self.define(line[3].strip(), on, line[1].strip(), line[2].strip())
+    # ~ def formerload(self, filename):
+        # ~ 'load definitions from file, temporary current format (inoperative)'
+        # ~ with open(filename) as f:
+            # ~ for line in f:
+                # ~ line = line.split('|')
+                # ~ on = tuple(line[4].split())
+                # ~ self.define(line[3].strip(), on, line[1].strip(), line[2].strip())
 
 
     def dialog(self):
