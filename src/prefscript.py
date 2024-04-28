@@ -193,7 +193,7 @@ class PReFScript:
         'load in definitions from .prfs file'
         with open(filename) as infile:
             script = infile.read()
-        for funct in re.finditer(self.patt, script):
+        for funct in re_finditer(self.patt, script):
             nick = funct.group(2)
             comment = funct.group(3)
             if funct.group(7) is not None:
