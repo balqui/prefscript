@@ -71,7 +71,7 @@ class PReFScript:
         self.strcode = dict()
         self.pycode = dict()
         self.gnums = dict()
-        self.store_gnums = store_goedel_numbers # not in use at the moment
+        self.store_gnums = store_goedel_numbers 
         self.hownums = { "basic": 0, "comp": 1, "pair": 2, "mu": 3 }
         self.add_basic("k_1", "The constant 1 function", "lambda x: 1", 0)
         self.add_basic("id", "The identity function", "lambda x: x", 1)
@@ -95,8 +95,8 @@ class PReFScript:
         data["comment"] = comment
         data["how_def"] = "basic"
         data["def_on"] = tuple()
-        gnum = cp.dp(0, num)
-        self.gnums[nick] = gnum
+        if self.store_gnums:
+            self.gnums[nick] = cp.dp(0, num)
         self.main[nick] = data
         self.strcode[nick] = code
         self.pycode[nick] = eval(code, globals() | self.pycode)
