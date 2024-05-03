@@ -1,0 +1,180 @@
+121 define: dupl
+            [Duplicates the input]
+            pair id id
+
+171 define: piggyback_1
+            [Pairs up x with 1: <x.1>]
+            pair id k_1
+
+181 define: const_pair_1
+            [The constant <1.1> function]
+            pair k_1 k_1
+
+191 define: k_0
+            [The constant 0 function]
+            comp diff const_pair_1
+
+211 define: piggyback_0
+            [Pairs up x with 0: <x.0>]
+            pair id k_0
+
+221 define: pr_R
+            [The pr_R function]
+            comp s_tup piggyback_1
+
+231 define: pr_L
+            [The pr_L function]
+            comp proj piggyback_0
+
+241 define: swap
+            [From <x.y> to <y.x>]
+            pair pr_R pr_L
+
+251 define: swap_diff
+            [diff(<y.x>)]
+            comp diff swap
+
+261 define: ant
+            [The antecessor function]
+            comp diff piggyback_1
+
+271 define: piggyback_ant
+            [Pairs up x with its antecessor]
+            pair id ant
+
+281 define: sign
+            [Sign: 0 for 0, 1 for the rest]
+            comp diff piggyback_ant
+
+321 define: piggyfront_1
+            [Pairs up 1 with x: <1.x>]
+            pair k_1 id
+
+331 define: neg
+            [Negation: 0 from 1, 1 from 0]
+            comp diff piggyfront_1
+
+351 define: gt
+            [x > y in <x.y>]
+            comp sign diff
+
+361 define: lt
+            [x < y in <x.y>]
+            comp sign swap_diff
+
+371 define: both_compar
+            [Pair of x < y and x > y]
+            pair lt gt
+
+381 define: ineq
+            [Different x and y in <x.y>?]
+            comp add both_compar
+
+391 define: eq
+            [Is it <x.x>?]
+            comp neg ineq
+
+501 define: pair_el0
+            [Pair of 0-th element]
+            comp dupl pr_L
+
+511 define: sq_0
+            [Square of 0-th element]
+            comp mul pair_el0
+
+521 define: pr_LR
+            [pr_R on pr_R]
+            comp pr_L pr_R
+
+531 define: pair_el1
+            [Pair of 1-th element]
+            comp dupl pr_LR
+
+541 define: sq_1
+            [Square of 1-th element]
+            comp mul pair_el1
+
+551 define: pr_RR
+            [pr_R on pr_R]
+            comp pr_R pr_R
+
+561 define: pair_el2
+            [Pair of 2-th element]
+            comp dupl pr_RR
+
+571 define: sq_2
+            [Square of 2-th element]
+            comp mul pair_el2
+
+631 define: pair_sq_1_sq_2
+            [Pair for sum_sq_1_sq_2]
+            pair sq_1 sq_2
+
+641 define: sum_sq_1_sq_2
+            [Sum of non-0-th-element squares]
+            comp add pair_sq_1_sq_2
+
+651 define: pair_pyth_0
+            [Pair for square of 0-th equals sum of other two squares]
+            pair sq_0 sum_sq_1_sq_2
+
+661 define: pyth_0
+            [Square of 0-th equals sum of other two squares]
+            comp eq pair_pyth_0
+
+711 define: pair_sq_0_sq_2
+            [Pair for sum_sq_0_sq_2]
+            pair sq_0 sq_2
+
+721 define: sum_sq_0_sq_2
+            [Sum of non-1-th-element squares]
+            comp add pair_sq_0_sq_2
+
+731 define: pair_pyth_1
+            [Pair for square of mid equals sum of other two squares]
+            pair sq_1 sum_sq_0_sq_2
+
+741 define: pyth_1
+            [Square of mid equals sum of other two squares]
+            comp eq pair_pyth_1
+
+751 define: pair_sq_0_sq_1
+            [Pair for sum_sq_0_sq_1]
+            pair sq_0 sq_1
+
+761 define: sum_sq_0_sq_1
+            [Sum of non-2-th-element squares]
+            comp add pair_sq_0_sq_1
+
+771 define: pair_pyth_2
+            [Pair for square of last equals sum of other two squares]
+            pair sq_2 sum_sq_0_sq_1
+
+781 define: pyth_2
+            [Square of last equals sum of other two squares]
+            comp eq pair_pyth_2
+
+871 define: pair_2_pyth
+            [Pair for sum_2_pyth]
+            pair pyth_1 pyth_2
+
+881 define: sum_2_pyth
+            [Disjunction of: square of one of last two equals sums of other two squares]
+            comp add pair_2_pyth
+
+881 define: pair_3_pyth
+            [Pair for sum_pyth]
+            pair pyth_0 sum_2_pyth
+
+891 define: sum_pyth
+            [Disjunction (sum) of square of one of three equals sums of other two squares]
+            comp add pair_3_pyth
+
+981 define: is_pythag_pair
+            [Pair for main, which is sum of pyth_0, pyth_1, pyth_2]
+            pair sum_pyth k_0
+            
+991 define: is_pythag
+            [main: square of one of three equals sums of other two squares]
+            comp gt is_pythag_pair
+            

@@ -1,0 +1,44 @@
+
+X91267 Pythagorean triples
+code "is_pyth_00.prfs"
+main:
+>>> is_pythagorean = ff.to_python("is_pythag")
+>>> is_pythagorean(cp.dp(3, cp.dp(4, 5)))
+
+
+X52569 Do They Intersect?
+
+X88172 Computing Areas
+
+X80093 Seven Game
+
+X75652 Rectangle inclusion NO, OUTPUT IS STRING
+
+X96828 Intersection - BUT output is pair of ints with tuple notation
+
+X60334 Number of real solutions for degree 2
+
+What about those that write booleans?
+
+X85235 Some of 'em numbers
+
+X92685 Even sum
+
+(Y hay un clon Odd sum)
+
+P55722 Iterative number of digits
+
+X40706 Count the digit
+
+X44100 Compress the digits
+
+P63448 Integer roots
+
+X15128 Sum of numbers in an interval
+
+X39837 idem (2)
+
+X25424 Even and odd HANDLES LISTS
+
+X86404 Length of longest ascending factor PARAM IS A LIST
+

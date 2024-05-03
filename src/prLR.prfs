@@ -1,0 +1,38 @@
+
+
+20 define: dupl
+           [Duplicates the input]
+           pair id id
+
+170 define: piggyback_1
+            [Pairs up x with 1: <x.1>]
+            pair id k_1
+
+220 define: const_pair_1
+            [The constant <1.1> function]
+            pair k_1 k_1
+
+230 define: k_0
+            [The constant 0 function]
+            comp diff const_pair_1
+
+240 define: piggyback_0
+            [Pairs up x with 0: <x.0>]
+            pair id k_0
+
+250 define: pr_L
+            [The pr_L function]
+            comp proj piggyback_0
+
+260 define: pr_R
+            [The pr_R function]
+            comp s_tup piggyback_1
+
+701 define: pair_el0
+            [Pair of 0-th element]
+            comp dupl pr_L
+
+711 define: sq0
+            [Square of 0-th element]
+            comp mul pair_el0
+
