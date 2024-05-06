@@ -6,6 +6,8 @@ main:
 >>> is_pythagorean(cp.dp(3, cp.dp(4, 5)))
 
 
+X26324 Maximum Number with Limited Digits
+
 X52569 Do They Intersect?
 
 X88172 Computing Areas
