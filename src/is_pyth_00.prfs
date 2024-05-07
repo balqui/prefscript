@@ -83,7 +83,7 @@
             comp mul pair_el0
 
 521 define: pr_LR
-            [pr_R on pr_R]
+            [pr_L on pr_R]
             comp pr_L pr_R
 
 531 define: pair_el1

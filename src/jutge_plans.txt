@@ -1,10 +1,13 @@
 
+
+
 X91267 Pythagorean triples
 code "is_pyth_00.prfs"
 main:
 >>> is_pythagorean = ff.to_python("is_pythag")
 >>> is_pythagorean(cp.dp(3, cp.dp(4, 5)))
 
+(añadir cast a bool en el main checker, si ya viene bool queda igual y el 0/1 de PReFScript se ajusta)
 
 X26324 Maximum Number with Limited Digits
 
