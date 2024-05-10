@@ -1,0 +1,243 @@
+121 define: dupl
+            [Duplicates the input]
+            pair id id
+
+171 define: piggyback_1
+            [Pairs up x with 1: <x.1>]
+            pair id k_1
+
+181 define: const_pair_1
+            [The constant <1.1> function]
+            pair k_1 k_1
+
+191 define: k_0
+            [The constant 0 function]
+            comp diff const_pair_1
+
+211 define: piggyback_0
+            [Pairs up x with 0: <x.0>]
+            pair id k_0
+
+221 define: pr_R
+            [The pr_R function]
+            comp s_tup piggyback_1
+
+231 define: pr_L
+            [The pr_L function]
+            comp proj piggyback_0
+
+241 define: swap
+            [From <x.y> to <y.x>]
+            pair pr_R pr_L
+
+251 define: swap_diff
+            [diff(<y.x>)]
+            comp diff swap
+
+261 define: ant
+            [The antecessor function]
+            comp diff piggyback_1
+
+271 define: piggyback_ant
+            [Pairs up x with its antecessor]
+            pair id ant
+
+281 define: sign
+            [Sign: 0 for 0, 1 for the rest]
+            comp diff piggyback_ant
+
+321 define: piggyfront_1
+            [Pairs up 1 with x: <1.x>]
+            pair k_1 id
+
+331 define: neg
+            [Negation: 0 from 1, 1 from 0]
+            comp diff piggyfront_1
+
+341 define: conj
+            [boolean and]
+            comp id mul
+
+351 define: disj
+            [boolean or]
+            comp sign add
+
+361 define: gt
+            [x > y in <x.y>]
+            comp sign diff
+
+371 define: lt
+            [x < y in <x.y>]
+            comp sign swap_diff
+
+381 define: both_compar
+            [Pair of x < y and x > y]
+            pair lt gt
+
+391 define: ineq
+            [Different x and y in <x.y>?]
+            comp add both_compar
+
+401 define: eq
+            [Is it <x.x>?]
+            comp neg ineq
+
+421 define: pr_LR
+            [pr_L on pr_R]
+            comp pr_L pr_R
+
+431 define: pr_LL
+            [pr_L on pr_L]
+            comp pr_L pr_L
+
+441 define: pr_RR
+            [pr_R on pr_R]
+            comp pr_R pr_R
+
+451 define: pr_RL
+            [pr_R on pr_L]
+            comp pr_R pr_L
+
+660 define: pair_add_1_to_L
+            [given <y.z>, return <y.1>]
+            comp piggyback_1 pr_L
+
+670 define: add_1_to_L
+            [given <y.z>, return y+1]
+            comp add pair_add_1_to_L
+
+680 define: pair_first_third
+            [given < <x.z> . k >, return <x.k>]
+            pair pr_LL pr_R
+
+690 define: first_minus_third
+            [given < <x.z> . k >, return x - k]
+            comp diff pair_first_third 
+
+700 define: first_equals_third
+            [given < <x.z> . k >, return x is k]
+            comp eq pair_first_third 
+
+710 define: pair_second_third
+            [given < <x.z> . k >, return <z.k>]
+            pair pr_RL pr_R
+
+720 define: pair_add_1_to_R
+            [given <z.k>, return <k.1>]
+            comp piggyback_1 pr_R
+
+730 define: add_1_to_R
+            [given <z.k>, return k+1]
+            comp add pair_add_1_to_R
+
+730 define: keep_L_add_1_to_R
+            [given <z.k>, return <z.k+1>]
+            pair pr_L add_1_to_R
+
+740 define: proj_next
+            [given <z.k>, return z(k+1)]
+            comp proj keep_L_add_1_to_R            
+
+750 define: proj_next_skip
+            [given < <x.z> . k >, return z(k+1)]
+            comp proj_next pair_second_third            
+
+760 define: pair_prod_with_next
+            [given < <x.z> . k >, return <(x-k).z(k+1)>]
+            pair first_minus_third proj_next_skip
+
+770 define: prod_with_next
+            [given < <x.z> . k >, return (x-k)*z(k+1)]
+            comp mul pair_prod_with_next
+
+780 define: current
+            [given < <x.z> . k >, find z(k)]
+            comp proj pair_second_third
+
+790 define: pair_for_current_is_wrong
+            [given < <x.z> . k >, pair up z(k) with (x-k)*z(k+1)  ]
+            pair current prod_with_next
+
+800 define: current_is_wrong
+            [given < <x.z> . k >, z(k) is not (x-k)*z(k+1) ]
+            comp ineq pair_for_current_is_wrong
+
+810 define: current_in_range
+            [given < <x.z> . k >, check x > k ]
+            comp gt pair_first_third
+
+820 define: pair_for_left_to_test_wrong_place
+            [given < <x.z> . k >, pair up z(k) is not (x-k)*z(k+1) with k < x]
+            pair current_is_wrong current_in_range
+
+830 define: left_to_test_wrong_place
+            [given < <x.z> . k >, test z(k) is not (x-k)*z(k+1) and k < x  ]
+            comp conj pair_for_left_to_test_wrong_place
+
+840 define: pair_for_current_not_1
+            [given < <x.z> . k >, pair up z(k) with 1]
+            pair current k_1
+
+850 define: current_not_1
+            [given < <x.z> . k >, check z(k) is not 1]
+            comp ineq pair_for_current_not_1
+
+860 define: pair_for_right_to_test_wrong_place
+            [given < <x.z> . k >, pair up z(k) is not 1 with k is x]
+            pair current_not_1 first_equals_third
+
+870 define: right_to_test_wrong_place
+            [given < <x.z> . k >, check z(k) is not 1 and k is x]
+            comp conj pair_for_right_to_test_wrong_place
+
+880 define: pair_to_test_wrong_place
+            [given < <x.z> . k >, pair up z(k) is not (x-k)*z(k+1) and k < x with z(k) is not 1 and k is x]
+            pair left_to_test_wrong_place right_to_test_wrong_place
+
+890 define: test_wrong_place
+            [given < <x.z> . k >, is position k of sequence z wrong before x-th or not 1 at x-th]
+            comp disj pair_to_test_wrong_place
+
+900 define: pair_for_sentinel
+            [given < <x.z> . k >, stop at x plus 1, when k > x ]
+            pair pr_R pr_LL
+
+910 define: sentinel
+            [given < <x.z> . k >, stop at x plus 1, when k > x ]
+            comp gt pair_for_sentinel
+
+920 define: pair_to_test_wrong_place_or_sentinel
+            [given < <x.z> . k >, is position k of sequence z wrong, not x before x-th or not 1 at x-th, or stop at x+1 ]
+            pair test_wrong_place sentinel
+
+930 define: test_wrong_place_or_sentinel
+            [given < <x.z> . k >, is position k of sequence z before x-th, or not 1 at x-th, or stop at x+1 ]
+            comp disj pair_to_test_wrong_place_or_sentinel
+
+940 define: find_wrong_place
+            [given <x.z>, find place in z before x-th wrong as the course of values of factorials of x, or place x-th is not 1, or stop at x+1 ]
+            mu test_wrong_place_or_sentinel
+
+950 define: pair_recode_wrong_place
+            [given <x.z>, x+1 if there is no wrong place, at most x otherwise ]
+            pair add_1_to_L find_wrong_place
+
+960 define: recode_wrong_place
+            [given <x.z>, answer > 0 if there is wrong place, 0 otherwise ]
+            comp diff pair_recode_wrong_place
+
+970 define: is_there_wrong_place
+            [given <x.z>, is z wrong as the course of values of factorials of x? ]
+            comp sign recode_wrong_place
+
+980 define: valid_course_of_values
+            [given <x.z>, is z the course of values of factorials of x? ]
+            comp neg is_there_wrong_place
+
+990 define: fact_course_of_values
+            [course of values of the factorial of x ]
+            mu valid_course_of_values
+
+999 define: fact
+            [factorial of x]
+            comp pr_L fact_course_of_values
