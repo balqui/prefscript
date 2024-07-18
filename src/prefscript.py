@@ -6,6 +6,9 @@ Rather: Towards a Partial Recursive Functions lab.
 Author: Jose L Balcazar, ORCID 0000-0003-4248-4528, april 2023 onwards 
 Copyleft: MIT License (https://en.wikipedia.org/wiki/MIT_License)
 
+Project started: mid Germinal 2003.
+Current version: 0.3, early Thermidor 2024.
+
 A Python-based environment to explore and experiment with partial 
 recursive functions; naturally doubles as a (purely functional) 
 programming language, but it is not intended to be used as such.
@@ -17,9 +20,12 @@ eval calls), a runnable version of the code.
 '''
 
 from re import compile as re_compile, finditer as re_finditer
-import scaff.cantorpairs as cp
-# ~ import cantorpairs as cp
+import cantorpairs as cp
+# ~ import scaff.cantorpairs as cp
+# ~ import cantorpairs.src.cantorpairs as cp
 # ~ from fundata import FunData # class FunData added here now
+
+__version__ = "0.3"
 
 # ~ limit in order to omit Gödel numbers too high, around 300 decimal digits
 # ~ LIMIT_GNUM set to 2**1000 but computed much faster via bit shift
@@ -209,15 +215,6 @@ class PReFScript:
             if funct.group(14) is not None:
                 on_what = tuple(funct.group(14).split())
             self.define(how.strip(), on_what, nick.strip(), comment.strip())
-
-
-    # ~ def formerload(self, filename):
-        # ~ 'load definitions from file, temporary current format (inoperative)'
-        # ~ with open(filename) as f:
-            # ~ for line in f:
-                # ~ line = line.split('|')
-                # ~ on = tuple(line[4].split())
-                # ~ self.define(line[3].strip(), on, line[1].strip(), line[2].strip())
 
 
     def dialog(self):
