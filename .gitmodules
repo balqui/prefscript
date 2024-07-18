@@ -1,0 +1,3 @@
+[submodule "src/cantorpairs"]
+	path = src/cantorpairs
+	url = git@github.com:balqui/cantorpairs.git
