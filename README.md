@@ -3,7 +3,11 @@
 
 Rather: Towards a Partial Recursive Functions lab.
 
-Author: Jose L Balcazar, ORCID 0000-0003-4248-4528, april 2023 onwards 
+Author: Jose L Balcazar, ORCID 0000-0003-4248-4528
+
+Project started: mid Germinal 2003.
+
+Current version: 0.3, early Thermidor 2024.
 
 Copyleft: MIT License (https://en.wikipedia.org/wiki/MIT_License)
 
@@ -11,15 +15,20 @@ A Python-based environment to explore and experiment with partial
 recursive functions; naturally doubles as a (purely functional) 
 programming language, but it is not intended to be used as such.
 
-Incomplete as of today, hence not pip-installable yet. Please
-download the source file `prefscript.py` from the `src` folder.
+Incomplete as of today, hence not pip-installable yet from PyPI
+hosting. Install it instead, within a virtual environment, with:
+`pip install --index-url https://test.pypi.org/simple/ --no-deps prefscript`
+Alternatively, download the source file `prefscript.py` from the `src` folder.
+Then, once within the Python interpreter, `from prefscript import PReFScript, cp`
+provides the class for storing the script functions and an access named `cp` 
+to `cantorpairs` functions, like `cp.dp(8, 4)`. Working on all that just these days.
 
 ### Defining Partial Recursive Functions directly
 
 Each function in a PReFScript has associated a Gödel number
-(until it becomes too big) with the last operation used 
+(until it becomes too big) and also the last operation used 
 to construct it. Then it has as well a nickname, a comment, 
-and code in various forms.
+and various forms of code.
 
 The `define` method allows one to add new functions but 
 I recommend the `dialog` method for a more amiable interface
@@ -109,6 +118,7 @@ the Python-callable codes is provided with `w_code = 2`.
 It is possible to load in a series of function definitions 
 from a separate script file; I use these files with
 extension .prfs (standing for "partial recursive functions script").
+The repo includes some script files.
 
 Function definitions in these scripts follow a format very similar 
 to the one used in listing them. The main differences are the keyword
