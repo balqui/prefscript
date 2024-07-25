@@ -1,0 +1,131 @@
+.about  Version of Jutge's X91267 Pythagorean triplets with main and extended "compair"
+.pragma main: is_pythag
+.pragma extended: True
+
+121 define: dupl
+            [Duplicates the input]
+            pair id id
+
+171 define: piggyback_1
+            [Pairs up x with 1: <x.1>]
+            pair id k_1
+
+191 define: k_0
+            [The constant 0 function]
+            compair diff k_1 k_1
+
+211 define: piggyback_0
+            [Pairs up x with 0: <x.0>]
+            pair id k_0
+
+221 define: pr_R
+            [The pr_R function]
+            comp s_tup piggyback_1
+
+231 define: pr_L
+            [The pr_L function]
+            comp proj piggyback_0
+
+241 define: swap
+            [From <x.y> to <y.x>]
+            pair pr_R pr_L
+
+251 define: swap_diff
+            [diff(<y.x>)]
+            comp diff swap
+
+261 define: ant
+            [The antecessor function]
+            comp diff piggyback_1
+
+281 define: sign
+            [Sign: 0 for 0, 1 for the rest]
+            compair diff id ant
+
+331 define: neg
+            [Negation: 0 from 1, 1 from 0]
+            comp diff k_1 id
+
+351 define: gt
+            [x > y in <x.y>]
+            comp sign diff
+
+361 define: lt
+            [x < y in <x.y>]
+            comp sign swap_diff
+
+381 define: ineq
+            [Different x and y in <x.y>?]
+            compair add lt gt
+
+391 define: eq
+            [Is it <x.x>?]
+            comp neg ineq
+
+501 define: pair_el0
+            [Pair of 0-th element]
+            comp dupl pr_L
+
+511 define: sq_0
+            [Square of 0-th element]
+            comp mul pair_el0
+
+521 define: pr_LR
+            [pr_L on pr_R]
+            comp pr_L pr_R
+
+531 define: pair_el1
+            [Pair of 1-th element]
+            comp dupl pr_LR
+
+541 define: sq_1
+            [Square of 1-th element]
+            comp mul pair_el1
+
+551 define: pr_RR
+            [pr_R on pr_R]
+            comp pr_R pr_R
+
+561 define: pair_el2
+            [Pair of 2-th element]
+            comp dupl pr_RR
+
+571 define: sq_2
+            [Square of 2-th element]
+            comp mul pair_el2
+
+641 define: sum_sq_1_sq_2
+            [Sum of non-0-th-element squares]
+            compair add sq_1 sq_2
+
+661 define: pyth_0
+            [Square of 0-th equals sum of other two squares]
+            compiar eq sq_0 sum_sq_1_sq_2
+
+721 define: sum_sq_0_sq_2
+            [Sum of non-1-th-element squares]
+            compair add sq_0 sq_2
+
+741 define: pyth_1
+            [Square of mid equals sum of other two squares]
+            compair eq sq_1 sum_sq_0_sq_2
+
+761 define: sum_sq_0_sq_1
+            [Sum of non-2-th-element squares]
+            compair add sq_0 sq_1
+
+781 define: pyth_2
+            [Square of last equals sum of other two squares]
+            compair eq sq_2 sum_sq_0_sq_1
+
+881 define: sum_2_pyth
+            [Disjunction (sum) of: square of one of last two equals sums of other two squares]
+            compair add pyth_1 pyth_2
+
+891 define: sum_pyth
+            [Disjunction (sum) of square of one of three equals sums of other two squares]
+            compair add pyth_0 sum_2_pyth
+
+991 define: is_pythag
+            [main: square of one of three equals sums of other two squares]
+            compair gt sum_pyth k_0

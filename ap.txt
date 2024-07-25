@@ -1,0 +1,7 @@
+.about auerlaiuhlg
+.pragma main: mainf
+.about auerlaiuhlg
+.about
+.about aoiu lfguiah ewlgifuah "
+.pragma output ascii
+.pragma output: ascii
