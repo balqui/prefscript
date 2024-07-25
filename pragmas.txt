@@ -1,22 +1,29 @@
-.pragma extended
-.pragma ascii_output
-.pragma main: mainfunction
+.pragma extended: True
+.pragma output: int / bool / intseq / ascii
+.pragma input: int / bool / intseq
+.pragma main: mainfunctionname
+.pragma cache: all
 
 100 define funcname [what is it] pair: k_1 k_1
 
 ...
 
+(ascii_input?)
 
 ====
 
 extended makes up for:
+. name aliasing
 . primrec scheme
 . compair scheme
 . arbitrary constant functions k_1234567
 
-ascii_output cuts in characters of 8 bits the binary value of the output and joins their chr version
-(ancillary functions to translate back and forth would be useful)
+output: ascii cuts in characters of 8 bits (or maybe 7) the binary 
+value of the output and joins their chr version (ancillary functions 
+to translate back and forth would be useful)
 
 main defines one of the function in the script as the one to be externally called
 
+cache: all caches all cantorpair computations, saves the time for the
+arithmetic but may require about 10GB for fact(4) under extended: False
 

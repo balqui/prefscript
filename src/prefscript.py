@@ -20,6 +20,7 @@ eval calls), a runnable version of the code.
 '''
 
 from re import compile as re_compile, finditer as re_finditer
+# ~ import cantorpairs
 import cantorpairs as cp
 # ~ import scaff.cantorpairs as cp
 # ~ import cantorpairs.src.cantorpairs as cp
