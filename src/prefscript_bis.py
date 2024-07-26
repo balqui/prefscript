@@ -57,6 +57,7 @@ class FunData(dict):
             return "basic"
         return self["how_def"] + ": " + ' '.join(on_what for on_what in self["def_on"])
 
+
 def mu(x, test):
     "ancillary linear search function for implementing mu-minimization"
     z = 0
@@ -84,11 +85,12 @@ class Parser:
                 'pragma declaration'
                 yield 'p', (g2, thing.group(3))
 
-    # to be completed from the non-pushed version in the desktop as of today
+    # to be completed from the versions in other files around / ADD IMPORT CLAUSES
 
         # ~ yield 'd', FunData() # or whatever
 
 
+# ~ CONSIDER ADDING A CLASS FOR HANDLING INFO/WARNING/ERROR/FATAL MESSAGES
 
 class PReFScript:
 
@@ -269,6 +271,7 @@ class PReFScript:
             # ~ if funct.group(14) is not None:
                 # ~ on_what = tuple(funct.group(14).split())
             # ~ self.define(how.strip(), on_what, nick.strip(), comment.strip())
+            # ~ CAREFUL WITH .pragma'S IN IMPORTED FILES
 
 
     def dialog(self):
@@ -293,7 +296,7 @@ class PReFScript:
 
 
 def run():
-    'Stand-alone CLI command to be handled as entry point'
+    'Stand-alone CLI command to be handled as entry point - no Goedel numbers stored'
     # ~ handle the filename as argument
     from argparse import ArgumentParser
     aparser = ArgumentParser(prog = 'prefscript',
@@ -301,7 +304,7 @@ def run():
     aparser.add_argument('filename', help = 'Script filename')
     args = aparser.parse_args()
     f = PReFScript()
-    # ~ HARDWIRED FUNCTION
+    # ~ HARDWIRED FUNCTION / ADD A HELP OPTION BASED ON THE .about CLAUSES, IN GOOD ORDER
     f.define("ascii_const", ["Hello, World!"], "message", 
           "constant function with the desired message")
     f.load(args.filename)
