@@ -34,6 +34,9 @@ __version__ = "0.3"
 
 from ascii7io import int2str, str2int, int2raw_str # users are not expected to need int2raw_str
 
+# ~ ALSO VALUE .pragma input: none, for the hw.prfs program
+
+
 LIMIT_GNUM = 2 << 999
 
 class FunData(dict):
@@ -102,6 +105,7 @@ class PReFScript:
          recomputing it with several load calls - this is going
          to change right next)
         '''
+        self.valid = True # program is correct until proven wrong
         self.main = dict()
         self.strcode = dict()
         self.pycode = dict()
@@ -174,7 +178,10 @@ class PReFScript:
     def define(self, how, on_what, nick, comment):
         'here comes a new function to add to the dicts appropriately - REFACTOR, SEPARATE CREATING IT FROM ADDING TO dicts'
         if nick in self.main:
-            print("Nickname " + nick + " already in use. New definition ignored.")
+            if (self.main[nick]["how_def"] != how or
+                self.main[nick]["def_on"] != on_what):
+                    self.valid = False
+                    print("Script not valid:", nick, "defined in incompatible ways more than once.")
             return None
         numhow = self.hownums[how]
         if numhow == 0:
@@ -226,6 +233,8 @@ class PReFScript:
 
     def to_python(self, what):
         'returns the Python-runnable version of the function'
+        if not self.valid:
+            print("Script not valid. Run with care.")
         if what not in self.pycode:
             print("Nickname " + what + " not defined.")
             return None
@@ -270,8 +279,21 @@ class PReFScript:
         on_what = on_what.split()
         self.define(how.strip(), tuple(on_what), nick.strip(), comment.strip())
 
+
+    def check_names(self, name = ''):
+        if not name and self.pragmas['main']:
+            name = self.pragmas['main']
+        for nname in self.main[name]['def_on']:
+            if nname in self.main:
+                self.check_names(nname)
+            elif self.main[name]['how_def'] != "ascii_const":
+                self.valid = False
+                print("Script not valid:", nname, "not found but needed by", name)
+
+
+
 def run():
-    'Stand-alone CLI command handled as entry point'
+    'Stand-alone CLI command to be handled as entry point'
     # ~ handle the filename as argument
     from argparse import ArgumentParser
     aparser = ArgumentParser(prog = 'prefscript',
@@ -282,12 +304,14 @@ def run():
     # ~ HARDWIRED FUNCTION
     f.define("ascii_const", ["Hello, World!"], "message", 
           "constant function with the desired message")
-    ok = f.load(args.filename)
-    if ok is None:
+    f.load(args.filename)
+    f.check_names()
+    if f.valid:
         'run it on data, an int for now coming along in stdin, REFACTOR whether load returns status'
         r = f.to_python(f.pragmas["main"])
         post = int2str if f.pragmas["output"] == "ascii" else lambda x: x # extend with other options
         # ~ exit(print(post(r(int(input()))))) # preprocessing to be extended
+        # ~ CHOOSE ACCORDING TO .pragma input
         print(post(r(666))) 
 
 if __name__ == "__main__":
