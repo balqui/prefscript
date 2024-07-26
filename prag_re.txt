@@ -1,1 +1,4 @@
 re.compile("\s*.pragma\s+(\w+):?\s+(\w+)\s*")
+
+Also: .about
+
