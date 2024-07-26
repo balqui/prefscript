@@ -19,6 +19,7 @@ construct it. Then, in a separate dict (used as namespace for
 eval calls), a runnable version of the code.
 '''
 
+from collections import defaultdict as ddict
 from re import compile as re_compile, finditer as re_finditer
 # ~ import cantorpairs
 import cantorpairs as cp
@@ -30,6 +31,11 @@ __version__ = "0.3"
 
 # ~ limit in order to omit Gödel numbers too high, around 300 decimal digits
 # ~ LIMIT_GNUM set to 2**1000 but computed much faster via bit shift
+
+from ascii7io import int2str, str2int, int2raw_str # users are not expected to need int2raw_str
+
+# ~ ALSO VALUE .pragma input: none, for the hw.prfs program
+
 
 LIMIT_GNUM = 2 << 999
 
@@ -60,6 +66,32 @@ def mu(x, test):
     return z
 
 
+class Parser:
+    'Prepare an re-based parser to be used upon reading scripts'
+
+    def __init__(self):
+        from re import compile as re_compile, finditer as re_finditer
+        about = "\s*\.about(.*)\n"                  # arbitrary documentation
+        pragma = "\s*\.pragma\s+(\w+):?\s+(\w+)\s*" # compilation directives
+        self.the_parser = re_compile(about + '|' + pragma)
+
+    def parse(self, source):
+        # ~ from re import compile as re_compile, finditer as re_finditer
+        for thing in re_finditer(self.the_parser, source):
+            if g1 := thing.group(1):
+                'about declaration'
+                yield 'a', g1
+            if g2 := thing.group(2):
+                'pragma declaration'
+                yield 'p', (g2, thing.group(3))
+
+    # to be completed from the versions in other files around / ADD IMPORT CLAUSES
+
+        # ~ yield 'd', FunData() # or whatever
+
+
+# ~ CONSIDER ADDING A CLASS FOR HANDLING INFO/WARNING/ERROR/FATAL MESSAGES
+
 class PReFScript:
 
     def __init__(self, store_goedel_numbers = ""):
@@ -72,14 +104,19 @@ class PReFScript:
         include here the basic functions;
         their implementation assumes 'import cantorpairs as cp'
         (re compilation moved from load to here so as to avoid
-         recomputing it with several load calls)
+         recomputing it with several load calls - this is going
+         to change right next)
         '''
+        self.valid = True # program is correct until proven wrong
         self.main = dict()
         self.strcode = dict()
         self.pycode = dict()
         self.gnums = dict()
+        self.abouts = list()
+        self.pragmas = ddict(str)
         self.store_gnums = store_goedel_numbers 
-        self.hownums = { "basic": 0, "comp": 1, "pair": 2, "mu": 3 }
+        self.hownums = { "basic": 0, "comp": 1, "pair": 2, "mu": 3 } # extend with compair and primrec and arbitrary int/ascii constants
+        self.hownums["ascii_const"] = 6
         self.add_basic("k_1", "The constant 1 function", "lambda x: 1", 0)
         self.add_basic("id", "The identity function", "lambda x: x", 1)
         self.add_basic("s_tup", "Single-argument version of suffix tuple", 
@@ -92,7 +129,8 @@ class PReFScript:
                        "lambda x: cp.pr_L(x) * cp.pr_R(x)", 5)
         self.add_basic("diff", "Modified difference max(0, x-y) of the two components of input <x.y>", 
                        "lambda x: max(0, cp.pr_L(x) - cp.pr_R(x))", 6)
-        self.patt = re_compile("(\d|\s)*define\:\s*(\w+)\s+\[\s*((\w|\s|[.,:;<>\)\(?\-+*]?)+)\]\s+(((pair)\s+(\w*\s+\w+)\s+)|((comp)\s+(\w*\s+\w+)\s+)|((mu)\s+(\w*)\s+))")
+        # ~ self.patt = re_compile("(\d|\s)*define\:\s*(\w+)\s+\[\s*((\w|\s|[.,:;<>\)\(?\-+*]?)+)\]\s+(((pair)\s+(\w*\s+\w+)\s+)|((comp)\s+(\w*\s+\w+)\s+)|((mu)\s+(\w*)\s+))")
+        self.parser = Parser()
 
 
 
@@ -140,9 +178,12 @@ class PReFScript:
 
 
     def define(self, how, on_what, nick, comment):
-        'here comes a new function to add to the dicts appropriately'
+        'here comes a new function to add to the dicts appropriately - REFACTOR, SEPARATE CREATING IT FROM ADDING TO dicts'
         if nick in self.main:
-            print("Nickname " + nick + " already in use. New definition ignored.")
+            if (self.main[nick]["how_def"] != how or
+                self.main[nick]["def_on"] != on_what):
+                    self.valid = False
+                    print("Script not valid:", nick, "defined in incompatible ways more than once.")
             return None
         numhow = self.hownums[how]
         if numhow == 0:
@@ -153,7 +194,8 @@ class PReFScript:
             wrong = on_what[0]
         elif numhow < 3 and on_what[1] not in self.main:
             wrong = on_what[1]
-        if wrong:
+        if numhow < 6 and wrong:
+            "ALL THE HANDLING OF ERRORS TO BE REFACTORED"
             print("Nickname " + wrong + " unknown. Definition of " + nick + " ignored.")
             return None
         data = FunData()
@@ -184,12 +226,17 @@ class PReFScript:
         if numhow == 3:
             'mu-minimization'
             self.strcode[nick] = "lambda x: mu(x, " + on_what[0] + ")"
+        if numhow == 6:
+            'ascii_const'
+            self.strcode[nick] = "lambda x: str2int( '" + on_what[0] + "' )"
         self.main[nick] = data
         self.pycode[nick] = eval(self.strcode[nick], globals() | self.pycode)
 
 
     def to_python(self, what):
         'returns the Python-runnable version of the function'
+        if not self.valid:
+            print("Script not valid. Run with care.")
         if what not in self.pycode:
             print("Nickname " + what + " not defined.")
             return None
@@ -197,25 +244,34 @@ class PReFScript:
 
 
     def load(self, filename):
-        'load in definitions from .prfs file'
+        'load in definitions from .prfs file - accepts several calls in sequence'
         with open(filename) as infile:
             script = infile.read()
-        for funct in re_finditer(self.patt, script):
-            nick = funct.group(2)
-            comment = funct.group(3)
-            if funct.group(7) is not None:
-                how = funct.group(7)
-            if funct.group(10) is not None:
-                how = funct.group(10)
-            if funct.group(13) is not None:
-                how = funct.group(13)
-            if funct.group(8) is not None:
-                on_what = tuple(funct.group(8).split())
-            if funct.group(11) is not None:
-                on_what = tuple(funct.group(11).split())
-            if funct.group(14) is not None:
-                on_what = tuple(funct.group(14).split())
-            self.define(how.strip(), on_what, nick.strip(), comment.strip())
+        for label, what in self.parser.parse(script):
+            'make the FunData or store the about or the pragma'
+            if label == 'p':
+                self.pragmas[what[0]] = what[1] 
+            if label == 'a':
+                self.abouts.append(what) 
+            # ~ lastread = '' # here the nick of the last function defined
+                              # use it for default main
+        # ~ for funct in re_finditer(self.patt, script):
+            # ~ nick = funct.group(2)
+            # ~ comment = funct.group(3)
+            # ~ if funct.group(7) is not None:
+                # ~ how = funct.group(7)
+            # ~ if funct.group(10) is not None:
+                # ~ how = funct.group(10)
+            # ~ if funct.group(13) is not None:
+                # ~ how = funct.group(13)
+            # ~ if funct.group(8) is not None:
+                # ~ on_what = tuple(funct.group(8).split())
+            # ~ if funct.group(11) is not None:
+                # ~ on_what = tuple(funct.group(11).split())
+            # ~ if funct.group(14) is not None:
+                # ~ on_what = tuple(funct.group(14).split())
+            # ~ self.define(how.strip(), on_what, nick.strip(), comment.strip())
+            # ~ CAREFUL WITH .pragma'S IN IMPORTED FILES
 
 
     def dialog(self):
@@ -225,3 +281,41 @@ class PReFScript:
         on_what = input("Applied to what? [1 or 2 space-sep names] ")
         on_what = on_what.split()
         self.define(how.strip(), tuple(on_what), nick.strip(), comment.strip())
+
+
+    def check_names(self, name = ''):
+        if not name and self.pragmas['main']:
+            name = self.pragmas['main']
+        for nname in self.main[name]['def_on']:
+            if nname in self.main:
+                self.check_names(nname)
+            elif self.main[name]['how_def'] != "ascii_const":
+                self.valid = False
+                print("Script not valid:", nname, "not found but needed by", name)
+
+
+
+def run():
+    'Stand-alone CLI command to be handled as entry point - no Goedel numbers stored'
+    # ~ handle the filename as argument
+    from argparse import ArgumentParser
+    aparser = ArgumentParser(prog = 'prefscript',
+              description = 'Partial Recursive Functions Scripting interpreter')
+    aparser.add_argument('filename', help = 'Script filename')
+    args = aparser.parse_args()
+    f = PReFScript()
+    # ~ HARDWIRED FUNCTION / ADD A HELP OPTION BASED ON THE .about CLAUSES, IN GOOD ORDER
+    f.define("ascii_const", ["Hello, World!"], "message", 
+          "constant function with the desired message")
+    f.load(args.filename)
+    f.check_names()
+    if f.valid:
+        'run it on data, an int for now coming along in stdin, REFACTOR whether load returns status'
+        r = f.to_python(f.pragmas["main"])
+        post = int2str if f.pragmas["output"] == "ascii" else lambda x: x # extend with other options
+        # ~ exit(print(post(r(int(input()))))) # preprocessing to be extended
+        # ~ CHOOSE ACCORDING TO .pragma input
+        print(post(r(666))) 
+
+if __name__ == "__main__":
+    run()
