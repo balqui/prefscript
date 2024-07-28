@@ -44,7 +44,7 @@
 
 331 define: neg
             [Negation: 0 from 1, 1 from 0]
-            comp diff k_1 id
+            compair diff k_1 id
 
 351 define: gt
             [x > y in <x.y>]
@@ -100,7 +100,7 @@
 
 661 define: pyth_0
             [Square of 0-th equals sum of other two squares]
-            compiar eq sq_0 sum_sq_1_sq_2
+            compair eq sq_0 sum_sq_1_sq_2
 
 721 define: sum_sq_0_sq_2
             [Sum of non-1-th-element squares]

@@ -1,6 +1,6 @@
 .pragma extended: True
 .pragma output: int / bool / intseq / ascii
-.pragma input: int / bool / intseq
+.pragma input: int / bool / intseq / none
 .pragma main: mainfunctionname
 .pragma cache: all
 

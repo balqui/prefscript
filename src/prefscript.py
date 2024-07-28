@@ -108,9 +108,10 @@ class Parser:
                 yield 'import', to_import
             if nick := things['nick']:
                 if things['how'] == "ascii_const":
-                    yield "define", FunData(nick, things['comment'], things['how'], [things['a7str']])
+                    on_what = [things['a7str']]
                 else:
-                    yield "define", FunData(nick, things['comment'], things['how'], things['on_what'].split())
+                    on_what = things['on_what'].split()
+                yield "define", FunData(nick, things['comment'], things['how'], on_what)
 
 
 
@@ -203,8 +204,8 @@ class PReFScript:
         self.abouts = list()
         self.pragmas = ddict(str)
         self.store_gnums = store_goedel_numbers 
-        self.hownums = { "basic": 0, "comp": 1, "pair": 2, "mu": 3 } # extend with compair and primrec and arbitrary int/ascii constants
-        self.hownums["ascii_const"] = 6
+        # ~ self.hownums = { "basic": 0, "comp": 1, "pair": 2, "mu": 3 } # extend with compair and primrec and arbitrary int/ascii constants
+        # ~ self.hownums["ascii_const"] = 6
         self.add_basic("k_1", "The constant 1 function", "lambda x: 1", 0)
         self.add_basic("id", "The identity function", "lambda x: x", 1)
         self.add_basic("s_tup", "Single-argument version of suffix tuple", 
@@ -265,61 +266,121 @@ class PReFScript:
                 list_one(nick, w_code)
 
 
-# ~ PLEASE REFACTOR URGENTLY THE numhow CODES
+# ~ self.hownums = { "basic": 0, "comp": 1, "pair": 2, "mu": 3 } # extend with compair and primrec and arbitrary int/ascii constants
+# ~ self.hownums["ascii_const"] = 6
+# ~ pair|comp|mu|compair|primrec|ascii_const
+# ~ nick, comment, how_def, def_on
+# ~ def define(self, how, on_what, nick, comment):
 
-    def define(self, how, on_what, nick, comment):
-        'here comes a new function to add to the dicts appropriately - REFACTOR, SEPARATE CREATING IT FROM ADDING TO dicts'
-        if nick in self.main:
-            if (self.main[nick]["how_def"] != how or
-                self.main[nick]["def_on"] != on_what):
-                    self.valid = False
-                    print("Script not valid:", nick, "defined in incompatible ways more than once.")
-            return None
-        numhow = self.hownums[how]
-        if numhow == 0:
-            print("Addition of new basic functions is unsupported as yet. New definition ignored.")
-            return None
-        wrong = ""
-        if numhow < 4 and on_what[0] not in self.main:
-            wrong = on_what[0]
-        elif numhow < 3 and on_what[1] not in self.main:
-            wrong = on_what[1]
-        if numhow < 6 and wrong:
-            "ALL THE HANDLING OF ERRORS TO BE REFACTORED"
-            print("Nickname " + wrong + " unknown. Definition of " + nick + " ignored.")
-            return None
-        data = FunData()
-        data["nick"] = nick
-        data["comment"] = comment
-        data["how_def"] = how
-        data["def_on"] = on_what
-        if self.store_gnums and numhow < 6 and on_what[0] in self.gnums:
-            lft = self.gnums[on_what[0]]
-            if numhow < 3:
-                if on_what[1] in self.gnums:
-                    'set up gnum for pair or comp'
-                    rgt = self.gnums[on_what[1]]
-                    gnum = cp.dp(numhow, cp.dp(lft, rgt))
-                    if gnum < LIMIT_GNUM:
-                        self.gnums[nick] = gnum
-            else:
-                'set up gnum for minimization'
-                gnum = cp.dp(3, lft)
+    def define(self, new_funct):
+        'here comes a new function to add to the collection'
+        if new_funct['nick'] in self.main:
+            'repeated nick, check for consistency, PENDING until error reporting in place'
+            self.valid = False
+
+            # ~ if (self.main[nick]["how_def"] != how or
+                # ~ self.main[nick]["def_on"] != on_what):
+                    # ~ self.valid = False
+                    # ~ print("Script not valid:", nick, "defined in incompatible ways more than once.")
+            # ~ return None
+
+        nick = new_funct['nick']
+        self.main[nick] = new_funct
+        on_what = new_funct['def_on']
+
+        # ~ numhow = self.hownums[how]
+        # ~ if numhow == 0:
+            # ~ print("Addition of new basic functions is unsupported as yet. New definition ignored.")
+            # ~ return None
+        # ~ wrong = ""
+        # ~ if numhow < 4 and on_what[0] not in self.main:
+            # ~ wrong = on_what[0]
+        # ~ elif numhow < 3 and on_what[1] not in self.main:
+            # ~ wrong = on_what[1]
+        # ~ if numhow < 6 and wrong:
+            # ~ "ALL THE HANDLING OF ERRORS TO BE REFACTORED"
+            # ~ print("Nickname " + wrong + " unknown. Definition of " + nick + " ignored.")
+            # ~ return None
+        # ~ data = FunData()
+        # ~ data["nick"] = nick
+        # ~ data["comment"] = comment
+        # ~ data["how_def"] = how
+        # ~ data["def_on"] = on_what
+
+# ~ TO TAKE CARE OF ERRORS LEFT FOR LATER ON - REMEMBER TO TEST THE LENGTH OF on_what
+
+        if new_funct['how_def'] == "comp":
+            if on_what[0] not in self.main:
+                self.valid = False
+            if on_what[1] not in self.main:
+                self.valid = False
+            self.strcode[nick] = "lambda x: " + on_what[0] + "(" + on_what[1] + "(x))"
+            if self.store_gnums and on_what[0] in self.gnums and on_what[1] in self.gnums:
+                gnum = cp.dp(1, cp.dp(self.gnums[on_what[0]], self.gnums[on_what[1]]))
                 if gnum < LIMIT_GNUM:
                     self.gnums[nick] = gnum
-        if numhow == 1:
-            'composition'
-            self.strcode[nick] = "lambda x: " + on_what[0] + "(" + on_what[1] + "(x))"
-        if numhow == 2:
-            'pairing'
+
+        elif new_funct['how_def'] == "pair":
+            if on_what[0] not in self.main:
+                self.valid = False
+            if on_what[1] not in self.main:
+                self.valid = False
             self.strcode[nick] = "lambda x: cp.dp(" + on_what[0] + "(x), " + on_what[1] + "(x))"
-        if numhow == 3:
-            'mu-minimization'
+            if self.store_gnums and on_what[0] in self.gnums and on_what[1] in self.gnums:
+                gnum = cp.dp(2, cp.dp(self.gnums[on_what[0]], self.gnums[on_what[1]]))
+                if gnum < LIMIT_GNUM:
+                    self.gnums[nick] = gnum
+
+        elif new_funct['how_def'] == "mu":
+            if on_what[0] not in self.main:
+                self.valid = False
             self.strcode[nick] = "lambda x: mu(x, " + on_what[0] + ")"
-        if numhow == 6:
-            'ascii_const'
+            if self.store_gnums and on_what[0] in self.gnums:
+                gnum = cp.dp(3, self.gnums[on_what[0]])
+                if gnum < LIMIT_GNUM:
+                    self.gnums[nick] = gnum
+
+        elif new_funct['how_def'] == "compair":
+            if on_what[0] not in self.main:
+                self.valid = False
+            if on_what[1] not in self.main:
+                self.valid = False
+            if on_what[2] not in self.main:
+                self.valid = False
+            self.strcode[nick] = "lambda x: " + on_what[0] + "( cp.dp(" + on_what[1] + "(x), " + on_what[2] + "(x)))"
+            if (self.store_gnums and on_what[0] in self.gnums and 
+                on_what[1] in self.gnums and on_what[2] in self.gnums):
+                gnum = cp.dp(1, cp.dp(self.gnums[on_what[0]],
+                       cp.dp(2, cp.dp(self.gnums[on_what[1]], self.gnums[on_what[2]]))))
+                if gnum < LIMIT_GNUM:
+                    self.gnums[nick] = gnum
+
+        elif new_funct['how_def'] == "primrec":
+            # ~ if on_what[0] not in self.main:
+                # ~ self.valid = False
+            # ~ if on_what[1] not in self.main:
+                # ~ self.valid = False
+            # ~ if on_what[2] not in self.main:
+                # ~ self.valid = False
+            self.valid = False                       # NOT READY YET
+            # ~ self.strcode[nick] = "lambda x: " + on_what[0] + "( cp.dp(" + on_what[1] + "(x), " + on_what[2] + "(x)))"
+            # ~ if (self.store_gnums and on_what[0] in self.gnums and 
+                # ~ on_what[1] in self.gnums and on_what[2] in self.gnums):
+                # ~ gnum = cp.dp(1, cp.dp(self.gnums[on_what[0]],
+                       # ~ cp.dp(2, cp.dp(self.gnums[on_what[1]], self.gnums[on_what[2]]))))
+                # ~ if gnum < LIMIT_GNUM:
+                    # ~ self.gnums[nick] = gnum
+
+        elif new_funct['how_def'] == "ascii_const":
+            "ascii_const functions kept out of the Goedel numbering for the time being"
             self.strcode[nick] = "lambda x: str2int( '" + on_what[0] + "' )"
-        self.main[nick] = data
+
+        else:
+            "to handle better at some point"
+            self.valid = False
+            print("something wrong related to:", new_funct['how_def'])
+
+
         self.pycode[nick] = eval(self.strcode[nick], globals() | self.pycode)
 
 
@@ -346,7 +407,7 @@ class PReFScript:
                 self.abouts.append(what) 
             if label == 'define':
                 "Right now undo the FunData creation to create it again later, must refactor"
-                self.define(what["how_def"], what["def_on"], what["nick"], what["comment"])
+                self.define(FunData(what["nick"], what["comment"], what["how_def"], what["def_on"]))
                 lastread = 'nick' # nickname of the last function defined, use it for default main
             if label == "import":
                 self.load(what)
@@ -361,8 +422,7 @@ class PReFScript:
         comment = input("What is it? ")
         how = input("How is it made? [pair or comp or mu] ")
         on_what = input("Applied to what? [1 or 2 space-sep names] ")
-        on_what = on_what.split()
-        self.define(how.strip(), tuple(on_what), nick.strip(), comment.strip())
+        self.define(FunData(nick.strip(), comment.strip(), how.strip(), tuple(on_what.split())))
 
 
     def check_names(self, name = ''):
@@ -384,11 +444,9 @@ def run():
     aparser = ArgumentParser(prog = 'prefscript',
               description = 'Partial Recursive Functions Scripting interpreter')
     aparser.add_argument('filename', help = 'Script filename')
+    # ~ ADD A HELP OPTION BASED ON THE .about CLAUSES, IN GOOD ORDER
     args = aparser.parse_args()
     f = PReFScript()
-    # ~ HARDWIRED FUNCTION / ADD A HELP OPTION BASED ON THE .about CLAUSES, IN GOOD ORDER
-    # ~ f.define("ascii_const", ["Hello, World!"], "message", 
-          # ~ "constant function with the desired message")
     f.load(args.filename)
     f.check_names()
     if f.valid:
@@ -397,7 +455,13 @@ def run():
         post = int2str if f.pragmas["output"] == "ascii" else lambda x: x # extend with other options
         # ~ exit(print(post(r(int(input()))))) # preprocessing to be extended
         # ~ CHOOSE ACCORDING TO .pragma input
-        print(post(r(666))) 
+        # ~ print(post(r(666))) 
+        v3 = input().split() # temporary for is pyth 01
+        print(post(r(cp.dp(int(v3[0]), cp.dp(int(v3[1]), int(v3[2]))))))
+        # ~ v = int(input()) # temporary for frag_is pyth 01
+        # ~ for i in range(v):
+            # ~ for j in range(v):
+            # ~ print(i, post(r(i)))
 
 if __name__ == "__main__":
     run()
