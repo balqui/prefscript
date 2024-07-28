@@ -2,6 +2,7 @@
 .pragma main: message
 .pragma extended: True
 .pragma output: ascii
+.pragma input: none
 
 121 define: dupl
             [Duplicates the input]

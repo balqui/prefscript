@@ -452,11 +452,29 @@ def run():
         'run it on data, an int for now coming along in stdin, REFACTOR whether load returns status'
         r = f.to_python(f.pragmas["main"])
         post = int2str if f.pragmas["output"] == "ascii" else lambda x: x # extend with other options
-        # ~ exit(print(post(r(int(input()))))) # preprocessing to be extended
+        # extend with other options
+        # ~ if f.pragmas["input"] in ('', "int"):
+            # ~ arg = int(input()) 
+        # ~ elif f.pragmas["input"] == "none":
+            # ~ arg = 666 # for one
+        # ~ elif f.pragmas["input"] == "intseq":
+            # ~ arg = cp.tup_i(map(int, input().split()))
+        # ~ else:
+            # ~ "error message?"
+            # ~ pass
+
+
+        # ~ v3 = input().split() # temporary for is pyth 01
+        # ~ rv3 = cp.dp(int(v3[0]), cp.dp(int(v3[1]), int(v3[2])))
+        # ~ print(post(r(cp.dp(int(v3[0]), cp.dp(int(v3[1]), int(v3[2]))))))
+        # ~ print(rv3, post(r(rv3)))
+
+
+        # ~ print(arg, cp.pr(arg, 0), cp.pr(arg, 1), cp.pr(arg, 2))
+        # ~ print(post(r(arg)))
+
         # ~ CHOOSE ACCORDING TO .pragma input
         # ~ print(post(r(666))) 
-        v3 = input().split() # temporary for is pyth 01
-        print(post(r(cp.dp(int(v3[0]), cp.dp(int(v3[1]), int(v3[2]))))))
         # ~ v = int(input()) # temporary for frag_is pyth 01
         # ~ for i in range(v):
             # ~ for j in range(v):
