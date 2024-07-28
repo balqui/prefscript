@@ -380,7 +380,6 @@ class PReFScript:
             self.valid = False
             print("something wrong related to:", new_funct['how_def'])
 
-
         self.pycode[nick] = eval(self.strcode[nick], globals() | self.pycode)
 
 
@@ -408,7 +407,7 @@ class PReFScript:
             if label == 'define':
                 "Right now undo the FunData creation to create it again later, must refactor"
                 self.define(FunData(what["nick"], what["comment"], what["how_def"], what["def_on"]))
-                lastread = 'nick' # nickname of the last function defined, use it for default main
+                lastread = what['nick'] # nickname of the last function defined, use it for default main
             if label == "import":
                 self.load(what)
         if not self.pragmas['main']:
