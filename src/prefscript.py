@@ -451,20 +451,32 @@ def run():
     if f.valid:
         'run it on data, an int for now coming along in stdin, REFACTOR whether load returns status'
         r = f.to_python(f.pragmas["main"])
-        post = int2str if f.pragmas["output"] == "ascii" else lambda x: x # extend with other options
+        if f.pragmas["output"] in ('', "int"):
+            post = lambda x: x
+        elif f.pragmas["output"] == "ascii":
+            post = int2str
+        elif f.pragmas["output"] == "bool":
+            post = bool
+        else:
+            "error message?"
+            pass
         # extend with other options
-        # ~ if f.pragmas["input"] in ('', "int"):
-            # ~ arg = int(input()) 
-        # ~ elif f.pragmas["input"] == "none":
-            # ~ arg = 666 # for one
-        # ~ elif f.pragmas["input"] == "intseq":
-            # ~ arg = cp.tup_i(map(int, input().split()))
-        # ~ else:
-            # ~ "error message?"
-            # ~ pass
+        if f.pragmas["input"] in ('', "int"):
+            arg = int(input()) 
+        elif f.pragmas["input"] == "none":
+            arg = 666 # for one
+        elif f.pragmas["input"] == "intseq":
+            arg = cp.tup_i(map(int, input().split()))
+        else:
+            "error message?"
+            pass
 
+        # ~ v3 = input().split() # temporary for is pyth 01             
 
-        # ~ v3 = input().split() # temporary for is pyth 01
+        arg = cp.dp(cp.pr(arg, 0), cp.dp(cp.pr(arg, 1), cp.pr(arg, 2)))
+        print(post(r(arg)))
+        # temporary for is pyth 01           
+
         # ~ rv3 = cp.dp(int(v3[0]), cp.dp(int(v3[1]), int(v3[2])))
         # ~ print(post(r(cp.dp(int(v3[0]), cp.dp(int(v3[1]), int(v3[2]))))))
         # ~ print(rv3, post(r(rv3)))

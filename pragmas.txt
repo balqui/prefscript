@@ -1,6 +1,6 @@
 .pragma extended: True
-.pragma output: int / bool / intseq / ascii
-.pragma input: int / bool / intseq / none
+.pragma output (o bien process?): int / bool / intseq (filter como caso particular?) / ascii
+.pragma input: int / intseq (inttup?) / none
 .pragma main: mainfunctionname
 .pragma cache: all
 
@@ -26,4 +26,16 @@ main defines one of the function in the script as the one to be externally calle
 
 cache: all caches all cantorpair computations, saves the time for the
 arithmetic but may require about 10GB for fact(4) under extended: False
+
+Errors, nonfatal:
+
+- nickname redefined
+- import from extended
+- use primrec/compair/ascii_const out of extended
+
+
+Errors, fatal:
+
+- unknown definition method (careful with "basic" which is like unknown but is known)
+- undefined nickname employed (in check_names)
 
