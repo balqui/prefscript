@@ -17,6 +17,10 @@ Each function in a script has: associated Gödel number, nickname,
 comments, and code (string); also, the last operation used to 
 construct it. Then, in a separate dict (used as namespace for 
 eval calls), a runnable version of the code.
+
+Nicknames are alphanum strings not starting with a number (no surprise).
+
+CONSIDER ADDING A CLASS FOR HANDLING INFO/WARNING/ERROR/FATAL MESSAGES
 '''
 
 from collections import defaultdict as ddict
@@ -42,12 +46,12 @@ LIMIT_GNUM = 2 << 999
 class FunData(dict):
     'Simple class for PReFScript functions data'
 
-    def __init__(self):
+    def __init__(self, nick = None, comment = None, how_def = None, def_on = None):
         dict.__init__(self)
-        self["nick"] = None
-        self["comment"] = None
-        self["how_def"] = None
-        self["def_on"] = None
+        self["nick"] = nick
+        self["comment"] = comment
+        self["how_def"] = how_def
+        self["def_on"] = def_on
 
     def __str__(self):
         return self["nick"] + "\n " + self["comment"] 
@@ -67,30 +71,106 @@ def mu(x, test):
 
 
 class Parser:
-    'Prepare an re-based parser to be used upon reading scripts'
+    '''Prepare an re-based parser to be used upon reading scripts
+    The single Parser with single parse generator is likely to mess up
+    the recursive imports, I bet it does not work yet.
+    '''
 
     def __init__(self):
         from re import compile as re_compile, finditer as re_finditer
-        about = "\s*\.about(.*)\n"                  # arbitrary documentation
-        pragma = "\s*\.pragma\s+(\w+):?\s+(\w+)\s*" # compilation directives
-        self.the_parser = re_compile(about + '|' + pragma)
+        about = "\s*\.about(?P<about>.*)\n"                          # arbitrary documentation
+        pragma = "\s*\.pragma\s+(?P<which>\w+):?\s+(?<what>\w+)\s*"  # compilation directives
+        importing = "\s*\.import(?P<to_import>\w+)\s*"               # additional external script
+        startdef = "\d+\s+define\:\s*"
+        group1_nick = "(?P<nick>\w+)\s+"
+        group2_comment = "\[\s*(?P<comment>(\w|\s|[.,:;<>=)(?!/+*-])+)\]\s+"    # has group 3 inside
+        groups_how_on_what = "(?P<how>pair|comp|mu|ascii_const|primrec)\s+(?P<on_what>([a-zA-Z_]\w*\s+)*)" # args required not to start with a number
+        define = (startdef +  
+              group1_nick + 
+              group2_comment + 
+              groups_how_on_what)
+        self.the_parser = re_compile(define + '|' + about + '|' + pragma + '|' + importing)
 
     def parse(self, source):
         # ~ from re import compile as re_compile, finditer as re_finditer
         for thing in re_finditer(self.the_parser, source):
-            if g1 := thing.group(1):
-                'about declaration'
-                yield 'a', g1
-            if g2 := thing.group(2):
-                'pragma declaration'
-                yield 'p', (g2, thing.group(3))
+            things = thing.groupdict(default = '')
+            if about := things['about']:
+                yield 'about', about
+            if which := things['which']:
+                yield 'pragma', (which, things['what'])
+            if to_import := things['to_import']:
+                yield 'import', to_import
+            if nick := things['nick']:
+                yield "define", FunData(nick, things['comment'], things['how'], things['on_what'])
 
-    # to be completed from the versions in other files around / ADD IMPORT CLAUSES
+
 
         # ~ yield 'd', FunData() # or whatever
+# ~ for thing in re_finditer(re_compile(script), stdin.read()):
+	# ~ nick = thing.group(1)
+	# ~ if comment := thing.group(2):
+		# ~ comment = comment.strip()
+	# ~ how = thing.group(5)
+	# ~ if on_what := thing.group(6):
+		# ~ on_what = tuple(on_what.split())
+	# ~ print(str(how), str(on_what), str(nick), '/'+str(comment)+'/')
+	# ~ if g7 := thing.group(7):
+		# ~ print("in .about", g7)
+	# ~ elif g8 := thing.group(8):
+		# ~ print("in .pragma", g8, thing.group(9))
+	# ~ print("thing seen, stripped:", "-" + thing.group(0).strip() + "-")
+	# ~ for i, g in enumerate(thing.groups()):
+		# ~ print("thing group", i+1, g) 
 
+# ~ for thing in re_finditer(re_compile(about), stdin.read()):
+	# ~ print("thing seen:", thing.group(0), thing.groups())
 
-# ~ CONSIDER ADDING A CLASS FOR HANDLING INFO/WARNING/ERROR/FATAL MESSAGES
+# ~ for thing in re_finditer(re_compile(script), stdin.read()):
+	# ~ if g16 := thing.group(16):
+		# ~ print("in .about", g16)
+	# ~ elif g14 := thing.group(14):
+		# ~ print("in .pragma", g14, thing.group(15))
+	# ~ print("thing seen, stripped:", "-" + thing.group(0).strip() + "-")
+	# ~ print("thing groups:", thing.groups())
+	# ~ else:
+		# ~ funct = thing
+		# ~ how = "no-how"
+		# ~ on_what = "no-on-what"
+	
+		# ~ nick = funct.group(1)
+		# ~ comment = funct.group(2)
+		# ~ if funct.group(7) is not None:
+			# ~ "how becomes 'pair'"
+			# ~ how = funct.group(7)
+		# ~ if funct.group(10) is not None:
+			# ~ how = funct.group(10)
+		# ~ if funct.group(13) is not None:
+			# ~ how = funct.group(13)
+		# ~ if funct.group(8) is not None:
+			# ~ on_what = tuple(funct.group(8).split())
+		# ~ if funct.group(11) is not None:
+			# ~ on_what = tuple(funct.group(11).split())
+		# ~ if funct.group(14) is not None:
+			# ~ on_what = tuple(funct.group(14).split())
+		# ~ print(how.strip(), on_what, nick.strip(), '/'+comment.strip()+'/')
+
+        # ~ for funct in re_finditer(self.patt, script):
+            # ~ nick = funct.group(2)
+            # ~ comment = funct.group(3)
+            # ~ if funct.group(7) is not None:
+                # ~ how = funct.group(7)
+            # ~ if funct.group(10) is not None:
+                # ~ how = funct.group(10)
+            # ~ if funct.group(13) is not None:
+                # ~ how = funct.group(13)
+            # ~ if funct.group(8) is not None:
+                # ~ on_what = tuple(funct.group(8).split())
+            # ~ if funct.group(11) is not None:
+                # ~ on_what = tuple(funct.group(11).split())
+            # ~ if funct.group(14) is not None:
+                # ~ on_what = tuple(funct.group(14).split())
+
 
 class PReFScript:
 
@@ -244,33 +324,23 @@ class PReFScript:
 
 
     def load(self, filename):
-        'load in definitions from .prfs file - accepts several calls in sequence'
+        'load in definitions from .prfs file - accepts several calls in sequence - also accepts recursive imports - MIND, on a single parser'
         with open(filename) as infile:
+            "filename expected to end with .prfs but not enforced nor defaulted to"
             script = infile.read()
         for label, what in self.parser.parse(script):
-            'make the FunData or store the about or the pragma'
-            if label == 'p':
+            'make the FunData or store the about or the pragma or the import'
+            if label == 'pragma':
                 self.pragmas[what[0]] = what[1] 
-            if label == 'a':
+            if label == 'about':
                 self.abouts.append(what) 
-            # ~ lastread = '' # here the nick of the last function defined
-                              # use it for default main
-        # ~ for funct in re_finditer(self.patt, script):
-            # ~ nick = funct.group(2)
-            # ~ comment = funct.group(3)
-            # ~ if funct.group(7) is not None:
-                # ~ how = funct.group(7)
-            # ~ if funct.group(10) is not None:
-                # ~ how = funct.group(10)
-            # ~ if funct.group(13) is not None:
-                # ~ how = funct.group(13)
-            # ~ if funct.group(8) is not None:
-                # ~ on_what = tuple(funct.group(8).split())
-            # ~ if funct.group(11) is not None:
-                # ~ on_what = tuple(funct.group(11).split())
-            # ~ if funct.group(14) is not None:
-                # ~ on_what = tuple(funct.group(14).split())
-            # ~ self.define(how.strip(), on_what, nick.strip(), comment.strip())
+            if label == 'define':
+                "Right now undo the FunData creation to create it again later, must refactor"
+                self.define(what["how_def"], what["def_on"], what["nick"], what["comment"])
+                lastread = 'nick' # nickname of the last function defined, use it for default main
+            if label == "import":
+                self.load(what)
+
             # ~ CAREFUL WITH .pragma'S IN IMPORTED FILES
 
 
