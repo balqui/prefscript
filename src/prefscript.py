@@ -52,7 +52,6 @@ class FunData(dict):
         self["comment"] = comment
         self["how_def"] = how_def
         self["def_on"] = def_on
-        print("FD", nick, comment, how_def, def_on)
 
     def __str__(self):
         return self["nick"] + "\n " + self["comment"] 
@@ -78,19 +77,23 @@ class Parser:
     '''
 
     def __init__(self):
+        "group names require Python >= 3.11"
         from re import compile as re_compile, finditer as re_finditer
         about = "\s*\.about(?P<about>.*)\n"                           # arbitrary documentation
         pragma = "\s*\.pragma\s+(?P<which>\w+):?\s+(?P<what>\w+)\s*"  # compilation directives
         importing = "\s*\.import(?P<to_import>\w+)\s*"                # additional external script
+        a7str = '''(?P<quote>['"])(?P<a7str>.*)(?P=quote)'''
         startdef = "\d+\s+define\:\s*"
         group1_nick = "(?P<nick>\w+)\s+"
         group2_comment = "\[\s*(?P<comment>(\w|\s|[.,:;<>=)(?!/+*-])+)\]\s+"    # has group 3 inside
         # ~ groups_how_on_what = "(?P<how>pair|comp|mu|compair|primrec|ascii_const)\s+(?P<on_what>(\w+\s+)*)" # args NOT required not to start with a number
-        groups_how_on_what = "(?P<how>pair|comp|mu|compair|primrec|ascii_const)\s+(?P<on_what>(\"?\'?[a-zA-Z_]\w*\"?\'?\s+)*)" # args required not to start with a number
+        group4_how = "(?P<how>pair|comp|mu|compair|primrec|ascii_const)\s+" 
+        group5_on_what = "((?P<on_what>([a-zA-Z_]\w*\s+)+)|" + a7str + ")"  # nick args required not to start with a number
         define = (startdef +  
               group1_nick + 
               group2_comment + 
-              groups_how_on_what)
+              group4_how +
+              group5_on_what)
         self.the_parser = re_compile(define + '|' + about + '|' + pragma + '|' + importing)
 
     def parse(self, source):
@@ -104,8 +107,10 @@ class Parser:
             if to_import := things['to_import']:
                 yield 'import', to_import
             if nick := things['nick']:
-                print(nick, things['on_what'], things['on_what'].split(), things['how'])
-                yield "define", FunData(nick, things['comment'], things['how'], things['on_what'])
+                if things['how'] == "ascii_const":
+                    yield "define", FunData(nick, things['comment'], things['how'], [things['a7str']])
+                else:
+                    yield "define", FunData(nick, things['comment'], things['how'], things['on_what'].split())
 
 
 
@@ -264,7 +269,6 @@ class PReFScript:
 
     def define(self, how, on_what, nick, comment):
         'here comes a new function to add to the dicts appropriately - REFACTOR, SEPARATE CREATING IT FROM ADDING TO dicts'
-        print("define", how, on_what, nick, comment)
         if nick in self.main:
             if (self.main[nick]["how_def"] != how or
                 self.main[nick]["def_on"] != on_what):
@@ -288,8 +292,8 @@ class PReFScript:
         data["nick"] = nick
         data["comment"] = comment
         data["how_def"] = how
-        data["def_on"] = on_what.strip('" ').strip("' ") if numhow == 6 else on_what.split()
-        if self.store_gnums and on_what[0] in self.gnums:
+        data["def_on"] = on_what
+        if self.store_gnums and numhow < 6 and on_what[0] in self.gnums:
             lft = self.gnums[on_what[0]]
             if numhow < 3:
                 if on_what[1] in self.gnums:
@@ -342,7 +346,6 @@ class PReFScript:
                 self.abouts.append(what) 
             if label == 'define':
                 "Right now undo the FunData creation to create it again later, must refactor"
-                print("what:", what, '/', what["def_on"])
                 self.define(what["how_def"], what["def_on"], what["nick"], what["comment"])
                 lastread = 'nick' # nickname of the last function defined, use it for default main
             if label == "import":

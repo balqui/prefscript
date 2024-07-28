@@ -3,7 +3,11 @@
 .pragma extended: True
 .pragma output: ascii
 
-0 define: message
+121 define: dupl
+            [Duplicates the input]
+            pair id id
+
+  0 define: message
           [ constant function with the desired message ]
           ascii_const "Hello, World!"
 
