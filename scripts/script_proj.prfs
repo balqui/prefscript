@@ -1,0 +1,44 @@
+
+# Script for projections, repeats one function from script_sign
+
+# Repeated from script_sign: piggyback_1
+
+170 define: piggyback_1
+            [Pairs up x with 1: <x.1>]
+            pair id k_1
+
+220 define: const_pair_1
+            [The constant <1.1> function]
+            pair k_1 k_1
+
+230 define: k_0
+            [The constant 0 function]
+            comp diff const_pair_1
+
+240 define: piggyback_0
+            [Pairs up x with 0: <x.0>]
+            pair id k_0
+
+250 define: pr_L
+            [The left projection function]
+            comp proj piggyback_0
+
+260 define: pr_R
+            [The right projection function]
+            comp s_tup piggyback_1
+
+270 define: pr_LL
+            [Iterated pr_L]
+            comp pr_L pr_L
+
+280 define: pr_RL
+            [pr_R on pr_L]
+            comp pr_R pr_L
+
+310 define: swap
+            [From <x.y> to <y.x>]
+            pair pr_R pr_L
+
+320 define: swap_diff
+            [diff(<y.x>)]
+            comp diff swap

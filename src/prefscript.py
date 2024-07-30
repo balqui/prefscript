@@ -213,74 +213,43 @@ class PReFScript:
             'repeated nick, check for consistency'
             if (self.main[nick]["how_def"] != new_funct['how_def'] or
                 self.main[nick]["def_on"] != new_funct['def_on']):
-                    pass
-                    # ~ self.valid &= self.synt_err_handler(fatal = True, 
-                        # ~ nick + " defined in incompatible ways more than once.")
+                    self.valid &= self.synt_err_handler.report(nonfatal = False, 
+                        info = f"repeated, inconsistent definitions for function '{nick}' found.")
         else:
             self.main[nick] = new_funct
             on_what = new_funct['def_on']
 
             if new_funct['how_def'] == "comp":
-                '''
-                if on_what[0] not in self.main:
-                    "BUT THIS IS TO BE MOVED TO THE CHECK NAMES FUNCTION !!!!!!!!!!!!!"
-                    self.valid &= self.synt_err_handler(fatal = False, 
-                        "function " + on_what[0] + " appearing in the definition of " + nick + " unknown.")
-                if on_what[1] not in self.main:
-                    self.valid &= self.synt_err_handler(fatal = False, 
-                        "function " + on_what[1] + " appearing in the definition of " + nick + " unknown.")
-                '''
                 self.strcode[nick] = "lambda x: " + on_what[0] + "(" + on_what[1] + "(x))"
                 if self.store_gnums and on_what[0] in self.gnums and on_what[1] in self.gnums:
                     gnum = cp.dp(1, cp.dp(self.gnums[on_what[0]], self.gnums[on_what[1]]))
                     if gnum < LIMIT_GNUM:
                         self.gnums[nick] = gnum
-
-                    # ~ CONSIDER MAYBE AN ERROR MESSAGE HERE AND IN THE ANALOGOUS PLACES BELOW:
-                    # ~ self.valid &= self.synt_err_handler(fatal = False, "Gödel number too large, omitted")
+                    else:
+                        self.valid &= self.synt_err_handler.report(nonfatal = False, 
+                            info = f"Gödel number for '{nick}' too large, omitted.")
 
             elif new_funct['how_def'] == "pair":
-                '''
-                if on_what[0] not in self.main:
-                    "BUT THIS IS TO BE MOVED TO THE CHECK NAMES FUNCTION !!!!!!!!!!!!!"
-                    self.valid &= self.synt_err_handler(fatal = False, 
-                        "function " + on_what[0] + " appearing in the definition of " + nick + " unknown.")
-                if on_what[1] not in self.main:
-                    self.valid &= self.synt_err_handler(fatal = False, 
-                        "function " + on_what[1] + " appearing in the definition of " + nick + " unknown.")
-                '''
                 self.strcode[nick] = "lambda x: cp.dp(" + on_what[0] + "(x), " + on_what[1] + "(x))"
                 if self.store_gnums and on_what[0] in self.gnums and on_what[1] in self.gnums:
                     gnum = cp.dp(2, cp.dp(self.gnums[on_what[0]], self.gnums[on_what[1]]))
                     if gnum < LIMIT_GNUM:
                         self.gnums[nick] = gnum
+                    else:
+                        self.valid &= self.synt_err_handler.report(nonfatal = False, 
+                            info = f"Gödel number for '{nick}' too large, omitted.")
     
             elif new_funct['how_def'] == "mu":
-                '''
-                if on_what[0] not in self.main:
-                    "BUT THIS IS TO BE MOVED TO THE CHECK NAMES FUNCTION !!!!!!!!!!!!!"
-                    self.valid &= self.synt_err_handler(fatal = False, 
-                        "function " + on_what[0] + " appearing in the definition of " + nick + " unknown.")
-                '''
                 self.strcode[nick] = "lambda x: mu(x, " + on_what[0] + ")"
                 if self.store_gnums and on_what[0] in self.gnums:
                     gnum = cp.dp(3, self.gnums[on_what[0]])
                     if gnum < LIMIT_GNUM:
                         self.gnums[nick] = gnum
+                    else:
+                        self.valid &= self.synt_err_handler.report(nonfatal = False, 
+                            info = f"Gödel number for '{nick}' too large, omitted.")
     
             elif new_funct['how_def'] == "compair":
-                '''
-                if on_what[0] not in self.main:
-                    "BUT THIS IS TO BE MOVED TO THE CHECK NAMES FUNCTION !!!!!!!!!!!!!"
-                    self.valid &= self.synt_err_handler(fatal = False, 
-                        "function " + on_what[0] + " appearing in the definition of " + nick + " unknown.")
-                if on_what[1] not in self.main:
-                    self.valid &= self.synt_err_handler(fatal = False, 
-                        "function " + on_what[0] + " appearing in the definition of " + nick + " unknown.")
-                if on_what[2] not in self.main:
-                    self.valid &= self.synt_err_handler(fatal = False, 
-                        "function " + on_what[0] + " appearing in the definition of " + nick + " unknown.")
-                '''
                 self.strcode[nick] = "lambda x: " + on_what[0] + "( cp.dp(" + on_what[1] + "(x), " + on_what[2] + "(x)))"
                 if (self.store_gnums and on_what[0] in self.gnums and 
                     on_what[1] in self.gnums and on_what[2] in self.gnums):
@@ -288,6 +257,9 @@ class PReFScript:
                            cp.dp(2, cp.dp(self.gnums[on_what[1]], self.gnums[on_what[2]]))))
                     if gnum < LIMIT_GNUM:
                         self.gnums[nick] = gnum
+                    else:
+                        self.valid &= self.synt_err_handler.report(nonfatal = False, 
+                            info = f"Gödel number for '{nick}' too large, omitted.")
 
             elif new_funct['how_def'] == "primrec":
                 "NOT READY YET"
@@ -325,10 +297,13 @@ class PReFScript:
 
     def to_python(self, what):
         'returns the Python-runnable version of the function'
-        if not self.valid:
-            print("[in to_python, refactor] Script not valid. Run with care.")
+        # ~ if not self.valid:
+            # ~ "validity might be orthogonal to function 'what'"
+            # ~ print("Script not valid. Run with care.")
         if what not in self.pycode:
-            print("[in to_python, refactor] Nickname " + what + " not defined.")
+            self.valid &= self.synt_err_handler.report(nonfatal = False, 
+                info = f"no Python code for function '{what}' found.")
+            # ~ print("Nickname " + what + " not defined.")
             return None
         return self.pycode[what]
 
@@ -366,6 +341,7 @@ class PReFScript:
 
 
     def check_names(self):
+        "checks that all function names needed to run main have been defined"
 
         def check_name(self, name, need = 'pragma main'):
             if name not in checked:
