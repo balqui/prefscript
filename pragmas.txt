@@ -16,7 +16,7 @@ extended makes up for:
 . name aliasing
 . primrec scheme
 . compair scheme
-. arbitrary constant functions k_1234567
+. arbitrary constant functions k_1234567 (constant given as string for now)
 
 output: ascii cuts in characters of 8 bits (or maybe 7) the binary 
 value of the output and joins their chr version (ancillary functions 
@@ -32,7 +32,7 @@ Errors, nonfatal:
 - nickname redefined
 - import from extended
 - use primrec/compair/ascii_const out of extended
-
+- unknown pragma value
 
 Errors, fatal:
 
