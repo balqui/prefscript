@@ -92,6 +92,7 @@ class Parser:
     def parse(self, source):
         # ~ from re import compile as re_compile, finditer as re_finditer
         for thing in re_finditer(self.the_parser, source):
+            "can one find out non-matched portions to message the user about?"
             things = thing.groupdict(default = '')
             if about := things['about']:
                 yield 'about', about
@@ -289,11 +290,10 @@ class PReFScript:
                         self.gnums[nick] = gnum
 
             elif new_funct['how_def'] == "primrec":
-                '''
-                self.valid &= self.synt_err_handler(fatal = True, 
-                    "adding " + nick + " as primrec is still disallowed.")
-                self.strcode[nick] = "lambda x: x"
-                # ~ self.valid = False                       # NOT READY YET
+                "NOT READY YET"
+                self.valid &= self.synt_err_handler.report(nonfatal = True, 
+                    info = f"adding {nick} as as primrec is still disallowed.")
+                del self.main[nick] # MAYBE PROGRAM DOES NOT USE THIS NICK AT ALL, THEN NONFATAL
                 # ~ self.strcode[nick] = "lambda x: " + on_what[0] + "( cp.dp(" + on_what[1] + "(x), " + on_what[2] + "(x)))"
                 # ~ if (self.store_gnums and on_what[0] in self.gnums and 
                     # ~ on_what[1] in self.gnums and on_what[2] in self.gnums):
@@ -301,26 +301,24 @@ class PReFScript:
                            # ~ cp.dp(2, cp.dp(self.gnums[on_what[1]], self.gnums[on_what[2]]))))
                     # ~ if gnum < LIMIT_GNUM:
                         # ~ self.gnums[nick] = gnum
-                '''
-                pass
-    
-            elif new_funct['how_def'] == "ascii_const":
-                "ascii_const functions kept out of the Goedel numbering for the time being"
-                self.strcode[nick] = "lambda x: str2int( '" + on_what[0] + "' )"
-    
-            elif new_funct['how_def'] == "basic":
-                '''
-                self.valid &= self.synt_err_handler(fatal = True, 
-                    "adding " + nick + " as basic is disallowed.")
-                '''
-                self.strcode[nick] = "lambda x: x"
     
             else:
-                '''
+                "ascii_const as no other 'how' captured by parser - kept out of the Goedel numbering for the time being"
+                self.strcode[nick] = "lambda x: str2int( '" + on_what[0] + "' )"
+    
+            '''
+            elif new_funct['how_def'] == "ascii_const":
+            elif new_funct['how_def'] == "basic":
+                print("???", new_funct)
+                self.valid &= self.synt_err_handler.report(nonfatal = True, 
+                    info = f"adding {nick} as basic is disallowed.")
+                del self.main[nick] # MAYBE PROGRAM DOES NOT USE THIS NICK AT ALL, THEN NONFATAL
+    
+            else:
                 self.valid &= self.synt_err_handler(fatal = True, 
                     nick + " definition method " + new_funct['how_def'] + " unknown.")
-                '''
                 self.strcode[nick] = "lambda x: x"
+            '''
     
             self.pycode[nick] = eval(self.strcode[nick], globals() | self.pycode)
 
