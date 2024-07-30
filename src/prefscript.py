@@ -111,13 +111,14 @@ class SyntErr:
     "handle syntactic errors in the script - VERY PRIMITIVE for the time being"
 
     def __init__(self):
+        "The calls seem to be made to the local object but seem to run the report method (????)"
         pass
 
-    def report(self, fatal, info):
-        "return value to be given to the valid field"
-        p = 'F' if fatal else 'Nonf'
+    def report(self, nonfatal = False, info = ''):
+        "return value to be given to the valid field / alt: fatal here and nonvalid at script"
+        p = 'Nonf' if nonfatal else 'F'
         print(p + 'atal error:', info)
-        return fatal
+        return nonfatal
 
 
 
@@ -137,7 +138,7 @@ class PReFScript:
          to change right next)
         '''
         self.valid = True # program is correct until proven wrong
-        self.main = dict()
+        self.main = dict()              # RENAME, I am using 'main' for the main function to be called
         self.strcode = dict()
         self.pycode = dict()
         self.gnums = dict()
@@ -327,9 +328,9 @@ class PReFScript:
     def to_python(self, what):
         'returns the Python-runnable version of the function'
         if not self.valid:
-            print("Script not valid. Run with care.")
+            print("[in to_python, refactor] Script not valid. Run with care.")
         if what not in self.pycode:
-            print("Nickname " + what + " not defined.")
+            print("[in to_python, refactor] Nickname " + what + " not defined.")
             return None
         return self.pycode[what]
 
@@ -366,18 +367,23 @@ class PReFScript:
         self.define(FunData(nick.strip(), comment.strip(), how.strip(), tuple(on_what.split())))
 
 
-    def check_names(self, name = ''):
-        if not name and self.pragmas['main']:
-            name = self.pragmas['main']
-        for nname in self.main[name]['def_on']:
-            if nname in self.main:
-                self.check_names(nname)
-            elif self.main[name]['how_def'] != "ascii_const":
-                pass
-                '''
-                self.valid &= self.synt_err_handler(fatal = True, 
-                    nname + " not found but needed by " + name)
-                '''
+    def check_names(self):
+
+        def check_name(self, name, need = 'pragma main'):
+            if name not in checked:
+                checked.add(name)
+                if name in self.main:
+                    if self.main[name]['how_def'] != "ascii_const":
+                        for nname in self.main[name]['def_on']:
+                            check_name(self, nname, f"'{name}'")
+                else:
+                    "newly found undefined name"
+                    self.valid &= self.synt_err_handler.report(nonfatal = False, 
+                        info = f"function '{name}' not found but needed by {need}.")
+
+        checked = set()
+        check_name(self, self.pragmas['main'])
+
 
 def run():
     'Stand-alone CLI command to be handled as entry point - no Goedel numbers stored'

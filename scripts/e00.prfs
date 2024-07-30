@@ -1,0 +1,15 @@
+.about  Hello World with main and extended for ascii output and arbitrary constants
+.pragma main: q
+.pragma extended: True
+
+  1 define: q
+          [ uses undefined function second ]
+          pair p noway
+
+  2 define: p
+          [ uses undefined function first ]
+          pair nowayeither q
+
+  3 define: r
+          [ uses undefined function third ]
+          compair k_1 k_1 noway
