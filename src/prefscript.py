@@ -64,6 +64,20 @@ def mu(x, test):
     return z
 
 
+def prim_rec(is_base, base, recurse):
+	"ancillary course-of-values primitive recursion more efficient than by minimization"
+
+	def c_of_v(x):
+		"create the full course of values"
+		sq = 0
+		for y in range(x + 1):
+			new = base(y) if is_base(y) else recurse(cp.dp(y, sq))
+			sq = cp.dp(new, sq)
+		return sq
+
+	return lambda x: cp.pr_L(c_of_v(x))
+
+
 class Parser:
     '''Prepare an re-based parser to be used upon reading scripts
     The single Parser with single parse generator is likely to mess up
@@ -248,7 +262,7 @@ class PReFScript:
                     else:
                         self.valid &= self.synt_err_handler.report(nonfatal = False, 
                             info = f"Gödel number for '{nick}' too large, omitted.")
-    
+
             elif new_funct['how_def'] == "compair":
                 self.strcode[nick] = "lambda x: " + on_what[0] + "( cp.dp(" + on_what[1] + "(x), " + on_what[2] + "(x)))"
                 if (self.store_gnums and on_what[0] in self.gnums and 
@@ -262,20 +276,18 @@ class PReFScript:
                             info = f"Gödel number for '{nick}' too large, omitted.")
 
             elif new_funct['how_def'] == "primrec":
-                "NOT READY YET"
-                self.valid &= self.synt_err_handler.report(nonfatal = True, 
-                    info = f"adding {nick} as as primrec is still disallowed.")
-                del self.main[nick] # MAYBE PROGRAM DOES NOT USE THIS NICK AT ALL, THEN NONFATAL
-                # ~ self.strcode[nick] = "lambda x: " + on_what[0] + "( cp.dp(" + on_what[1] + "(x), " + on_what[2] + "(x)))"
-                # ~ if (self.store_gnums and on_what[0] in self.gnums and 
-                    # ~ on_what[1] in self.gnums and on_what[2] in self.gnums):
-                    # ~ gnum = cp.dp(1, cp.dp(self.gnums[on_what[0]],
-                           # ~ cp.dp(2, cp.dp(self.gnums[on_what[1]], self.gnums[on_what[2]]))))
-                    # ~ if gnum < LIMIT_GNUM:
-                        # ~ self.gnums[nick] = gnum
-    
+                self.strcode[nick] = "prim_rec(" + on_what[0] + ", " + on_what[1] + ", " + on_what[2] + ")"
+                if (self.store_gnums and on_what[1] in self.gnums and on_what[2] in self.gnums):
+                    gnum = cp.dp(4, cp.dp(int(on_what[0]),
+                               cp.dp(self.gnums[on_what[1]], self.gnums[on_what[2]])))
+                    if gnum < LIMIT_GNUM:
+                        self.gnums[nick] = gnum
+                # ~ self.valid &= self.synt_err_handler.report(nonfatal = True, 
+                    # ~ info = f"adding {nick} as as primrec is still disallowed.") # if "NOT READY YET"
+                # ~ del self.main[nick] # MAYBE PROGRAM DOES NOT USE THIS NICK AT ALL, THEN NONFATAL
+
             else:
-                "ascii_const as no other 'how' captured by parser - kept out of the Goedel numbering for the time being"
+                "ascii_const, as no other 'how' captured by parser - kept out of the Goedel numbering for the time being"
                 self.strcode[nick] = "lambda x: str2int( '" + on_what[0] + "' )"
     
             '''
@@ -358,6 +370,8 @@ class PReFScript:
         checked = set()
         check_name(self, self.pragmas['main'])
 
+
+# ~ EXTENDED pragma NOT YET OPERATIVE, ANYTHING GOES RIGHT NOW
 
 def run():
     'Stand-alone CLI command to be handled as entry point - no Goedel numbers stored'
