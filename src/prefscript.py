@@ -89,7 +89,7 @@ class Parser:
         from re import compile as re_compile, finditer as re_finditer
         about = "\s*\.about(?P<about>.*)\n"                           # arbitrary documentation
         pragma = "\s*\.pragma\s+(?P<which>\w+):?\s+(?P<what>\w+)\s*"  # compilation directives
-        importing = "\s*\.import(?P<to_import>\w+)\s*"                # additional external script
+        importing = "\s*\.import\s+(?P<to_import>\w+)\s*"                # additional external script
         a7str = '''(?P<quote>['"])(?P<a7str>.*)(?P=quote)'''
         startdef = "\d+\s+define\:\s*"
         group1_nick = "(?P<nick>\w+)\s+"

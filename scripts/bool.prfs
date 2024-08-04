@@ -1,0 +1,11 @@
+.about Towards boolean operations
+.pragma main neg
+
+320 define: piggyfront_1
+            [Pairs up 1 with x: <1.x>]
+            pair k_1 id
+
+330 define: neg
+            [Negation: 0 from 1, 1 from 0]
+            comp diff piggyfront_1
+
