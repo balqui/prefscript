@@ -7,7 +7,7 @@ Author: Jose L Balcazar, ORCID 0000-0003-4248-4528, april 2023 onwards
 Copyleft: MIT License (https://en.wikipedia.org/wiki/MIT_License)
 
 Project started: mid Germinal 2003.
-Current version: 0.3, early Thermidor 2024.
+Current version: 0.5, mid Thermidor 2024.
 
 A Python-based environment to explore and experiment with partial 
 recursive functions; naturally doubles as a (purely functional) 
@@ -19,8 +19,6 @@ construct it. Then, in a separate dict (used as namespace for
 eval calls), a runnable version of the code.
 
 Nicknames are alphanum strings not starting with a number (no surprise).
-
-CONSIDER ADDING A CLASS FOR HANDLING INFO/WARNING/ERROR/FATAL MESSAGES
 '''
 
 from collections import defaultdict as ddict
@@ -265,6 +263,12 @@ class PReFScript:
                             info = f"Gödel number for '{nick}' too large, omitted.")
 
             elif new_funct['how_def'] == "compair":
+                if not self.pragmas['extended']:
+                    self.valid &= self.synt_err_handler.report(nonfatal = True, 
+                                  info = "Using compair requires .pragma extended: True. Changed.")
+                elif what[0] ==  and what[1] == :
+                    "pragmas in imported files are ignored except extended set to True"
+                self.pragmas['extended'] = 'True'
                 self.strcode[nick] = "lambda x: " + on_what[0] + "( cp.dp(" + on_what[1] + "(x), " + on_what[2] + "(x)))"
                 if (self.store_gnums and on_what[0] in self.gnums and 
                     on_what[1] in self.gnums and on_what[2] in self.gnums):
@@ -277,6 +281,10 @@ class PReFScript:
                             info = f"Gödel number for '{nick}' too large, omitted.")
 
             elif new_funct['how_def'] == "primrec":
+                if not self.pragmas['extended']:
+                    self.valid &= self.synt_err_handler.report(nonfatal = True, 
+                                  info = "Using primrec requires .pragma extended: True. Changed.")
+                self.pragmas['extended'] = 'True'
                 self.strcode[nick] = "prim_rec(" + on_what[0] + ", " + on_what[1] + ", " + on_what[2] + ")"
                 if (self.store_gnums and on_what[1] in self.gnums and on_what[2] in self.gnums):
                     gnum = cp.dp(4, cp.dp(int(on_what[0]),
@@ -321,30 +329,37 @@ class PReFScript:
         return self.pycode[what]
 
 
-    def load(self, filename):
+    def load(self, filename, main = False):
         'load in definitions from .prfs file - accepts several calls in sequence - also accepts recursive imports - MIND, on a single parser'
-        with open(filename) as infile:
-            "filename expected to end with .prfs but not enforced nor defaulted to"
+        with open(filename + '.prfs') as infile:
+            "filename expected to end with .prfs but not explicit in argument"
             script = infile.read()
-            print("LOAD", script, "DAOL")
+            # ~ print("LOAD", script, "DAOL")
         for label, what in self.parser.parse(script):
             'make the FunData or store the about or the pragma or the import'
             if label == 'pragma':
-                self.pragmas[what[0]] = what[1] 
+                if main:
+                    "pragmas in main file are stored"
+                    self.pragmas[what[0]] = what[1]
+                elif what[0] == 'extended' and what[1] == 'True':
+                    "pragmas in imported files are ignored except extended when set to True"
+                    if self.pragmas['extended'] != 'True':
+                        self.valid &= self.synt_err_handler.report(nonfatal = True, 
+                            info = f"The .pragma extended declaration found in {filename} affects globally.")
+                    self.pragmas[what[0]] = what[1]
             if label == 'about':
-                self.abouts.append(what) 
+                self.abouts.append(filename + ': ' + what) 
             if label == 'define':
-                "Undid the FunData creation to create it again later, refactoring..."
                 self.define(what)
-                # ~ self.define(FunData(what["nick"], what["comment"], what["how_def"], what["def_on"]))
-                lastread = what['nick'] # nickname of the last function defined, use it for default main
+                lastread = what['nick'] # nickname of the last function defined, used for default main
             if label == "import":
-                self.load(what+".prfs")
+                "non-main recursive call"
+                self.load(what)
         if not self.pragmas['main']:
-            "there should be some warning that main assumed lastread as no declaration found"
+            "there should be some warning that main assumed is lastread"
+            self.valid &= self.synt_err_handler.report(nonfatal = True, 
+                          info = f"No main .pragma given; '{lastread}' assumed to be the main function, cross fingers.")
             self.pragmas['main'] = lastread
-
-            # ~ CAREFUL WITH .pragma'S IN IMPORTED FILES
 
 
     def dialog(self):
@@ -386,7 +401,7 @@ def run():
     # ~ ADD A HELP OPTION BASED ON THE .about CLAUSES, IN GOOD ORDER
     args = aparser.parse_args()
     f = PReFScript()
-    f.load(args.filename)
+    f.load(args.filename, main = True)
     f.check_names()
     if f.valid:
         'run it on data from stdin according to input/output/main pragmas, REFACTOR whether load returns status'
