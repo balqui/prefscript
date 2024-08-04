@@ -266,8 +266,6 @@ class PReFScript:
                 if not self.pragmas['extended']:
                     self.valid &= self.synt_err_handler.report(nonfatal = True, 
                                   info = "Using compair requires .pragma extended: True. Changed.")
-                elif what[0] ==  and what[1] == :
-                    "pragmas in imported files are ignored except extended set to True"
                 self.pragmas['extended'] = 'True'
                 self.strcode[nick] = "lambda x: " + on_what[0] + "( cp.dp(" + on_what[1] + "(x), " + on_what[2] + "(x)))"
                 if (self.store_gnums and on_what[0] in self.gnums and 
