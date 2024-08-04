@@ -1,7 +1,5 @@
-
-# Script for projections, repeats one function from script_sign
-
-# Repeated from script_sign: piggyback_1
+.about Script for projections, repeats one function from script_sign: piggyback_1
+.about Consistent repetitions ignored as of mid Thermidor 2024
 
 170 define: piggyback_1
             [Pairs up x with 1: <x.1>]
@@ -41,5 +39,13 @@
 
 370 define: pr_RL
             [pr_R on pr_L]
-            comp pr_R prLl
+            comp pr_R pr_L
+
+380 define: k_0
+            [Test repeated INconsistent definition message as import not yet ready]
+            comp diff swap
+
+390 define: k_0
+            [Test repeated INconsistent definition message as import not yet ready]
+            comp diff const_pair_1
 

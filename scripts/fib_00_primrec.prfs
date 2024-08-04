@@ -112,7 +112,7 @@
              compair add pr_LR pr_LRR
 
 1111 define: fib_is_base
-             [ is input less than 2 ? ]
+             [ is input less than 2 ?]
              compair lt id k_1
 
 1121 define: fib

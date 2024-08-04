@@ -126,13 +126,13 @@ class SyntErr:
     "handle syntactic errors in the script - VERY PRIMITIVE for the time being"
 
     def __init__(self):
-        "The calls seem to be made to the local object but seem to run the report method (????)"
+        "Nothing as of today"
         pass
 
     def report(self, nonfatal = False, info = ''):
         "return value to be given to the valid field / alt: fatal here and nonvalid at script"
         p = 'Nonf' if nonfatal else 'F'
-        print(p + 'atal error:', info)
+        print(p + 'atal error in PReFScript:', info, sep = '\n  ')
         return nonfatal
 
 
