@@ -107,6 +107,7 @@ class Parser:
         # ~ from re import compile as re_compile, finditer as re_finditer
         for thing in re_finditer(self.the_parser, source):
             "can one find out non-matched portions to message the user about?"
+            print("PARSER", thing)
             things = thing.groupdict(default = '')
             if about := things['about']:
                 yield 'about', about
@@ -325,6 +326,7 @@ class PReFScript:
         with open(filename) as infile:
             "filename expected to end with .prfs but not enforced nor defaulted to"
             script = infile.read()
+            print("LOAD", script, "DAOL")
         for label, what in self.parser.parse(script):
             'make the FunData or store the about or the pragma or the import'
             if label == 'pragma':
@@ -337,8 +339,9 @@ class PReFScript:
                 # ~ self.define(FunData(what["nick"], what["comment"], what["how_def"], what["def_on"]))
                 lastread = what['nick'] # nickname of the last function defined, use it for default main
             if label == "import":
-                self.load(what)
+                self.load(what+".prfs")
         if not self.pragmas['main']:
+            "there should be some warning that main assumed lastread as no declaration found"
             self.pragmas['main'] = lastread
 
             # ~ CAREFUL WITH .pragma'S IN IMPORTED FILES
@@ -387,6 +390,7 @@ def run():
     f.check_names()
     if f.valid:
         'run it on data from stdin according to input/output/main pragmas, REFACTOR whether load returns status'
+        f.list()
         r = f.to_python(f.pragmas["main"])
         if f.pragmas["output"] in ('', "int"):
             post = lambda x: x
