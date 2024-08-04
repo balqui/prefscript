@@ -1,0 +1,117 @@
+.about  first attempt at fact by primitive recursion on pragma extended
+.pragma main: fact
+.pragma extended: True
+
+
+121 define: dupl
+            [Duplicates the input]
+            pair id id
+
+171 define: piggyback_1
+            [Pairs up x with 1: <x.1>]
+            pair id k_1
+
+181 define: const_pair_1
+            [The constant <1.1> function]
+            pair k_1 k_1
+
+191 define: k_0
+            [The constant 0 function]
+            comp diff const_pair_1
+
+211 define: piggyback_0
+            [Pairs up x with 0: <x.0>]
+            pair id k_0
+
+221 define: pr_R
+            [The pr_R function]
+            comp s_tup piggyback_1
+
+231 define: pr_L
+            [The pr_L function]
+            comp proj piggyback_0
+
+241 define: swap
+            [From <x.y> to <y.x>]
+            pair pr_R pr_L
+
+251 define: swap_diff
+            [diff(<y.x>)]
+            comp diff swap
+
+261 define: ant
+            [The antecessor function]
+            comp diff piggyback_1
+
+271 define: piggyback_ant
+            [Pairs up x with its antecessor]
+            pair id ant
+
+281 define: sign
+            [Sign: 0 for 0, 1 for the rest]
+            comp diff piggyback_ant
+
+321 define: piggyfront_1
+            [Pairs up 1 with x: <1.x>]
+            pair k_1 id
+
+331 define: neg
+            [Negation: 0 from 1, 1 from 0]
+            comp diff piggyfront_1
+
+341 define: conj
+            [boolean and]
+            comp id mul
+
+351 define: disj
+            [boolean or]
+            comp sign add
+
+361 define: gt
+            [x > y in <x.y>]
+            comp sign diff
+
+371 define: lt
+            [x < y in <x.y>]
+            comp sign swap_diff
+
+381 define: both_compar
+            [Pair of x < y and x > y]
+            pair lt gt
+
+391 define: ineq
+            [Different x and y in <x.y>?]
+            comp add both_compar
+
+401 define: eq
+            [Is it <x.x>?]
+            comp neg ineq
+
+421 define: pr_LR
+            [pr_L on pr_R]
+            comp pr_L pr_R
+
+431 define: pr_LL
+            [pr_L on pr_L]
+            comp pr_L pr_L
+
+441 define: pr_RR
+            [pr_R on pr_R]
+            comp pr_R pr_R
+
+451 define: pr_RL
+            [pr_R on pr_L]
+            comp pr_R pr_L
+
+1101 define: fact_step
+             [given <x.z>, factorial of x given the whole course of values as z ]
+             compair mul pr_L pr_LR
+
+1111 define: fact_is_base
+             [given <x.z>, factorial of x given the whole course of values as z ]
+             compair eq id k_0
+
+1121 define: fact
+             [factorial by prim rec: is_base, base function below lim, step function as defined on course of values]
+             primrec fact_is_base k_1 fact_step
+

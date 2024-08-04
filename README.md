@@ -7,7 +7,7 @@ Author: Jose L Balcazar, ORCID 0000-0003-4248-4528
 
 Project started: mid Germinal 2003.
 
-Current version: 0.3, early Thermidor 2024.
+Current version: 0.4, mid Thermidor 2024.
 
 Copyleft: MIT License (https://en.wikipedia.org/wiki/MIT_License)
 
