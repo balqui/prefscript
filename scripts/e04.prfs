@@ -1,0 +1,18 @@
+.about  test of inconsistent definitions in import
+.import e03
+
+  0 define: m
+          [ constant function ]
+          ascii_const "mmm"
+
+  1 define: mm
+          [ constant function ]
+          ascii_const "mm"
+
+  2 define: mmm
+          [ constant function ]
+          compair add k_1 k_1
+
+  3 define: mm
+          [ constant function ]
+          ascii_const "mm"

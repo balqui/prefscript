@@ -147,9 +147,6 @@ class PReFScript:
           key is always nick for all of them;
         include here the basic functions;
         their implementation assumes 'import cantorpairs as cp'
-        (re compilation moved from load to here so as to avoid
-         recomputing it with several load calls - this is going
-         to change right next)
         '''
         self.valid = True # program is correct until proven wrong
         self.main = dict()              # RENAME, I am using 'main' for the main function to be called
@@ -210,7 +207,6 @@ class PReFScript:
                           "= <" + str(cp.pr_L(gnum)) + "." + str(cp.pr_R(gnum)) + ">")
                 else:
                     self.valid &= self.synt_err_handler(fatal = False, info = "Gödel number too large, omitted")
-                    # ~ print(" Gödel number too large, omitted")
 
         if what is not None:
             list_one(what, w_code)
@@ -289,28 +285,11 @@ class PReFScript:
                                cp.dp(self.gnums[on_what[1]], self.gnums[on_what[2]])))
                     if gnum < LIMIT_GNUM:
                         self.gnums[nick] = gnum
-                # ~ self.valid &= self.synt_err_handler.report(nonfatal = True, 
-                    # ~ info = f"adding {nick} as as primrec is still disallowed.") # if "NOT READY YET"
-                # ~ del self.main[nick] # MAYBE PROGRAM DOES NOT USE THIS NICK AT ALL, THEN NONFATAL
 
             else:
                 "ascii_const, as no other 'how' captured by parser - kept out of the Goedel numbering for the time being"
                 self.strcode[nick] = "lambda x: str2int( '" + on_what[0] + "' )"
-    
-            '''
-            elif new_funct['how_def'] == "ascii_const":
-            elif new_funct['how_def'] == "basic":
-                print("???", new_funct)
-                self.valid &= self.synt_err_handler.report(nonfatal = True, 
-                    info = f"adding {nick} as basic is disallowed.")
-                del self.main[nick] # MAYBE PROGRAM DOES NOT USE THIS NICK AT ALL, THEN NONFATAL
-    
-            else:
-                self.valid &= self.synt_err_handler(fatal = True, 
-                    nick + " definition method " + new_funct['how_def'] + " unknown.")
-                self.strcode[nick] = "lambda x: x"
-            '''
-    
+
             self.pycode[nick] = eval(self.strcode[nick], globals() | self.pycode)
 
 
@@ -327,12 +306,11 @@ class PReFScript:
         return self.pycode[what]
 
 
-    def load(self, filename, main = False):
-        'load in definitions from .prfs file - accepts several calls in sequence - also accepts recursive imports - MIND, on a single parser'
+    def load(self, filename, main = True):
+        'load in definitions from .prfs file(s) - use .import to recurse into further loading'
         with open(filename + '.prfs') as infile:
             "filename expected to end with .prfs but not explicit in argument"
             script = infile.read()
-            # ~ print("LOAD", script, "DAOL")
         lastread = None
         for label, what in self.parser.parse(script):
             'make the FunData or store the about or the pragma or the import'
@@ -353,17 +331,18 @@ class PReFScript:
                 lastread = what['nick'] # nickname of the last function defined, used for default main
             if label == "import":
                 "non-main recursive call"
-                self.load(what)
+                self.load(what, main = False)
         if main and not self.pragmas['main']:
-            if lastread:
+            self.valid &= self.synt_err_handler.report(nonfatal = True, 
+                 info = f"No main .pragma found in '{filename}.prfs'.")
+            if self.valid and lastread:
                 "warn that main assumed is lastread"
                 self.valid &= self.synt_err_handler.report(nonfatal = True, 
-                     info = f"No main .pragma found in '{filename}.prfs'; '{lastread}' assumed to be the main function, cross fingers.")
+                     info = f"Function '{lastread}' guessed to be the main function, cross fingers.")
                 self.pragmas['main'] = lastread
-            else:
+            elif self.valid:
                 self.valid &= self.synt_err_handler.report(nonfatal = False, 
-                     info = f"No main .pragma found in '{filename}.prfs', no guess available for the main function.")
-        print("MAIN AT", filename, self.pragmas['main'])
+                     info = f"No guess available for the main function.")
 
 
     def dialog(self):
@@ -393,8 +372,6 @@ class PReFScript:
         check_name(self, self.pragmas['main'])
 
 
-# ~ EXTENDED pragma NOT YET OPERATIVE, ANYTHING GOES RIGHT NOW
-
 def run():
     'Stand-alone CLI command to be handled as entry point - no Goedel numbers stored'
     # ~ handle the filename as argument
@@ -405,12 +382,11 @@ def run():
     # ~ ADD A HELP OPTION BASED ON THE .about CLAUSES, IN GOOD ORDER
     args = aparser.parse_args()
     f = PReFScript()
-    f.load(args.filename, main = True)
+    f.load(args.filename)
     if f.valid:
         f.check_names()
     if f.valid:
-        'run it on data from stdin according to input/output/main pragmas, REFACTOR whether load returns status'
-        # ~ f.list()
+        'run it on data from stdin according to input/output/main pragmas'
         r = f.to_python(f.pragmas["main"])
         if f.pragmas["output"] in ('', "int"):
             post = lambda x: x
@@ -435,24 +411,6 @@ def run():
     if f.valid:
         print(post(r(arg)))
 
-        # ~ v3 = input().split() # temporary for is pyth 01             
-        # ~ arg = cp.dp(cp.pr(arg, 0), cp.dp(cp.pr(arg, 1), cp.pr(arg, 2)))
-        # temporary for is pyth 01           
-
-        # ~ rv3 = cp.dp(int(v3[0]), cp.dp(int(v3[1]), int(v3[2])))
-        # ~ print(post(r(cp.dp(int(v3[0]), cp.dp(int(v3[1]), int(v3[2]))))))
-        # ~ print(rv3, post(r(rv3)))
-
-
-        # ~ print(arg, cp.pr(arg, 0), cp.pr(arg, 1), cp.pr(arg, 2))
-        # ~ print(post(r(arg)))
-
-        # ~ CHOOSE ACCORDING TO .pragma input
-        # ~ print(post(r(666))) 
-        # ~ v = int(input()) # temporary for frag_is pyth 01
-        # ~ for i in range(v):
-            # ~ for j in range(v):
-            # ~ print(i, post(r(i)))
 
 if __name__ == "__main__":
     run()
