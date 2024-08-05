@@ -105,7 +105,7 @@ class Parser:
         # ~ from re import compile as re_compile, finditer as re_finditer
         for thing in re_finditer(self.the_parser, source):
             "can one find out non-matched portions to message the user about?"
-            print("PARSER", thing)
+            # ~ print("PARSER", thing)
             things = thing.groupdict(default = '')
             if about := things['about']:
                 yield 'about', about
@@ -333,6 +333,7 @@ class PReFScript:
             "filename expected to end with .prfs but not explicit in argument"
             script = infile.read()
             # ~ print("LOAD", script, "DAOL")
+        lastread = None
         for label, what in self.parser.parse(script):
             'make the FunData or store the about or the pragma or the import'
             if label == 'pragma':
@@ -353,11 +354,16 @@ class PReFScript:
             if label == "import":
                 "non-main recursive call"
                 self.load(what)
-        if not self.pragmas['main']:
-            "there should be some warning that main assumed is lastread"
-            self.valid &= self.synt_err_handler.report(nonfatal = True, 
-                          info = f"No main .pragma given; '{lastread}' assumed to be the main function, cross fingers.")
-            self.pragmas['main'] = lastread
+        if main and not self.pragmas['main']:
+            if lastread:
+                "warn that main assumed is lastread"
+                self.valid &= self.synt_err_handler.report(nonfatal = True, 
+                     info = f"No main .pragma found in '{filename}.prfs'; '{lastread}' assumed to be the main function, cross fingers.")
+                self.pragmas['main'] = lastread
+            else:
+                self.valid &= self.synt_err_handler.report(nonfatal = False, 
+                     info = f"No main .pragma found in '{filename}.prfs', no guess available for the main function.")
+        print("MAIN AT", filename, self.pragmas['main'])
 
 
     def dialog(self):
@@ -400,10 +406,11 @@ def run():
     args = aparser.parse_args()
     f = PReFScript()
     f.load(args.filename, main = True)
-    f.check_names()
+    if f.valid:
+        f.check_names()
     if f.valid:
         'run it on data from stdin according to input/output/main pragmas, REFACTOR whether load returns status'
-        f.list()
+        # ~ f.list()
         r = f.to_python(f.pragmas["main"])
         if f.pragmas["output"] in ('', "int"):
             post = lambda x: x

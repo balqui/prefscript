@@ -1,0 +1,6 @@
+.about  test main in separate file
+
+  0 define: m
+          [ constant function ]
+          ascii_const "mmm"
+

@@ -1,0 +1,3 @@
+.about  test main in separate file and here just import
+.import e03
+.pragma main m
