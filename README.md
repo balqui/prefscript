@@ -13,13 +13,12 @@ Copyleft: MIT License (https://en.wikipedia.org/wiki/MIT_License)
 
 A Python-based environment to explore and experiment with partial 
 recursive functions; naturally doubles as a (purely functional) 
-programming language, but it is not intended to be used as such.
+programming language, but it is not intended to be used much as such.
 
 ##### REWRITE THIS WHEN READY including the pipx thingy
 Incomplete as of today, hence not pip-installable yet from PyPI
 hosting. Install it instead, within a virtual environment, with:
 `pip install --index-url https://test.pypi.org/simple/ --no-deps prefscript`
-Alternatively, download the source file `prefscript.py` from the `src` folder.
 Then, once within the Python interpreter, `from prefscript import PReFScript, cp`
 provides the class for storing the script functions and an access named `cp` 
 to `cantorpairs` functions, like `cp.dp(8, 4)`. Working on all that just these days.
@@ -30,15 +29,15 @@ of composition and minimization. All functions are from the
 natural numbers into the natural numbers and may be undefined
 for some inputs. In order to handle tuples or sequences of natural
 numbers, a Cantor-like encoding is used (for information about the 
-related names dp, pr_l, pr_r, tup_e, tup_i, s_tup, pr please see 
-the companion repository `https://github.com/balqui/cantorpairs`).
+related names `dp`, `pr_l`, `pr_r`, `tup_e`, `tup_i`, `s_tup`, `pr` 
+please see the companion repository `https://github.com/balqui/cantorpairs`).
 The basic functions include projection variants, and a 
 composition-like rule of pair formation is also available.
 
 Scripts are maintained in objects of the class PReFScript,
 that can be imported into your own Python program. 
 A stand-alone interpreter is also provided. Thus, you
-have available two main ways of programming in prefscript.
+have available two main ways of programming in PReFScript.
 
 ### Running the interpreter on a script in a text file
 
@@ -47,7 +46,7 @@ have available two main ways of programming in prefscript.
 INSTALLATION DEPENDING, run the command `prefscript --help`
 as a first attempt or call directly `prefscript myscript`
 after making sure that the working folder contains a text 
-file `myscript.prfs` (omit the extension upon calling the
+file `myscript.prfs` (omit the `.prfs` extension upon calling the
 interpreter).
 
 Function definitions in these scripts start with an arbitrary
@@ -58,7 +57,7 @@ being defined, a human-oriented description in square brackets,
 and how it is constructed out of other functions in the script:
 "pair" followed by two function names for the function that 
 pairs their output up, "comp" followed by two function names 
-for the composition function, and "mu" followed by a function
+for the composition function, or "mu" followed by a function
 for defining a function by minimization.
 
 ```
@@ -67,7 +66,7 @@ for defining a function by minimization.
            pair id k_1
 
 20 define: ant
- [The predecessor or anterior function]
+ [The predecessor or anterior function, maps 0 to 0 and x to x-1 if nonzero]
  comp diff piggyback_1
 
 30 define: piggyback_ant
@@ -91,7 +90,7 @@ Starting with `.about` indicates that the rest of the line is a
 human-oriented explanation; the directive `.import` followed by a
 `filename` requires the interpreter to load in, at that point, 
 the contents of `filename.prfs`; also the `.pragma` directives
-are explained below. None of these directives is absolutely required.
+are explained next. None of these directives is absolutely required.
 
 #### Currently valid pragmas
 
@@ -103,7 +102,7 @@ last is run, preceded by a message to the effect.
 
 `.pragma input:` followed by one of the keywords `int` (default),
 `intseq` or `none`; specifying, respectively, that the input is
-an `int` or a sequence of `int` or that no input will be read.
+an `int`, or a sequence of `int`, or that no input will be read.
 In the second case, the main function will receive a single `int`
 encoding the whole sequence as per the `tup_i` encoding function
 in `cantorpairs`.
