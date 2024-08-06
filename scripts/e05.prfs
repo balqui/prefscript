@@ -1,5 +1,7 @@
-.about  test of inconsistent definitions in import
-.import e03
+.about  several tests
+.pragma extended True
+.import e03.prfs
+.pragma main mm
 
 
   0 define: m

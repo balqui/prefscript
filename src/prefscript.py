@@ -87,7 +87,7 @@ class Parser:
         from re import compile as re_compile, finditer as re_finditer
         about = "\s*\.about(?P<about>.*)\n"                           # arbitrary documentation
         pragma = "\s*\.pragma\s+(?P<which>\w+):?\s+(?P<what>\w+)\s*"  # compilation directives
-        importing = "\s*\.import\s+(?P<to_import>\w+)\s*"                # additional external script
+        importing = "\s*\.import\s+(?P<to_import>[\w._-]+)\s*"                # additional external script
         a7str = '''(?P<quote>['"])(?P<a7str>.*)(?P=quote)'''
         startdef = "\d+\s+define\:\s*"
         group1_nick = "(?P<nick>\w+)\s+"
@@ -102,10 +102,8 @@ class Parser:
         self.the_parser = re_compile(define + '|' + about + '|' + pragma + '|' + importing)
 
     def parse(self, source):
-        # ~ from re import compile as re_compile, finditer as re_finditer
         for thing in re_finditer(self.the_parser, source):
             "can one find out non-matched portions to message the user about?"
-            # ~ print("PARSER", thing)
             things = thing.groupdict(default = '')
             if about := things['about']:
                 yield 'about', about
@@ -122,16 +120,16 @@ class Parser:
 
 
 class SyntErr:
-    "handle syntactic errors in the script - VERY PRIMITIVE for the time being - should write to stderr !!!!!!!!!!!!!!!!!!!!!"
+    "handle syntactic errors in the script - VERY PRIMITIVE for the time being"
 
     def __init__(self):
-        "Nothing as of today"
-        pass
+        from sys import stderr
+        self.e = stderr
 
     def report(self, nonfatal = False, info = ''):
         "return value to be given to the valid field / alt: fatal here and nonvalid at script"
         p = 'Nonf' if nonfatal else 'F'
-        print(p + 'atal error in PReFScript:', info, sep = '\n  ')
+        print(p + 'atal error in PReFScript:', info, sep = '\n  ', file = self.e)
         return nonfatal
 
 
@@ -148,8 +146,8 @@ class PReFScript:
         include here the basic functions;
         their implementation assumes 'import cantorpairs as cp'
         '''
-        self.valid = True # program is correct until proven wrong
-        self.main = dict()              # RENAME, I am using 'main' for the main function to be called
+        self.valid = True   # program is correct until proven wrong
+        self.main = dict()  # RENAME some day, I am using 'main' for the main function to be called
         self.strcode = dict()
         self.pycode = dict()
         self.gnums = dict()
@@ -206,7 +204,7 @@ class PReFScript:
                     print(" Gödel number:", gnum,
                           "= <" + str(cp.pr_L(gnum)) + "." + str(cp.pr_R(gnum)) + ">")
                 else:
-                    self.valid &= self.synt_err_handler(fatal = False, info = "Gödel number too large, omitted")
+                    self.valid &= self.synt_err_handler(fatal = False, info = "Gödel number too large, omitted.")
 
         if what is not None:
             list_one(what, w_code)
@@ -223,7 +221,7 @@ class PReFScript:
             if (self.main[nick]["how_def"] != new_funct['how_def'] or
                 self.main[nick]["def_on"] != new_funct['def_on']):
                     self.valid &= self.synt_err_handler.report(nonfatal = False, 
-                        info = f"repeated, inconsistent definitions for function '{nick}' found.")
+                        info = f"Repeated, inconsistent definitions for function '{nick}' found.")
         else:
             self.main[nick] = new_funct
             on_what = new_funct['def_on']
@@ -261,7 +259,7 @@ class PReFScript:
             elif new_funct['how_def'] == "compair":
                 if not self.pragmas['extended']:
                     self.valid &= self.synt_err_handler.report(nonfatal = True, 
-                                  info = "Using compair requires .pragma extended: True. Changed.")
+                                  info = "Use of compair requires '.pragma extended: True', changed.")
                 self.pragmas['extended'] = 'True'
                 self.strcode[nick] = "lambda x: " + on_what[0] + "( cp.dp(" + on_what[1] + "(x), " + on_what[2] + "(x)))"
                 if (self.store_gnums and on_what[0] in self.gnums and 
@@ -277,7 +275,7 @@ class PReFScript:
             elif new_funct['how_def'] == "primrec":
                 if not self.pragmas['extended']:
                     self.valid &= self.synt_err_handler.report(nonfatal = True, 
-                                  info = "Using primrec requires .pragma extended: True. Changed.")
+                                  info = "Use of primrec requires '.pragma extended: True', changed.")
                 self.pragmas['extended'] = 'True'
                 self.strcode[nick] = "prim_rec(" + on_what[0] + ", " + on_what[1] + ", " + on_what[2] + ")"
                 if (self.store_gnums and on_what[1] in self.gnums and on_what[2] in self.gnums):
@@ -285,12 +283,15 @@ class PReFScript:
                                cp.dp(self.gnums[on_what[1]], self.gnums[on_what[2]])))
                     if gnum < LIMIT_GNUM:
                         self.gnums[nick] = gnum
+                    else:
+                        self.valid &= self.synt_err_handler.report(nonfatal = False, 
+                            info = f"Gödel number for '{nick}' too large, omitted.")
 
             else:
                 "ascii_const, as no other 'how' captured by parser - kept out of the Goedel numbering for the time being"
                 if not self.pragmas['extended']:
                     self.valid &= self.synt_err_handler.report(nonfatal = True, 
-                                  info = "Using ascii constants requires .pragma extended: True. Changed.")
+                                  info = "Use of ascii constants requires '.pragma extended: True', changed.")
                 self.pragmas['extended'] = 'True'
                 self.strcode[nick] = "lambda x: str2int( '" + on_what[0] + "' )"
 
@@ -301,16 +302,34 @@ class PReFScript:
         'returns the Python-runnable version of the function'
         if what not in self.pycode:
             self.valid &= self.synt_err_handler.report(nonfatal = False, 
-                info = f"no Python code for function '{what}' found.")
+                info = f"No Python code for function '{what}' found.")
             return None
         return self.pycode[what]
 
 
+    def find_script_in_file(self, filename, main):
+        try:
+            with open(filename) as infile:
+                 return infile.read()
+        except IOError:
+            if main:
+                self.valid &= self.synt_err_handler.report(nonfatal = False, 
+                              info = f"Script {filename} not found.")
+            else:
+                self.valid &= self.synt_err_handler.report(nonfatal = True, 
+                              info = f"Imported script {filename} not found.")
+
+
     def load(self, filename, main = True):
-        'load in definitions from .prfs file(s) - use .import to recurse into further loading - NEED A TRY CLAUSE HERE !!!!!!!!!'
-        with open(filename + '.prfs') as infile:
-            "filename expected to end with .prfs but not explicit in argument"
-            script = infile.read()
+        'load in definitions from .prfs file(s) - use .import to recurse into further loading'
+        if filename.endswith('.prfs'):
+            self.valid &= self.synt_err_handler.report(nonfatal = True, 
+                          info = f"File name {filename} NOT expected to include the '.prfs' extension.")
+        else:
+            filename += '.prfs'
+        script = self.find_script_in_file(filename, main)
+        if not script:
+            return None
         lastread = None
         for label, what in self.parser.parse(script):
             'make the FunData or store the about or the pragma or the import'
@@ -322,10 +341,10 @@ class PReFScript:
                     "pragmas in imported files are ignored except extended when set to True"
                     if self.pragmas['extended'] != 'True':
                         self.valid &= self.synt_err_handler.report(nonfatal = True, 
-                            info = f"The .pragma extended declaration found in {filename} affects globally.")
+                            info = f"Warning: the .pragma extended declaration found in {filename} affects globally.")
                     self.pragmas[what[0]] = what[1]
             if label == 'about':
-                self.abouts.append(filename + ': ' + what) 
+                self.abouts.append('about ' + filename + ': ' + what) 
             if label == 'define':
                 self.define(what)
                 lastread = what['nick'] # nickname of the last function defined, used for default main
@@ -334,7 +353,7 @@ class PReFScript:
                 self.load(what, main = False)
         if main and not self.pragmas['main']:
             self.valid &= self.synt_err_handler.report(nonfatal = True, 
-                 info = f"No main .pragma found in '{filename}.prfs'.")
+                 info = f"No main .pragma found in '{filename}'.")
             if self.valid and lastread:
                 "warn that main assumed is lastread"
                 self.valid &= self.synt_err_handler.report(nonfatal = True, 
@@ -366,22 +385,23 @@ class PReFScript:
                 else:
                     "newly found undefined name"
                     self.valid &= self.synt_err_handler.report(nonfatal = False, 
-                        info = f"function '{name}' not found but needed by {need}.")
+                        info = f"Function '{name}' not found but needed by {need}.")
 
         checked = set()
         check_name(self, self.pragmas['main'])
 
 
 def run():
-    'Stand-alone CLI command to be handled as entry point - no Goedel numbers stored'
-    # ~ handle the filename as argument
+    'Stand-alone CLI command to be handled as entry point - no Goedel numbers stored; handle the filename as argument'
     from argparse import ArgumentParser
     from pytokr import pytokr
     read, loop = pytokr(iter = True)
     aparser = ArgumentParser(prog = 'prefscript',
               description = 'Partial Recursive Functions Scripting interpreter')
-    aparser.add_argument('filename', help = 'Script filename')
-    # ~ ADD A HELP OPTION BASED ON THE .about CLAUSES, IN GOOD ORDER
+    aparser.add_argument('filename', help = 'script filename to be run, extension .prfs assumed')
+    aparser.add_argument('-a', '--about', 
+            help = "show contents of .about directives in file and .import'd files before running",
+            action = "store_true")
     args = aparser.parse_args()
     f = PReFScript()
     f.load(args.filename)
@@ -389,27 +409,25 @@ def run():
         f.check_names()
     if f.valid:
         'run it on data from stdin according to input/output/main pragmas'
+        if args.about:
+            print('\n'.join(f.abouts))
+
         r = f.to_python(f.pragmas["main"])
+
         if f.pragmas["output"] in ('', "int"):
             post = lambda x: x
         elif f.pragmas["output"] == "ascii":
             post = int2str
         elif f.pragmas["output"] == "bool":
             post = bool
-        # ~ else:
-            # ~ "extend with other options"
-            # ~ self.valid &= self.synt_err_handler(fatal = True, 
-                # ~ f.pragmas["output"] + " value for pragma 'output' unknown.")
+
         if f.pragmas["input"] in ('', "int"):
             arg = int(input()) 
         elif f.pragmas["input"] == "none":
             arg = 666 # for one
         elif f.pragmas["input"] == "intseq":
             arg = cp.tup_i(map(int, loop()))
-        # ~ else:
-            # ~ "extend with other options"
-            # ~ self.valid &= self.synt_err_handler(fatal = True, 
-                # ~ f.pragmas["input"] + " value for pragma 'input' unknown.")
+
     if f.valid:
         print(post(r(arg)))
 
