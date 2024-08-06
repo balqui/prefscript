@@ -116,14 +116,14 @@ by the main function will be converted into a Boolean value or a
 
 If `True` then a number of extensions are enabled, namely, the 
 capabilities of defining functions as arbitrary ASCII constants, 
-as `compair` compositions that merge into a shot a `pair` with a 
-`comp` or as `primrec` for primitive recursion (faster than the 
-dismal delay introduced by `mu`-based primitive recursion).
+as `compair` compositions that merge into a single shot a `pair` 
+with a `comp`, or as `primrec` for primitive recursion (faster 
+than the dismal delay introduced by `mu`-based primitive recursion).
 
 More precisely, `compair f g h` takes three function names and
 forms an intermediate function as `pair g h` composing then `f`
 with it; whereas `primrec f g h` defines a new function `s` by
-course-of-values primitive recursion: for a given input `x`,
+_course-of-values primitive recursion:_ for a given input `x`,
 `f` tests `x` for being a base case, `g` is applied to `x` if
 it is a base case (that is, when `f(x)` returned nonzero) and, 
 in recursive cases, `h` is applied to a pair that has `x` as
