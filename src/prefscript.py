@@ -122,7 +122,7 @@ class Parser:
 
 
 class SyntErr:
-    "handle syntactic errors in the script - VERY PRIMITIVE for the time being"
+    "handle syntactic errors in the script - VERY PRIMITIVE for the time being - should write to stderr !!!!!!!!!!!!!!!!!!!!!"
 
     def __init__(self):
         "Nothing as of today"
@@ -288,6 +288,10 @@ class PReFScript:
 
             else:
                 "ascii_const, as no other 'how' captured by parser - kept out of the Goedel numbering for the time being"
+                if not self.pragmas['extended']:
+                    self.valid &= self.synt_err_handler.report(nonfatal = True, 
+                                  info = "Using ascii constants requires .pragma extended: True. Changed.")
+                self.pragmas['extended'] = 'True'
                 self.strcode[nick] = "lambda x: str2int( '" + on_what[0] + "' )"
 
             self.pycode[nick] = eval(self.strcode[nick], globals() | self.pycode)
@@ -295,19 +299,15 @@ class PReFScript:
 
     def to_python(self, what):
         'returns the Python-runnable version of the function'
-        # ~ if not self.valid:
-            # ~ "validity might be orthogonal to function 'what'"
-            # ~ print("Script not valid. Run with care.")
         if what not in self.pycode:
             self.valid &= self.synt_err_handler.report(nonfatal = False, 
                 info = f"no Python code for function '{what}' found.")
-            # ~ print("Nickname " + what + " not defined.")
             return None
         return self.pycode[what]
 
 
     def load(self, filename, main = True):
-        'load in definitions from .prfs file(s) - use .import to recurse into further loading'
+        'load in definitions from .prfs file(s) - use .import to recurse into further loading - NEED A TRY CLAUSE HERE !!!!!!!!!'
         with open(filename + '.prfs') as infile:
             "filename expected to end with .prfs but not explicit in argument"
             script = infile.read()
@@ -376,6 +376,8 @@ def run():
     'Stand-alone CLI command to be handled as entry point - no Goedel numbers stored'
     # ~ handle the filename as argument
     from argparse import ArgumentParser
+    from pytokr import pytokr
+    read, loop = pytokr(iter = True)
     aparser = ArgumentParser(prog = 'prefscript',
               description = 'Partial Recursive Functions Scripting interpreter')
     aparser.add_argument('filename', help = 'Script filename')
@@ -403,7 +405,7 @@ def run():
         elif f.pragmas["input"] == "none":
             arg = 666 # for one
         elif f.pragmas["input"] == "intseq":
-            arg = cp.tup_i(map(int, input().split()))
+            arg = cp.tup_i(map(int, loop()))
         # ~ else:
             # ~ "extend with other options"
             # ~ self.valid &= self.synt_err_handler(fatal = True, 

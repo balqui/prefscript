@@ -1,19 +1,28 @@
 .pragma extended: True
-.pragma output (o bien process?): int / bool / intseq (filter como caso particular?) / ascii
-.pragma input: int / intseq (inttup?) / none
+.pragma output: int / bool / ascii 
+.pragma input: int / intseq / none
 .pragma main: mainfunctionname
-.pragma cache: all
 
-100 define funcname [what is it] pair: k_1 k_1
 
-...
+Future:
 
-(ascii_input?)
+.pragma cache: all (or what/how? must reach down to cantorpairs...)
+.pragma output: intseq
+
+. name aliasing (PENDING)
+
+variantes...
+ (process?)
+ (filter como caso particular?) 
+ (inttup?)
+ (ascii_input?)
+
+[move future plans to issues, also the cantorpairs import]
 
 ====
 
 extended makes up for:
-. name aliasing
+. name aliasing (PENDING)
 . primrec scheme
 . compair scheme
 . arbitrary constant functions k_1234567 (constant given as string for now)
@@ -26,6 +35,8 @@ main defines one of the function in the script as the one to be externally calle
 
 cache: all caches all cantorpair computations, saves the time for the
 arithmetic but may require about 10GB for fact(4) under extended: False
+
+100 define funcname [what is it] pair: k_1 k_1
 
 Errors, nonfatal:
 

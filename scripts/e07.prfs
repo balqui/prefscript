@@ -1,0 +1,2 @@
+.about leaving define numbers out versus in
+0 define: m [ c ] ascii_const "m"

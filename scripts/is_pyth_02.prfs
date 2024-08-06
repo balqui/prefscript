@@ -1,11 +1,9 @@
-.about  Version of Jutge's X91267 Pythagorean triplets with main and extended "compair" and sequence reading
+.about  Version of Jutge's X91267 Pythagorean triplets with main and extended "compair" and sequence reading:
+.about  input pragma intseq means we get <a . <b . <c . 0 >>> from the input
 .pragma main: is_pythag
 .pragma extended: True
 .pragma input: intseq
 .pragma output: bool
-
-
-.about  remember that input pragma intseq means we get <a . <b . <c . 0 >>> and not <a . <b . c >> as current code assumes
 
 121 define: dupl
             [Duplicates the input]
