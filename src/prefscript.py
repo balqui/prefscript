@@ -23,14 +23,13 @@ Nicknames are alphanum strings not starting with a number (no surprise).
 
 from collections import defaultdict as ddict
 from re import compile as re_compile, finditer as re_finditer
-import cantorpairs as cp
-# ~ import scaff.cantorpairs as cp
-# ~ import cantorpairs.src.cantorpairs as cp
 from ascii7io import int2str, str2int, int2raw_str # users are not expected to need int2raw_str
+import cantorpairs
+cp = cantorpairs
 
 __version__ = "1.0"
 
-# ~ limit in order to omit Gödel numbers too high, around 300 decimal digits
+# ~ In order to omit Gödel numbers too high, around 300 decimal digits,
 # ~ LIMIT_GNUM set to 2**1000 but computed much faster via bit shift
 
 LIMIT_GNUM = 2 << 999
@@ -40,7 +39,7 @@ class FunData(dict):
 
     def __init__(self, nick = None, comment = None, how_def = None, def_on = None):
         dict.__init__(self)
-        self["nick"] = nick
+        self["nick"] = nick # function name
         self["comment"] = comment
         self["how_def"] = how_def
         self["def_on"] = def_on
@@ -87,11 +86,11 @@ class Parser:
         from re import compile as re_compile, finditer as re_finditer
         about = "\s*\.about(?P<about>.*)\n"                           # arbitrary documentation
         pragma = "\s*\.pragma\s+(?P<which>\w+):?\s+(?P<what>\w+)\s*"  # compilation directives
-        importing = "\s*\.import\s+(?P<to_import>[\w._-]+)\s*"                # additional external script
+        importing = "\s*\.import\s+(?P<to_import>[\w._-]+)\s*"        # additional external script
         a7str = '''(?P<quote>['"])(?P<a7str>.*)(?P=quote)'''
         startdef = "\d+\s+define\:\s*"
         group1_nick = "(?P<nick>\w+)\s+"
-        group2_comment = "\[\s*(?P<comment>(\w|\s|[.,:;<>=)(?!/+*-])+)\]\s+"    # has group 3 inside
+        group2_comment = "\[\s*(?P<comment>(\w|\s|[.,:;<>=)(?!/+*-])+)\]\s+" 
         group4_how = "(?P<how>pair|comp|mu|compair|primrec|ascii_const)\s+" 
         group5_on_what = "((?P<on_what>([a-zA-Z_]\w*\s+)+)|" + a7str + ")"  # nick args required not to start with a number
         define = (startdef +  
@@ -147,7 +146,7 @@ class PReFScript:
         their implementation assumes 'import cantorpairs as cp'
         '''
         self.valid = True   # program is correct until proven wrong
-        self.main = dict()  # RENAME some day, I am using 'main' for the main function to be called
+        self.main = dict()  # RENAME some day, as I am using also 'main' for the main function to be called
         self.strcode = dict()
         self.pycode = dict()
         self.gnums = dict()
