@@ -18,8 +18,8 @@ There are two installation options.
 #### Installing only the stand-alone interpreter
 
 It should be possible to do that with `pipx`. Then, use the
-interpreter as a command-line call. On Windows it is also 
-possible to launch a minimal GUI.
+interpreter as a command-line call. On Windows it will be also 
+possible to launch a minimal GUI hopefully in the near future.
 
 <!--- 
 
