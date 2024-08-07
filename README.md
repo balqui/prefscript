@@ -36,7 +36,8 @@ other and of a few basic functions via the partial recursion rules
 of composition and minimization. All functions are from the
 natural numbers into the natural numbers and may be undefined
 for some inputs. In order to handle tuples or sequences of natural
-numbers, a Cantor-like encoding is used. 
+numbers, a Cantor-like encoding is used (please see the companion 
+repository `https://github.com/balqui/cantorpairs`).
 
 The always available basic functions include: 
 `k_1`, the constant 1 function;
@@ -61,7 +62,7 @@ integer (that might be useful for human readers to label and
 reorder parts of the script) followed by the keyword "define:" 
 (with the colon) and then, in sequence, the name of the function
 being defined, a human-oriented description in square brackets,
-and how it is constructed out of other functions in the script:
+and how it is constructed out of other previously defined functions in the script:
 "pair" followed by two function names for the function that 
 pairs their output up, "comp" followed by two function names 
 for the composition function, or "mu" followed by a test function
@@ -161,6 +162,8 @@ left component and, as right component, a tuple containing
 all the values `s(x-1)`, `s(x-2)`, ..., `s(1)`, `s(0)`.
 
 
+Further examples of 
+`define` are shown in file `uses_prefscript.py`.
 
 
 
@@ -169,9 +172,8 @@ all the values `s(x-1)`, `s(x-2)`, ..., `s(1)`, `s(0)`.
 
 The `define` method of PReFScript objects allows one to add 
 new functions but I recommend the `dialog` method for a more
- amiable interface. Further examples of 
-`define` are shown in file `uses_prefscript.py`.
-
+ amiable interface. 
+ 
 Also, definitions contained in `.prfs` files
 can be loaded in with the method `load`; there, 
 all the previous considerations given for script 
