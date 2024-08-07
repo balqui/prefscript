@@ -28,7 +28,7 @@ import cantorpairs as cp
 # ~ import cantorpairs.src.cantorpairs as cp
 from ascii7io import int2str, str2int, int2raw_str # users are not expected to need int2raw_str
 
-__version__ = "0.4"
+__version__ = "1.0"
 
 # ~ limit in order to omit Gödel numbers too high, around 300 decimal digits
 # ~ LIMIT_GNUM set to 2**1000 but computed much faster via bit shift
@@ -365,7 +365,7 @@ class PReFScript:
 
 
     def dialog(self):
-        nick = input("Function nickname? ")
+        nick = input("Function name? ")
         comment = input("What is it? ")
         how = input("How is it made? [pair or comp or mu] ")
         on_what = input("Applied to what? [1 or 2 space-sep names] ")

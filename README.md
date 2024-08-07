@@ -1,19 +1,19 @@
 # PReFScript: 
-## A Partial Recursive Functions Scripts Lab
-
-Rather: Towards a Partial Recursive Functions lab.
+## Partial Recursive Functions for Scripting
 
 Author: Jose L Balcazar, ORCID 0000-0003-4248-4528
 
 Project started: mid Germinal 2003.
 
-Current version: 0.5, mid Thermidor 2024.
+Current version: 1.0, late Thermidor 2024.
 
 Copyleft: MIT License (https://en.wikipedia.org/wiki/MIT_License)
 
 A Python-based environment to explore and experiment with partial 
 recursive functions; naturally doubles as a (purely functional) 
 programming language, but it is not intended to be used much as such.
+
+<!--- 
 
 ##### REWRITE THIS WHEN READY including the pipx thingy
 Incomplete as of today, hence not pip-installable yet from PyPI
@@ -23,31 +23,38 @@ Then, once within the Python interpreter, `from prefscript import PReFScript, cp
 provides the class for storing the script functions and an access named `cp` 
 to `cantorpairs` functions, like `cp.dp(8, 4)`. Working on all that just these days.
 
-A prefscript is a sequence of functions defined in terms of each
-other and a few basic functions via the partial recursion rules 
-of composition and minimization. All functions are from the
-natural numbers into the natural numbers and may be undefined
-for some inputs. In order to handle tuples or sequences of natural
-numbers, a Cantor-like encoding is used (for information about the 
+(for information about the 
 related names `dp`, `pr_l`, `pr_r`, `tup_e`, `tup_i`, `s_tup`, `pr` 
 please see the companion repository `https://github.com/balqui/cantorpairs`).
 The basic functions include projection variants, and a 
 composition-like rule of pair formation is also available.
 
+---> 
+
+In PReFScript, a script is a sequence of functions defined in terms of each
+other and of a few basic functions via the partial recursion rules 
+of composition and minimization. All functions are from the
+natural numbers into the natural numbers and may be undefined
+for some inputs. In order to handle tuples or sequences of natural
+numbers, a Cantor-like encoding is used. 
+
+The always available basic functions include: 
+`k_1`, the constant 1 function;
+`id`, the identity function;
+addition and multiplication, `add` and `mul` respectively,
+that interpret the single number received as the Cantor encoding
+of a pair `<x.y>` and compute the corresponding operation on `x` and 
+`y`; modified difference `diff` that receives likewise a Cantor-encoded
+pair  `<x.y>` and computes `max(0, x - y)` so that we always stay
+within the natural numbers; and two functions related to projections
+of Cantor-encoded sequences.
+
 Scripts are maintained in objects of the class PReFScript,
 that can be imported into your own Python program. 
-A stand-alone interpreter is also provided. Thus, you
-have available two main ways of programming in PReFScript.
+Alternatively, a stand-alone interpreter is also provided. 
+Thus, you have available two main ways of programming in PReFScript.
 
 ### Running the interpreter on a script in a text file
-
-##### REWRITE THIS WHEN READY
-
-INSTALLATION DEPENDING, run the command `prefscript --help`
-as a first attempt or call directly `prefscript myscript`
-after making sure that the working folder contains a text 
-file `myscript.prfs` (omit the `.prfs` extension upon calling the
-interpreter).
 
 Function definitions in these scripts start with an arbitrary
 integer (that might be useful for human readers to label and
@@ -57,8 +64,18 @@ being defined, a human-oriented description in square brackets,
 and how it is constructed out of other functions in the script:
 "pair" followed by two function names for the function that 
 pairs their output up, "comp" followed by two function names 
-for the composition function, or "mu" followed by a function
-for defining a function by minimization.
+for the composition function, or "mu" followed by a test function
+in order to define a function by minimization (linear search).
+
+<!--- 
+
+##### REWRITE THIS WHEN READY
+
+INSTALLATION DEPENDING, run the command `prefscript --help`
+as a first attempt or call directly `prefscript myscript`
+after making sure that the working folder contains a text 
+file `myscript.prfs` (omit the `.prfs` extension upon calling the
+interpreter).
 
 ```
 10 define: piggyback_1
@@ -85,6 +102,10 @@ The well-aligned format exemplified by cases 10 and 50 is not
 compulsory, as can be seen in the other cases, but is highly
 recommended. The repository includes a few examples of such files.
 
+---> 
+
+
+
 Alternatively, each line in the script may contain a directive.
 Starting with `.about` indicates that the rest of the line is a 
 human-oriented explanation; the directive `.import` followed by a
@@ -100,8 +121,8 @@ As of the current version, the following directives are recognized:
 the function with that name. If omitted, the function declared
 last is run, preceded by a message to the effect.
 
-`.pragma input:` followed by one of the keywords `int` (default),
-`intseq` or `none`; specifying, respectively, that the input is
+`.pragma input:` followed by one of the keywords `int` (default)
+or `intseq` or `none`; specifying, respectively, that the input is
 an `int`, or a sequence of `int`, or that no input will be read.
 In the second case, the main function will receive a single `int`
 encoding the whole sequence as per the `tup_i` encoding function
@@ -120,6 +141,15 @@ as `compair` compositions that merge into a single shot a `pair`
 with a `comp`, or as `primrec` for primitive recursion (faster 
 than the dismal delay introduced by `mu`-based primitive recursion).
 
+
+
+
+### Handling PReFScript objects directly
+
+<!--- 
+
+INSTALLATION PROCEDURE
+
 More precisely, `compair f g h` takes three function names and
 forms an intermediate function as `pair g h` composing then `f`
 with it; whereas `primrec f g h` defines a new function `s` by
@@ -134,10 +164,8 @@ all the values `s(x-1)`, `s(x-2)`, ..., `s(1)`, `s(0)`.
 
 
 
+---> 
 
-### Handling PReFScript objects directly
-
-INSTALLATION PROCEDURE
 
 The `define` method of PReFScript objects allows one to add 
 new functions but I recommend the `dialog` method for a more
@@ -145,10 +173,12 @@ new functions but I recommend the `dialog` method for a more
 `define` are shown in file `uses_prefscript.py`.
 
 Also, definitions contained in `.prfs` files
-can be loaded in with the method `load`.
+can be loaded in with the method `load`; there, 
+all the previous considerations given for script 
+files apply.
 
-The `list` method without nicknames specified will list all 
-the functions; or the one function matching the nickname if 
+The `list` method without names specified will list all 
+the functions; or the one function matching the name if 
 one is provided. Adding `w_code = 1` will give additional 
 information.
 
@@ -172,13 +202,13 @@ add
 [...] shows the basic functions that are always available from the beginning
 
 >>> my_fs.dialog()
-Function nickname? const_pair_1
+Function name? const_pair_1
 What is it? The constant <1.1> function
 How is it made? [pair or comp or mu] pair
 Applied to what? [1 or 2 space-sep names] k_1 k_1
 >>>
 >>> my_fs.dialog()
-Function nickname? k_2
+Function name? k_2
 What is it? The constant 2 function
 How is it made? [pair or comp or mu] comp
 Applied to what? [1 or 2 space-sep names] add const_pair_1
@@ -214,7 +244,7 @@ k_2
 
 Each function in a PReFScript may have a Gödel number associated
 (until it becomes too big) and also the last operation used 
-to construct it. Then it has as well a nickname, a comment, 
+to construct it. Then it has as well a name, a comment, 
 and various forms of code, as indicated so far.
 If the object initialization is made with
 
