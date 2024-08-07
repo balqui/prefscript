@@ -1,0 +1,15 @@
+.about  playing with undefined functions
+.pragma main: q
+.pragma extended: True
+
+  1 define: q
+          [ uses later function ]
+          pair p id
+
+  2 define: p
+          [ uses later function too ]
+          pair k_1 r
+
+  3 define: r
+          [ uses undefined function third ]
+          compair diff k_1 k_1
