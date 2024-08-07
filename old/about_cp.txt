@@ -1,0 +1,33 @@
+
+Initially cantorpairs was imported by prefscript as 
+
+import scaff.cantorpairs as cp
+
+Then cantorpairs was put as a submodule within src, and then
+the usage within prefscript was
+
+import cantorpairs.src.cantorpairs as cp
+
+After setting up the __init__.py file with the convenient
+imports, it was employed from prefscript as
+
+import cantorpairs as cp
+
+But then user programs would need to do
+
+from prefscript import PReFScript, cp
+
+which is kinda opaque, hence the current situation which is 
+that in prefscript the import is just
+
+import cantorpairs
+
+plus
+
+cp = cantorpairs
+
+so that within prefscript.py the name cp can be used whereas 
+from user programs one can write
+
+from prefscript import PReFScript, cantorpairs as cp
+

@@ -1,3 +1,21 @@
+
+Aug 2024:
+ - add --version to argparse
+ - rewrite doc.md to 
+   - explain the two install possibilities
+   - clarify the difference between pipx and pip
+ - bump version to 1.1
+ - ensure everything ready once more
+ - remove the global prefscript, suppose pipx knows how to do it
+ - upload to true pypi
+ - remove the prefscript from tpy02 and/or tpytokr
+ - enter venv, install with pip and check with which, call, and import
+ - exit venv, check which, install with pipx, check which
+ - enter venv again and recheck
+
+
+
+
 .pragma extended: True
 .pragma output: int / bool / ascii 
 .pragma input: int / intseq / none
