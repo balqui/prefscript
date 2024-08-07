@@ -4,9 +4,9 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "prefscript"
-version = "0.3"
+version = "1.0"
 authors = [ { name = "José Luis Balcázar", email = "jose.luis.balcazar@upc.edu" }, ]
-description = "(Towards a) Partial Recursive Functions lab"
+description = "Partial Recursive Functions for Scripting"
 readme = "README.md"
 requires-python = ">=3.10"
 classifiers = [
@@ -19,3 +19,6 @@ classifiers = [
 [project.urls]
 "Homepage" = "https://github.com/balqui/prefscript"
 "Bug Tracker" = "https://github.com/balqui/prefscript/issues"
+
+[project.scripts]
+prefscript = "prefscript:run"
