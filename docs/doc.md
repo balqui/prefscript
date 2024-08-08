@@ -17,19 +17,28 @@ There are two installation options.
 
 #### Installing only the stand-alone interpreter
 
-Make sure you have `pipx`; installing it globally via `pip` 
-is possible but may require you to accept responsibility for 
-mixing up `apt`-installed things with `pip`-installed things.
-The option of installing it in a virtual environment will 
-leave the global environment without it; another possibility 
-on Ubuntu/Debian is to install `pipx` via `apt`.
-
-Then, installation proceeds in the standard manner: 
-`pipx install prefscript` (maybe preceded by super-user
-identification) will create a command `prefscript` that
-you can call from the command line. It is suggested that
+Make sure you have `pipx`; then, installation proceeds 
+in the standard manner: `pipx install prefscript` 
+(maybe preceded by super-user identification) will 
+create a command `prefscript` that you can call 
+from the command line. It is suggested that
 your very first call is `prefscript --help`.
 
+If you don't have `pipx` yet, installing it globally 
+via `pip` should be possible but may require you to 
+accept responsibility for mixing up `apt`-installed 
+things with `pip`-installed things. The option of 
+installing `pipx` in a virtual environment will leave 
+the global environment without it; another possibility 
+on Ubuntu/Debian is to install `pipx` via `apt`.
+
+This installation form is appropriate if you plan only
+to run the interpreter on third-party PReFScript files 
+or if you are already familiar with this particular form 
+of functional programming. To learn to write scripts of
+partial recursive functions and understand well that
+formal model of computation, the next installation 
+option may be preferable.
 
 <!--- 
 
@@ -44,14 +53,17 @@ it is importable, which again I guess it would not be.
 
 #### Installing the system in an importable form
 
+Use the usual mechanism `pip install prefscript`
+(maybe preceded by super-user identification).
+This way, besides making the interpreter available
+as described in the previous section, you will be 
+able to `import prefscript` into your own code.
+
 It is recommended that the installation is made in a
 virtual environment. It will install as well the module
 `pytokr` unless it is already installed. If you have
-`pytokr` in a virtual environment, consider using the
-same environment to install also `prefscript`. To do
-this, use the usual mechanism `pip install prefscript`.
-Then, besides the previously described interpreter,
-you will be able to `import prefscript`.
+`pytokr` already in a virtual environment, consider 
+using the same environment to install also `prefscript`.
 
 It may be easier to learn to use PReFScript by installing
 it in this way and then importing its main objects as
@@ -92,7 +104,8 @@ sequences of natural numbers, a Cantor-like encoding is used.
 #### Cantor-like encoding
 
 Before proceeding to our form of partial recursive functions,
-please see first the companion repository `https://github.com/balqui/cantorpairs`.
+please see first the companion repository 
+[cantorpairs](https://github.com/balqui/cantorpairs).
 Its README file describes the available functions and their usages.
 It is a submodule of `prefscript` and provides the
 related names `dp`, `pr_L`, `pr_R`, `tup_e`, `tup_i`, `s_tup`, `pr`
@@ -131,7 +144,7 @@ that can be interpreted as the encoding of a pair:
 
 Thus, composition works in the fully standard way: if `h` is
 defined by composition of `f` and `g` (noted here as `comp f g`)
-then `h(n) = f(g(n))` if `g(n)` is defined and `f` is defined
+then `h(n) = f(g(n))` if `g(n)` is defined and if `f` is defined
 on that value. _Evaluation is eager_. (Fans of lazy evaluation 
 may work on Haskell instead.)
 
@@ -143,13 +156,13 @@ finding a value `k` such that `f(<x.k>)` is nonzero: then `h(x) = k`.
 
 In `mu f` one expects `f` to be a predicate, that is, a total
 function that only evaluates to 0 or 1. If one of the intermediate
-tests `f(<x.j>)` turns out to be undefined before reaching for
+tests `f(<x.j>)` turns out to be undefined before reaching
 the `k` searched for, then `h(x)` is undefined. Nonzero values
 of `f` are treated as 1.
 
-A nonstandard addition to the partial recursive function schemes
+A slightly nonstandard addition to the partial recursive function schemes
 is necessary to handle everything as single natural numbers, 
-namely, given two functions `f` and `g`, compute a single
+namely, given two functions `f` and `g`, computing a single
 value pairing up both outputs: it is expressed as `pair f g`
 and defines a function `h` such that `h(x) = <f(x).g(x)>`. 
 
@@ -213,42 +226,21 @@ about the assumed main function and for additional useful extensions.
 
 ### Importing PReFScript objects
 
-
-<!--- 
-
-INSTALLATION DEPENDING, 
-
-REWRITE THIS WHEN READY
-
-DELETE:
-
-Alternatively, a 
-
-as a first attempt or call directly 
-
-run the command `prefscript --help`
-as a first attempt or call directly `prefscript myscript`
-after making sure that the working folder contains a text 
-file `myscript.prfs` 
-
-Further examples of 
-`define` are shown in file `uses_prefscript.py`.
-
----> 
-
 Scripts are maintained in objects of the class PReFScript,
 that can be imported into your own Python program. 
 Thus, you have available two main ways of programming in 
-PReFScript: through the stand-alone interpreter described
-or by handling the scripts internals yourself. Simply
-import the class:
+PReFScript: through the stand-alone interpreter as described
+or by handling the scripts internals yourself. 
+
+If the installation was made with `pip` instead of `pipx`,
+simply import the class:
 
 ```
 >>> from prefscript import PReFScript
 >>> my_fs = PReFScript() # to store my functions for this session
 ```
 
-You are likely to import as well the `cantorpairs` module
+You are likely to want to import as well the `cantorpairs` module
 so that you have available the auxiliary tuping functions
 mentioned earlier; one way to do this is:
 
@@ -347,8 +339,8 @@ the Python-callable codes is provided with `w_code = 2` in method
 
 ### Directives
 
-Alternatively, each line in a `.prfs` script may contain a directive.
-Starting with `.about` indicates that the rest of the line is a 
+Lines in a `.prfs` script may contain directives.
+Starting the line with `.about` indicates that the rest of the line is a 
 human-oriented explanation; the directive `.import` followed by a
 `filename` requires the interpreter to load in, at that point, 
 the contents of `filename.prfs`; and the `.pragma` directives

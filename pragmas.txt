@@ -1,9 +1,9 @@
 
 Aug 2024:
- - add --version to argparse
+ - add --version to argparse v
  - rewrite doc.md to 
-   - explain the two install possibilities
-   - clarify the difference between pipx and pip
+   - explain the two install possibilities v
+   - clarify the difference between pipx and pip v
  - bump version to 1.1 v
  - ensure everything ready once more
  - remove the global prefscript, suppose pipx knows how to do it
