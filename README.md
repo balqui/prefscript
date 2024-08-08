@@ -39,7 +39,6 @@ Thus, you have available two main ways of programming in PReFScript.
 
 ### Installation and ways to use PReFScript functions
 
-See [doc.md](https://github.com/balqui/prefscript/blob/main/docs/doc.md) 
-for all the details (somewhat incomplete as of today).
+See [doc.md](https://github.com/balqui/prefscript/blob/main/docs/doc.md).
 
 
