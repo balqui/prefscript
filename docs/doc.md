@@ -19,8 +19,7 @@ There are two installation options.
 
 Make sure you have `pipx`; then, installation proceeds 
 in the standard manner: `pipx install prefscript` 
-(maybe preceded by super-user identification) will 
-create a command `prefscript` that you can call 
+will create a command `prefscript` that you can call 
 from the command line. It is suggested that
 your very first call is `prefscript --help`.
 
