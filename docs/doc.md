@@ -3,7 +3,7 @@
 
 Author: Jose L Balcazar, ORCID 0000-0003-4248-4528
 
-Documentation for version: 1.0 (SOMEWHAT INCOMPLETE AS OF TODAY, RETURN IN A FEW DAYS PLEASE)
+Documentation for version: 1.1
 
 Copyleft: MIT License (https://en.wikipedia.org/wiki/MIT_License)
 
@@ -17,13 +17,24 @@ There are two installation options.
 
 #### Installing only the stand-alone interpreter
 
-It should be possible to do that with `pipx`. Then, use the
-interpreter as a command-line call. On Windows it will be also 
-possible to launch a minimal GUI hopefully in the near future.
+Make sure you have `pipx`; installing it globally via `pip` 
+is possible but may require you to accept responsibility for 
+mixing up `apt`-installed things with `pip`-installed things.
+The option of installing it in a virtual environment will 
+leave the global environment without it; another possibility 
+on Ubuntu/Debian is to install `pipx` via `apt`.
+
+Then, installation proceeds in the standard manner: 
+`pipx install prefscript` (maybe preceded by super-user
+identification) will create a command `prefscript` that
+you can call from the command line. It is suggested that
+your very first call is `prefscript --help`.
+
 
 <!--- 
 
-All this, to be tested and then rewritten.
+On Windows it will be also 
+possible to launch a minimal GUI hopefully in the near future.
 
 Then test whether it brought in pytokr and cantorpairs
 in an importable form, which I guess it would not, and whether

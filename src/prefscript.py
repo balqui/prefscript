@@ -27,7 +27,7 @@ from ascii7io import int2str, str2int, int2raw_str # users are not expected to n
 import cantorpairs
 cp = cantorpairs
 
-__version__ = "1.0"
+__version__ = "1.1"
 
 # ~ In order to omit Gödel numbers too high, around 300 decimal digits,
 # ~ LIMIT_GNUM set to 2**1000 but computed much faster via bit shift
@@ -84,15 +84,15 @@ class Parser:
     def __init__(self):
         "group names require Python >= 3.11"
         from re import compile as re_compile, finditer as re_finditer
-        about = "\s*\.about(?P<about>.*)\n"                           # arbitrary documentation
-        pragma = "\s*\.pragma\s+(?P<which>\w+):?\s+(?P<what>\w+)\s*"  # compilation directives
-        importing = "\s*\.import\s+(?P<to_import>[\w._-]+)\s*"        # additional external script
-        a7str = '''(?P<quote>['"])(?P<a7str>.*)(?P=quote)'''
-        startdef = "\d+\s+define\:\s*"
-        group1_nick = "(?P<nick>\w+)\s+"
-        group2_comment = "\[\s*(?P<comment>(\w|\s|[.,:;<>=)(?!/+*-])+)\]\s+" 
-        group4_how = "(?P<how>pair|comp|mu|compair|primrec|ascii_const)\s+" 
-        group5_on_what = "((?P<on_what>([a-zA-Z_]\w*\s+)+)|" + a7str + ")"  # nick args required not to start with a number
+        about = r"\s*\.about(?P<about>.*)\n"                           # arbitrary documentation
+        pragma = r"\s*\.pragma\s+(?P<which>\w+):?\s+(?P<what>\w+)\s*"  # compilation directives
+        importing = r"\s*\.import\s+(?P<to_import>[\w._-]+)\s*"        # additional external script
+        a7str = r'''(?P<quote>['"])(?P<a7str>.*)(?P=quote)'''
+        startdef = r"\d+\s+define\:\s*"
+        group1_nick = r"(?P<nick>\w+)\s+"
+        group2_comment = r"\[\s*(?P<comment>(\w|\s|[.,:;<>=)(?!/+*-])+)\]\s+" 
+        group4_how = r"(?P<how>pair|comp|mu|compair|primrec|ascii_const)\s+" 
+        group5_on_what = r"((?P<on_what>([a-zA-Z_]\w*\s+)+)|" + a7str + ")"  # nick args required not to start with a number
         define = (startdef +  
               group1_nick + 
               group2_comment + 
@@ -401,6 +401,8 @@ def run():
     aparser.add_argument('-a', '--about', 
             help = "show contents of .about directives in file and .import'd files before running",
             action = "store_true")
+    aparser.add_argument('-v', '--version', 
+            action = "version", version = f'{__version__}')
     args = aparser.parse_args()
     f = PReFScript()
     f.load(args.filename)

@@ -4,7 +4,7 @@ Aug 2024:
  - rewrite doc.md to 
    - explain the two install possibilities
    - clarify the difference between pipx and pip
- - bump version to 1.1
+ - bump version to 1.1 v
  - ensure everything ready once more
  - remove the global prefscript, suppose pipx knows how to do it
  - upload to true pypi
