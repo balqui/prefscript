@@ -11,6 +11,25 @@ A Python-based environment to explore and experiment with partial
 recursive functions; naturally doubles as a (purely functional) 
 programming language, but it is not intended to be used much as such.
 
+<!--- 
+
+Make sure some example scripts become available.
+
+On Windows it will be also 
+possible to launch a minimal GUI hopefully in the near future.
+
+Test whether it brought in pytokr and cantorpairs
+in an importable form, also if pytokr wasn't there
+and maybe now is, stand-alone.
+
+Think how to avoid the no-main pragma complaint upon importing.
+
+Mention somewhere that repeated consistent definitions are ignored.
+
+TEST: `pip install --index-url https://test.pypi.org/simple/ --no-deps prefscript`
+
+---> 
+
 ### Installation
 
 There are two installation options.
@@ -39,17 +58,6 @@ partial recursive functions and understand well that
 formal model of computation, the next installation 
 option may be preferable.
 
-<!--- 
-
-On Windows it will be also 
-possible to launch a minimal GUI hopefully in the near future.
-
-Then test whether it brought in pytokr and cantorpairs
-in an importable form, which I guess it would not, and whether
-it is importable, which again I guess it would not be.
-
----> 
-
 #### Installing the system in an importable form
 
 Use the usual mechanism `pip install prefscript`
@@ -67,28 +75,6 @@ using the same environment to install also `prefscript`.
 It may be easier to learn to use PReFScript by installing
 it in this way and then importing its main objects as
 explained below, rather than from the stand-alone interpreter.
-
-<!--- 
-
-Again, all this to be tested.
-
-##### REWRITE THIS WHEN READY including the pipx thingy
-Incomplete as of today, hence not pip-installable yet from PyPI
-hosting. Install it instead, within a virtual environment, with:
-`pip install --index-url https://test.pypi.org/simple/ --no-deps prefscript`
-Then, once within the Python interpreter, `from prefscript import PReFScript, cp`
-provides the class for storing the script functions and an access named `cp` 
-to `cantorpairs` functions, like `cp.dp(8, 4)`. Working on all that just these days.
-
-(for information about the 
-related names `dp`, `pr_l`, `pr_r`, `tup_e`, `tup_i`, `s_tup`, `pr` 
-please see the companion repository `https://github.com/balqui/cantorpairs`).
-The basic functions include projection variants, and a 
-composition-like rule of pair formation is also available.
-
-CHECK OUT THE CAPITAL L AND R IN THE cp FUNCTIONS !!!
-
----> 
 
 ### Elementary notions
 
@@ -240,7 +226,7 @@ simply import the class:
 ```
 
 You are likely to want to import as well the `cantorpairs` module
-so that you have available the auxiliary tuping functions
+so that you have available the auxiliary tupling functions
 mentioned earlier; one way to do this is:
 
 ```
