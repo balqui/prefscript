@@ -1,19 +1,4 @@
 
-Aug 2024:
- - add --version to argparse v
- - rewrite doc.md to 
-   - explain the two install possibilities v
-   - clarify the difference between pipx and pip v
- - bump version to 1.1 v
- - ensure everything ready once more
- - remove the global prefscript, suppose pipx knows how to do it
- - upload to true pypi
- - remove the prefscript from tpy02 and/or tpytokr
- - enter venv, install with pip and check with which, call, and import
- - exit venv, check which, install with pipx, check which
- - enter venv again and recheck
-
-
 
 
 .pragma extended: True
@@ -67,4 +52,22 @@ Errors, fatal:
 
 - unknown definition method (careful with "basic" which is like unknown but is known)
 - undefined nickname employed (in check_names)
+
+===
+
+Aug 2024:
+ - add --version to argparse
+ - rewrite doc.md to 
+   - explain the two install possibilities
+   - clarify the difference between pipx and pip
+ - bump version to 1.1
+ - ensure everything ready once more
+ - remove the global prefscript, suppose pipx knows how to do it
+ - remove the prefscript from tpy02 and/or tpytokr
+ - next, for 1.1:
+   - upload to true pypi
+   - enter venv, install with pip and check with which, call, and import
+   - exit venv, check which, install with pipx, check which
+   - enter venv again and recheck
+
 
