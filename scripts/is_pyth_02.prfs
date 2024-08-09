@@ -1,5 +1,5 @@
 .about  Version of Jutge's X91267 Pythagorean triplets with main and extended "compair" and sequence reading:
-.about  input pragma intseq means we get <a . <b . <c . 0 >>> from the input
+.about  input pragma intseq means we get <a . <b . <c . 0 >>> from the input, write three natural numbers and end with ctrl-D
 .pragma main: is_pythag
 .pragma extended: True
 .pragma input: intseq

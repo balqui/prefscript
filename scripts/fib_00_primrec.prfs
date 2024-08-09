@@ -1,4 +1,4 @@
-.about  first attempt at Fibonacci by primitive recursion on pragma extended
+.about  Fibonacci values by primitive recursion on pragma extended
 .pragma main: fib
 .pragma extended: True
 

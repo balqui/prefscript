@@ -1,4 +1,4 @@
-.about  first attempt at fact by primitive recursion on pragma extended
+.about  Factorial by primitive recursion on pragma extended
 .pragma main: fact
 .pragma extended: True
 

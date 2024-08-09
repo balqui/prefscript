@@ -9,7 +9,7 @@ Copyleft: MIT License (https://en.wikipedia.org/wiki/MIT_License)
 
 A Python-based environment to explore and experiment with partial 
 recursive functions; naturally doubles as a (purely functional) 
-programming language, but it is not intended to be used much as such.
+programming language, although it is not intended to be used much as such.
 
 <!--- 
 
@@ -130,8 +130,7 @@ that can be interpreted as the encoding of a pair:
 Thus, composition works in the fully standard way: if `h` is
 defined by composition of `f` and `g` (noted here as `comp f g`)
 then `h(n) = f(g(n))` if `g(n)` is defined and if `f` is defined
-on that value. _Evaluation is eager_. (Fans of lazy evaluation 
-may work on Haskell instead.)
+on that value. _Evaluation is eager_.
 
 The minimization operator takes a test function `f` and creates
 a new function `h = mu f` implementing linear search over `f`.
@@ -204,10 +203,16 @@ pairs `<x.y>` to answer 0 or 1 according to whether
 
 The well-aligned format exemplified by cases 10 and 50 is not
 compulsory, as can be seen in the other cases, but is highly
-recommended. The repository includes a few examples of such files.
+recommended. The repository includes 
+[a few examples](https://github.com/balqui/prefscript/tree/main/scripts)
+of such files, some intended to be imported from other files.
 
-See below under Directives for how to avoid the annoying message 
-about the assumed main function and for additional useful extensions.
+Add a first line with the contents `.pragma main: sign` to
+run instead the function `sign` and omit the warning. 
+See below under Directives for why this avoids the 
+annoying message about the assumed main function, for 
+how to import other scripts from separate files, and 
+for additional useful extensions.
 
 ### Importing PReFScript objects
 
