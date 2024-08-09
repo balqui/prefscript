@@ -1,6 +1,5 @@
-.about To reach up to sign: sign(x) = x - (x - 1) where "-" is modified difference
-.import bool
-.pragma main sign
+.about Function sign: sign(x) = x - (x - 1) where "-" is modified difference
+.about Script intended to be .import'd, not run on its own
 
 170 define: piggyback_1
             [Pairs up x with 1: <x.1>]
@@ -18,3 +17,10 @@
             [Sign: 0 for 0, 1 for the rest]
             comp diff piggyback_ant
 
+320 define: piggyfront_1
+            [Pairs up 1 with x: <1.x>]
+            pair k_1 id
+
+330 define: neg
+            [Negation: 0 from 1, 1 from 0]
+            comp diff piggyfront_1

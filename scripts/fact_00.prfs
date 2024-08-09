@@ -1,3 +1,8 @@
+.about Factorial on mu-based linear search, no extended pragma
+.about Complete script without imports as a stand-alone example
+.about Dismal slow, don't attempt to compute fact(5), takes years
+
+
 121 define: dupl
             [Duplicates the input]
             pair id id

@@ -1,19 +1,17 @@
-
-# Script for projections, repeats one function from script_sign
-
-# Repeated from script_sign: piggyback_1
+.about Script for various projection-related functions
+.about Script intended to be .import'd, not run on its own
 
 170 define: piggyback_1
             [Pairs up x with 1: <x.1>]
             pair id k_1
 
-220 define: const_pair_1
+220 define: k_1_1
             [The constant <1.1> function]
             pair k_1 k_1
 
 230 define: k_0
             [The constant 0 function]
-            comp diff const_pair_1
+            comp diff k_1_1
 
 240 define: piggyback_0
             [Pairs up x with 0: <x.0>]
@@ -34,6 +32,14 @@
 280 define: pr_RL
             [pr_R on pr_L]
             comp pr_R pr_L
+
+290 define: pr_RR
+            [Iterated pr_R]
+            comp pr_R pr_R
+
+300 define: pr_LR
+            [pr_L on pr_R]
+            comp pr_L pr_R
 
 310 define: swap
             [From <x.y> to <y.x>]

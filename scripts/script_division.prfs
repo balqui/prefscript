@@ -1,0 +1,43 @@
+.about Script to compute quotient of integer division
+.about Careful: loops forever if denominator is zero
+.about Division function on pair is div, divseq tuned to receive 2 values as an intseq
+
+.import script_compar
+.pragma main: divseq
+.pragma input: intseq
+
+380 define: aux_1
+            [Aux 1 for Test_Quotient]
+            comp piggyback_1 pr_R
+
+390 define: aux_2
+            [Aux 2 for Test_Quotient: pr_R(x)+1]
+            comp add aux_1
+
+400 define: aux_3
+            [Aux 3 for Test_Quotient]
+            pair pr_RL aux_2
+
+410 define: aux_4
+            [Aux 4 for Test_Quotient: pr_R(pr_L(y))*(pr_R(y)+1)]
+            comp mul aux_3
+
+420 define: aux_5
+            [Aux 5 for Test_Quotient]
+            pair aux_4 pr_LL
+
+430 define: test_quotient
+            [Test_Quotient for mu-division, pr_R(pr_L(y))*(pr_R(y)+1) > pr_L(pr_L(x))]
+            comp gt aux_5
+
+440 define: div
+            [Quotient of division by linear search]
+            mu test_quotient
+
+460 define: trans
+            [ changes seq input of size 2 into pair ]
+            pair pr_L pr_LR
+
+480 define: divseq
+            [Quotient of division, pair given as seq]
+            comp div trans
