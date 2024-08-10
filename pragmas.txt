@@ -1,27 +1,5 @@
 
 
-
-.pragma extended: True
-.pragma output: int / bool / ascii 
-.pragma input: int / intseq / none
-.pragma main: mainfunctionname
-
-
-Future:
-
-.pragma cache: all (or what/how? must reach down to cantorpairs...)
-.pragma output: intseq
-
-. name aliasing (PENDING)
-
-variantes...
- (process?)
- (filter como caso particular?) 
- (inttup?)
- (ascii_input?)
-
-[move future plans to issues, also the cantorpairs import]
-
 ====
 
 extended makes up for:
@@ -70,4 +48,38 @@ Aug 2024:
    - exit venv, check which, install with pipx, check which
    - enter venv again and recheck
 
+===
+
+
+
+.pragma extended: True
+.pragma output: int / bool / ascii 
+.pragma input: int / intseq / none
+.pragma main: mainfunctionname
+
+
+Future:
+
+.pragma main superseded by specifying main name at CLI call:
+  allows for easy run of problems defining functions in Jutge
+
+.pragma cache: all (or what/how? must reach down to cantorpairs...)
+.pragma output: intseq (for P37469 Time decomposition, P34279 Add one second, P37500 First numbers, )
+.pragma output: asciinum (for P50327 Reversed number which needs leading zeros)
+
+output intseq or in/out filter? (See e.g. P43850 Uncle Ernie, P84735 Smallest multiple, )
+
+. negative integers (for P41221 Add 3 numbers, P56118 Max of 2, P90615 Max of 3, P56559 Intervals (2), )
+
+. name aliasing (PENDING)
+
+. GCD right now would deploy whole sequence of values, very likely too slow
+
+variantes...
+ (process?)
+ (filter como caso particular?) 
+ (inttup?)
+ (ascii_input?)
+
+[move future plans to issues, also the cantorpairs import]
 

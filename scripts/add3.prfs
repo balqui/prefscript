@@ -1,0 +1,25 @@
+.about Jutge P41221: read 3 numbers and add them (but will fail with negative values)
+.about Import pr_LR and pr_RR and such
+.import script_proj
+.pragma input: intseq
+.pragma main: add3
+
+500 define: pr_LRR
+            [ pr_L on pr_RR ]
+            comp pr_L pr_RR
+
+1500 define: pair_2nd_3rd
+             [ extract the 2nd and 3rd addends from input sequence ]
+             pair pr_LR pr_LRR
+
+1520 define: add_2nd_3rd
+             [ sum of the 2nd and 3rd addends ]
+             comp add pair_2nd_3rd
+
+1540 define: pair_1st_sum_rest
+             [ extract the 1st and pair with sum of 2nd and 3rd ]
+             pair pr_L add_2nd_3rd
+
+1560 define: add3
+             [ sum of the 2nd and 3rd addends ]
+             comp add pair_1st_sum_rest
