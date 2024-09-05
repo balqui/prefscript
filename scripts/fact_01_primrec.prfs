@@ -104,11 +104,11 @@
             comp pr_R pr_L
 
 1101 define: fact_step
-             [given <x.z>, factorial of x given the whole course of values as z ]
+             [given <x.z>, factorial of x given the whole course of values as z]
              compair mul pr_L pr_LR
 
 1111 define: fact_is_base
-             [given <x.z>, factorial of x given the whole course of values as z ]
+             [test base case, is x = 0?]
              compair eq id k_0
 
 1121 define: fact
