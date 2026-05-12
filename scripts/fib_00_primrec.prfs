@@ -116,6 +116,6 @@
              compair lt id k_1
 
 1121 define: fib
-             [factorial by prim rec: is_base, base function below lim, step function as defined on course of values]
+             [fibonacci by prim rec: is_base, base function below lim, step function as defined on course of values]
              primrec fib_is_base k_1 fib_step
 
