@@ -1,0 +1,65 @@
+%import common.CNAME
+%import common.WS
+
+%ignore WS
+
+start   : defun+
+
+defun   : CNAME ":" SH_COMMENT? funspec SH_COMMENT? 
+
+funspec : "(" funspec ")"
+        | CNAME
+        | "mu"      funspec
+        | "pair"    funspec funspec
+        | "comp"    funspec funspec
+        | "primrec" funspec funspec funspec
+
+
+
+
+
+(FIRST SIMPLIFIED ATTEMPT WITHOUT PRAGMAS)
+
+
+
+Gramática:
+
+program : preface defun
+
+defun   :
+        | defun NAME COLON fun
+
+[
+EBNF:
+
+defuns  : (NAME COLON fun)*
+]
+
+
+funspec : OPEN funspec CLOSE
+        | NAME
+        | MU funspec
+        | PAIR funspec funspec
+        | COMP funspec funspec
+        | PRIMREC funspec funspec funspec
+
+preface :
+        | preface pragma
+
+pragma  : PRAGMA PRAGMANAME
+
+
+A defun main: funspec is mandatory; recommended that it takes the form main: NAME
+
+pragma names that will be preserved: ascii const output, sequence input, maybe pair input
+(the "extended" pragma will be removed and everything allowed from the start or, at most, 
+the other way around with a pragma "reduced"; main with silent default was initially
+planned to stay but now I think it will not as just said above)
+
+consider moving import to a pragma using / namespace merging a "std" with all the function 
+definitions and some form of import
+
+consider removing the word pragma
+
+
+

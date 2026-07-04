@@ -1,0 +1,65 @@
+
+First of all:
+
+(a) Solve trivial issues in 1.1 that don't need refactoring
+(b) Refactor the class
+(c) Solve the rest of issues in 1.1
+(d) Produce 1.2 and make it available in PyPI
+(e) Only then start working on 2.0
+
+Ideas for 2.0 most likely on a real Lark parser:
+
+Minimal def example:
+
+swap: pair proj_R proj_L
+
+Larger example:
+
+ant:
+    "anterior value, ant(x) = x-1 except ant(0) = 0"
+    comp diff (pair id k_1)
+
+sign: comp diff pair id ant
+
+Complete example:
+
+sign:
+    "0 for 0, 1 for the rest, sign(x) is then char fct of 'x > 0'"
+    comp diff ( pair id ( comp diff (pair id k_1) ) )
+
+Gramática:
+
+program : preface defun
+
+defun   :
+        | defun NAME COLON fun
+
+funspec : OPEN funspec CLOSE
+        | NAME
+        | MU funspec
+        | PAIR funspec funspec
+        | COMP funspec funspec
+        | PRIMREC funspec funspec funspec
+
+preface :
+        | preface pragma
+
+pragma  : PRAGMA PRAGMANAME
+
+
+A defun main: funspec is mandatory; recommended that it takes the form main: NAME
+
+pragma names that will be preserved: ascii const output, sequence input, maybe pair input
+(the "extended" pragma will be removed and everything allowed from the start or, at most, 
+the other way around with a pragma "reduced"; main with silent default was initially
+planned to stay but now I think it will not as just said above)
+
+will need a way (a pragma?) to keep running v1.2
+
+consider moving import to a pragma using / namespace merging a "std" with all the function 
+definitions and some form of import
+
+consider removing the word pragma
+
+
+
