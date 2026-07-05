@@ -1,0 +1,78 @@
+.pragma extended True
+.pragma main readexp
+.pragma input intseq
+.import script_sign
+.import script_proj
+
+10 define: zero
+           [ is it zero? ]
+           comp neg sign
+
+20 define: is_exp_zero
+           [ is the exponent part zero? ]
+           comp zero pr_R 
+
+30 define: ant_pr_R
+           [ rhs minus one if more than zero ]
+           comp ant pr_R
+
+40 define: red_exp
+           [ leave base, reduce exponent part by one ]
+           pair pr_L ant_pr_R
+
+50 define: red_exp_L
+           [ reduce exponent part by one, ignoring the course of values part ]
+           comp red_exp pr_L
+
+60 define: base_to_red_exp_BAD
+           [ aux for recursive call of exp - WRONG, NEED TO LOOK UP FROM THE RIGHT AND proj DOES FROM THE LEFT ]
+           compair proj pr_R red_exp_L
+
+61 define: neg_s_tup
+           [ length of tuple ]
+           comp neg s_tup
+
+61 define: len
+           [ length of tuple ]
+           mu neg_s_tup
+
+62 define: len_c_o_v
+           [ length of the course-of-values rhs part ]
+           comp len pr_R
+
+63 define: succ_mirror
+           [ one more than mirror lhs index for given length ]
+           compair diff len_c_o_v red_exp_L
+
+64 define: mirror
+           [ mirror lhs index for given length ]
+           compair diff succ_mirror k_1
+
+60 define: base_to_red_exp
+           [ aux for recursive call of exp ]
+           compair proj pr_R mirror
+
+65 define: step_ppr
+           [ recursive call of exp w par prim rec]
+           compair mul pr_LL pr_LR
+
+70 define: exp
+           [ exp ]
+           parprimrec zero k_1 step_ppr
+
+75 define: step_pr
+           [ recursive call of exp ]
+           compair mul pr_LL base_to_red_exp
+
+80 define: exp_pr
+           [ exp ]
+           primrec is_exp_zero k_1 step_pr
+
+90 define: adapt
+           [ adapt input to intseq: remove EOD zero ]
+           pair pr_L pr_LR
+
+100 define: readexp
+           [ adapt reading then exp ]
+           comp exp adapt
+           

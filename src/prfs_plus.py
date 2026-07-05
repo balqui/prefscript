@@ -1,36 +1,57 @@
 '''
-Project started mid Germinal 2023:
 PReFScript: A Partial Recursive Functions Lab
 
-Module version mid Messidor 2026:
-prefscript with main class PReFScript and run entrypoint only
-(file distribution slight refactoring on the monolithic design of Thermidor 2024)
+Rather: Towards a Partial Recursive Functions lab.
 
-Author: Jose L Balcazar, ORCID 0000-0003-4248-4528
+Author: Jose L Balcazar, ORCID 0000-0003-4248-4528, april 2023 onwards 
 Copyleft: MIT License (https://en.wikipedia.org/wiki/MIT_License)
+
+Project started: mid Germinal 2003.
+Current version: 0.5, mid Thermidor 2024.
 
 A Python-based environment to explore and experiment with partial 
 recursive functions; naturally doubles as a (purely functional) 
 programming language, but it is not intended to be used as such.
 
-Functions are stored in FunData instances.
-Then, in a separate dict (used as namespace for 
+Each function in a script has: associated Gödel number, nickname, 
+comments, and code (string); also, the last operation used to 
+construct it. Then, in a separate dict (used as namespace for 
 eval calls), a runnable version of the code.
+
+Nicknames are alphanum strings not starting with a number (no surprise).
 '''
 
 from collections import defaultdict as ddict
-from ascii7io import int2str, str2int
-import cantorpairs as cp
+from re import compile as re_compile, finditer as re_finditer
+from ascii7io import int2str, str2int, int2raw_str # users are not expected to need int2raw_str
+import cantorpairs
+cp = cantorpairs
 
-from v1parser import Parser, SyntErr
-from fundata import FunData
-
-__version__ = "1.2"
+__version__ = "1.1"
 
 # ~ In order to omit Gödel numbers too high, around 300 decimal digits,
 # ~ LIMIT_GNUM set to 2**1000 but computed much faster via bit shift
 
 LIMIT_GNUM = 2 << 999
+
+class FunData(dict):
+    'Simple class for PReFScript functions data'
+
+    def __init__(self, nick = None, comment = None, how_def = None, def_on = None):
+        dict.__init__(self)
+        self["nick"] = nick # function name
+        self["comment"] = comment
+        self["how_def"] = how_def
+        self["def_on"] = def_on
+
+    def __str__(self):
+        return self["nick"] + "\n " + self["comment"] 
+
+    def how_def(self):
+        if self["how_def"] == "basic":
+            return "basic"
+        return self["how_def"] + ": " + ' '.join(on_what for on_what in self["def_on"])
+
 
 def mu(x, test):
     "ancillary linear search function for implementing mu-minimization"
@@ -67,6 +88,64 @@ def par_prim_rec(is_base, base, recurse):
 		return sq
 
 	return lambda x: cp.pr_L(c_of_v(x))
+
+
+class Parser:
+    '''Prepare an re-based parser to be used upon reading scripts
+    The single Parser with single parse generator is likely to mess up
+    the recursive imports, I bet it does not work yet.
+    '''
+
+    def __init__(self):
+        "group names require Python >= 3.11"
+        from re import compile as re_compile, finditer as re_finditer
+        about = r"\s*\.about(?P<about>.*)\n"                           # arbitrary documentation
+        pragma = r"\s*\.pragma\s+(?P<which>\w+):?\s+(?P<what>\w+)\s*"  # compilation directives
+        importing = r"\s*\.import\s+(?P<to_import>[\w._-]+)\s*"        # additional external script
+        a7str = r'''(?P<quote>['"])(?P<a7str>.*)(?P=quote)'''
+        startdef = r"\d+\s+define\:\s*"
+        group1_nick = r"(?P<nick>\w+)\s+"
+        group2_comment = r"\[\s*(?P<comment>(\w|\s|[.,:;<>=)(?!/+*-])+)\]\s+" 
+        group4_how = r"(?P<how>pair|comp|mu|compair|primrec|ascii_const|parprimrec)\s+" 
+        group5_on_what = r"((?P<on_what>([a-zA-Z_]\w*\s+)+)|" + a7str + ")"  # nick args required not to start with a number
+        define = (startdef +  
+              group1_nick + 
+              group2_comment + 
+              group4_how +
+              group5_on_what)
+        self.the_parser = re_compile(define + '|' + about + '|' + pragma + '|' + importing)
+
+    def parse(self, source):
+        for thing in re_finditer(self.the_parser, source):
+            "can one find out non-matched portions to message the user about?"
+            things = thing.groupdict(default = '')
+            if about := things['about']:
+                yield 'about', about
+            if which := things['which']:
+                yield 'pragma', (which, things['what'])
+            if to_import := things['to_import']:
+                yield 'import', to_import
+            if nick := things['nick']:
+                if things['how'] == "ascii_const":
+                    on_what = [things['a7str']]
+                else:
+                    on_what = things['on_what'].split()
+                yield "define", FunData(nick, things['comment'], things['how'], on_what)
+
+
+class SyntErr:
+    "handle syntactic errors in the script - VERY PRIMITIVE for the time being"
+
+    def __init__(self):
+        from sys import stderr
+        self.e = stderr
+
+    def report(self, nonfatal = False, info = ''):
+        "return value to be given to the valid field / alt: fatal here and nonvalid at script"
+        p = 'Nonf' if nonfatal else 'F'
+        print(p + 'atal error in PReFScript:', info, sep = '\n  ', file = self.e)
+        return nonfatal
+
 
 
 class PReFScript:

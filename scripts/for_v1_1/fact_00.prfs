@@ -1,6 +1,8 @@
-.about Factorial on mu-based linear search, no extended pragma
-.about Complete script without imports as a stand-alone example
-.about Dismal slow, don't attempt to compute fact(5), takes years
+.about  Factorial on mu-based linear search, no extended pragma
+.about  Complete script without imports as a stand-alone example
+.about  Dismal slow, don't attempt to compute fact(5), takes years and
+.about  even fact(4) will demand hours and over 38GB memory 
+.pragma main: fact
 
 
 121 define: dupl
