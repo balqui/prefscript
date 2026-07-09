@@ -77,17 +77,17 @@ class PReFScript:
     def __init__(self, store_goedel_numbers = ""):
         '''
         Dicts for storing the functions:
-          main for the function data,
+          nicks to retrieve FunData from nick,
           gnums for Gödel numbers,
           pycode for Python runnable code, 
           key is always nick for all of them;
         include here the basic functions;
         their implementation assumes 'import cantorpairs as cp'
         '''
-        self.valid = True   # program is correct until proven wrong
-        self.main = dict()  # RENAME some day, as I am using also 'main' for the main function to be called
+        self.valid = True     # program is correct until proven wrong
+        self.nicks = dict()   # maps nick to FunData which includes nick
         self.strcode = dict()
-        self.pycode = dict()
+        self.pycode = dict()  # doubles as 'checked' set in former check_names
         self.gnums = dict()
         self.abouts = list()
         self.pragmas = ddict(str)
@@ -116,7 +116,7 @@ class PReFScript:
         data["def_on"] = tuple()
         if self.store_gnums:
             self.gnums[nick] = cp.dp(0, num)
-        self.main[nick] = data
+        self.nicks[nick] = data
         self.strcode[nick] = code
         self.pycode[nick] = eval(code, globals() | self.pycode)
 
@@ -129,10 +129,10 @@ class PReFScript:
         Gödel number printed depending on self.store_gnums and how big it is
         '''
         def list_one(nick, w_code):
-            print("\n" + str(self.main[nick]))
+            print("\n" + str(self.nicks[nick]))
             if w_code:
                 'print how it is defined'
-                print(" " + self.main[nick].how_def())
+                print(" " + self.nicks[nick].how_def())
             if w_code == 2:
                 'print also the Python code in this case only'
                 print(" " + self.strcode[nick])
@@ -147,21 +147,21 @@ class PReFScript:
         if what is not None:
             list_one(what, w_code)
         else:
-            for nick in self.main:
+            for nick in self.nicks:
                 list_one(nick, w_code)
 
 
     def define(self, new_funct):
         'here comes a new function to add to the collection'
 
-        if (nick := new_funct['nick']) in self.main:
+        if (nick := new_funct['nick']) in self.nicks:
             'repeated nick, check for consistency'
-            if (self.main[nick]["how_def"] != new_funct['how_def'] or
-                self.main[nick]["def_on"] != new_funct['def_on']):
+            if (self.nicks[nick]["how_def"] != new_funct['how_def'] or
+                self.nicks[nick]["def_on"] != new_funct['def_on']):
                     self.valid &= self.synt_err_handler.report(nonfatal = False, 
                         info = f"Repeated, inconsistent definitions for function '{nick}' found.")
         else:
-            self.main[nick] = new_funct
+            self.nicks[nick] = new_funct
             on_what = new_funct['def_on']
 
             if new_funct['how_def'] == "comp":
@@ -247,16 +247,19 @@ class PReFScript:
                                   info = "Use of ascii constants requires '.pragma extended: True', changed.")
                 self.pragmas['extended'] = 'True'
                 self.strcode[nick] = "lambda x: str2int( '" + on_what[0] + "' )"
+                # ~ self.pycode[nick] = eval(self.strcode[nick]) 
 
-            self.pycode[nick] = eval(self.strcode[nick], globals() | self.pycode)
+            # ~ if new_funct['how_def'] != "ascii_const":
+                # ~ self.pycode[nick] = eval(self.strcode[nick], globals() | self.pycode)
 
 
     def to_python(self, what):
         'returns the Python-runnable version of the function'
-        if what not in self.pycode:
-            self.valid &= self.synt_err_handler.report(nonfatal = False, 
-                info = f"No Python code for function '{what}' found.")
-            return None
+        # ~ if what not in self.pycode:
+            # ~ self.valid &= self.synt_err_handler.report(nonfatal = False, 
+                # ~ info = f"No Python code for function '{what}' found.")
+            # ~ return None
+        self.gen_py(what)
         return self.pycode[what]
 
 
@@ -275,10 +278,12 @@ class PReFScript:
 
     def load(self, filename, main = True):
         'load in definitions from .prfs file(s) - use .import to recurse into further loading'
-        if filename.endswith('.prfs'):
-            self.valid &= self.synt_err_handler.report(nonfatal = True, 
-                          info = f"File name {filename} NOT expected to include the '.prfs' extension.")
-        else:
+        # ~ if filename.endswith('.prfs'):
+            # ~ self.valid &= self.synt_err_handler.report(nonfatal = True, 
+                          # ~ info = f"File name {filename} NOT expected to include the '.prfs' extension.")
+        # ~ else:
+            # ~ filename += '.prfs'
+        if not filename.endswith('.prfs'):
             filename += '.prfs'
         script = self.find_script_in_file(filename, main)
         if not script:
@@ -325,23 +330,44 @@ class PReFScript:
         self.define(FunData(nick.strip(), comment.strip(), how.strip(), tuple(on_what.split())))
 
 
-    def check_names(self):
-        "checks that all function names needed to run main have been defined"
+    def gen_py(self, name = 'main'):
+        if name == 'main':
+            need = 'pragma main'
+            name = self.pragmas['main']
+        else:
+            need = name
+        if name not in self.pycode:
+            if name in self.nicks:
+                if self.nicks[name]['how_def'] != "ascii_const":
+                    "the def_on part of an ascii_const is a mere string already handled"
+                    for nname in self.nicks[name]['def_on']:
+                        "we need first the recursive calls"
+                        self.gen_py(nname)
+                self.pycode[name] = eval(self.strcode[name], globals() | self.pycode)
+            else:
+                "newly found undefined name"
+                self.valid &= self.synt_err_handler.report(nonfatal = False, 
+                    info = f"Function '{name}' not found but needed by {need}.")
 
-        def check_name(self, name, need = 'pragma main'):
-            if name not in checked:
-                checked.add(name)
-                if name in self.main:
-                    if self.main[name]['how_def'] != "ascii_const":
-                        for nname in self.main[name]['def_on']:
-                            check_name(self, nname, f"'{name}'")
-                else:
-                    "newly found undefined name"
-                    self.valid &= self.synt_err_handler.report(nonfatal = False, 
-                        info = f"Function '{name}' not found but needed by {need}.")
 
-        checked = set()
-        check_name(self, self.pragmas['main'])
+# ~ Process moved to gen_py
+    # ~ def check_names(self):
+        # ~ "checks that all function names needed to run main have been defined"
+
+        # ~ def check_name(self, name, need = 'pragma main'):
+            # ~ if name not in checked:
+                # ~ checked.add(name)
+                # ~ if name in self.nicks:
+                    # ~ if self.nicks[name]['how_def'] != "ascii_const":
+                        # ~ for nname in self.nicks[name]['def_on']:
+                            # ~ check_name(self, nname, f"'{name}'")
+                # ~ else:
+                    # ~ "newly found undefined name"
+                    # ~ self.valid &= self.synt_err_handler.report(nonfatal = False, 
+                        # ~ info = f"Function '{name}' not found but needed by {need}.")
+
+        # ~ checked = set()
+        # ~ check_name(self, self.pragmas['main'])
 
 
 def run():
@@ -361,7 +387,7 @@ def run():
     f = PReFScript()
     f.load(args.filename)
     if f.valid:
-        f.check_names()
+        f.gen_py()
     if f.valid:
         'run it on data from stdin according to input/output/main pragmas'
         if args.about:
