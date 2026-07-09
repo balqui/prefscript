@@ -1,5 +1,13 @@
 '''
+Project started mid Germinal 2023:
+PReFScript: A Partial Recursive Functions Lab
+
+Ancillary module, early Thermidor 2024:
 Single-integer encoding and decoding of (printable) 7-bit ASCII strings
+This docstring expanded by mid Messidor 2026 with no change to code.
+
+Author: Jose L Balcazar, ORCID 0000-0003-4248-4528
+Copyleft: MIT License (https://en.wikipedia.org/wiki/MIT_License)
 '''
 
 TWO_pow_7 = 1 << 7

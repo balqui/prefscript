@@ -32,6 +32,9 @@ __version__ = "1.2"
 
 LIMIT_GNUM = 2 << 999
 
+# ~ Ancillary functions to implement mu-linear search and parameterized
+# ~ and unparameterized primitive recursion.
+
 def mu(x, test):
     "ancillary linear search function for implementing mu-minimization"
     z = 0
@@ -55,12 +58,12 @@ def prim_rec(is_base, base, recurse):
 
 
 def par_prim_rec(is_base, base, recurse):
-	"attempt at primitive recursion with parameters - careful, swapped from the course notes in Spanish"
+	"primitive recursion with parameters - careful, names swapped from the course notes in Spanish"
 
 	def c_of_v(z):
 		"create the adequate course of values, not full anymore"
 		x = cp.pr_R(z)
-		sq = 0
+		sq = 0 # empty sequence
 		for y in range(x + 1):
 			new = base(z) if is_base(y) else recurse(cp.dp(z, sq))
 			sq = cp.dp(new, sq)
@@ -376,7 +379,7 @@ def run():
         if f.pragmas["input"] in ('', "int"):
             arg = int(input()) 
         elif f.pragmas["input"] == "none":
-            arg = 666 # for one
+            arg = 42 # for one
         elif f.pragmas["input"] == "intseq":
             arg = cp.tup_i(map(int, loop()))
 

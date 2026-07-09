@@ -2,7 +2,7 @@
 Project started mid Germinal 2003:
 PReFScript: A Partial Recursive Functions Lab
 
-Module:
+Module version mid Messidor 2026:
 v1parser: re-based parser for versions up to 1.2
 (file distribution slight refactoring on the monolithic design of Thermidor 2004)
 
@@ -10,11 +10,7 @@ Author: Jose L Balcazar, ORCID 0000-0003-4248-4528, april 2023 onwards
 Copyleft: MIT License (https://en.wikipedia.org/wiki/MIT_License)
 '''
 
-# ~ from collections import defaultdict as ddict
 from re import compile as re_compile, finditer as re_finditer
-# ~ from ascii7io import int2str, str2int, int2raw_str # users are not expected to need int2raw_str
-# ~ import cantorpairs
-# ~ cp = cantorpairs
 
 from fundata import FunData
 
@@ -77,3 +73,4 @@ class SyntErr:
         return nonfatal
 
 
+# ~ Should add unit testing here

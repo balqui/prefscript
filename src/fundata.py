@@ -2,7 +2,7 @@
 Project started mid Germinal 2003:
 PReFScript: A Partial Recursive Functions Lab
 
-Module:
+Module version mid Messidor 2026:
 fundata: class FunData storing all necessary information about 
 one function, includes as well ancillary algorithms mu and prim_rec
 (file distribution slight refactoring on the monolithic design of Thermidor 2004)
@@ -19,14 +19,6 @@ Nicknames are alphanum strings not starting with a number (no surprise).
 '''
 
 import cantorpairs as cp
-
-# ~ from collections import defaultdict as ddict
-# ~ from re import compile as re_compile, finditer as re_finditer
-# ~ from ascii7io import int2str, str2int, int2raw_str # users are not expected to need int2raw_str
-# ~ import cantorpairs
-# ~ cp = cantorpairs
-
-# ~ from v1parser import Parser, SyntErr
 
 __version__ = "1.2"
 
@@ -49,3 +41,4 @@ class FunData(dict):
         return self["how_def"] + ": " + ' '.join(on_what for on_what in self["def_on"])
 
 
+# ~ Should add unit testing here
