@@ -255,12 +255,10 @@ class PReFScript:
 
     def to_python(self, what):
         'returns the Python-runnable version of the function'
-        # ~ if what not in self.pycode:
-            # ~ self.valid &= self.synt_err_handler.report(nonfatal = False, 
-                # ~ info = f"No Python code for function '{what}' found.")
-            # ~ return None
-        self.gen_py(what)
-        return self.pycode[what]
+        if what not in self.pycode:
+            self.gen_py(what)
+        if self.valid:
+            return self.pycode[what]
 
 
     def find_script_in_file(self, filename, main):
@@ -337,24 +335,25 @@ class PReFScript:
         self.define(FunData(nick.strip(), comment.strip(), how.strip(), tuple(on_what.split())))
 
 
-    def gen_py(self, name = 'main'):
-        if name == 'main':
-            need = 'pragma main'
-            name = self.pragmas['main']
-        else:
-            need = name
+    def gen_py(self, name, need = 'pragma main'):
         if name not in self.pycode:
+            "make sure never to loop on it"
+            self.pycode[name] = "None"
             if name in self.nicks:
                 if self.nicks[name]['how_def'] != "ascii_const":
                     "the def_on part of an ascii_const is a mere string already handled"
                     for nname in self.nicks[name]['def_on']:
                         "we need first the recursive calls"
-                        self.gen_py(nname)
+                        self.gen_py(nname, name)
                 self.pycode[name] = eval(self.strcode[name], globals() | self.pycode)
             else:
                 "newly found undefined name"
                 self.valid &= self.synt_err_handler.report(nonfatal = False, 
                     info = f"Function '{name}' not found but needed by {need}.")
+        elif self.pycode[name] == "None":
+            "already attempted, make sure not to fall in a definition loop"
+            self.valid &= self.synt_err_handler.report(nonfatal = False, 
+                info = f"Function '{name}' belongs to a disallowed definition loop.")
 
 
 # ~ Process moved to gen_py
@@ -394,7 +393,7 @@ def run():
     f = PReFScript()
     f.load(args.filename, main = True)
     if f.valid:
-        f.gen_py()
+        f.gen_py(f.pragmas['main'])
     if f.valid:
         'run it on data from stdin according to input/output/main pragmas'
         if args.about:

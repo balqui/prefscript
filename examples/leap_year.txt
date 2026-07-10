@@ -7,6 +7,10 @@
 .import script_compar
 .pragma main: leap_year
 
+.pragma extended True
+.pragma output ascii
+
+1500 define: leap_year [ ] ascii_const "UNFINISHED, SORRY"
 
 
 
@@ -17,7 +21,6 @@
 
 
 
-1500 define: 
 
 1520 define: 
 

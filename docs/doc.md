@@ -392,15 +392,20 @@ leaving room in `pr_L(x)` for an invariant parameter.
 All the while, the whole of `x` is used to call both 
 the `base` and the `recurse` functions to which, hence,
 both parts are available. Thus, for example, for 
-`zero: comp neg sign` which tests for zero and 
+`zero: comp neg sign` which tests for zero, applied 
+to `pr_R(x)`, the constant `k_1` when `pr_R(x)` is zero,
+and otherwise applying
 `step: comp mul pair pr_LL pr_LR` one obtains the
-exponential `pr_L` (parameter) raised to the power `pr_R`
-(part traversed by the sequence of values): when `pr_L(x)` 
-is the base and `pr_R(x)` the desired exponent, the `step`
+exponential: the value `pr_L(x)` (the parameter) 
+raised to the power `pr_R(x)`
+(part traversed by the sequence of values): 
+when `pr_R(x)`, the desired exponent, is zero,
+we obtain 1 and, otherwise, the `step` recursion
 is given the pair of `x` and the current sequence of values,
-`<x.s>`, and gets the base as `pr_LL`, the exponent to
-one value less as most recent addition to `s`, `pr_LR`,
-and just multiplies them together. Standard primitive
+`<x.s>`, gets the base as `pr_LL: comp pr_L pr_L`, 
+gets the power to one unit less in the exponent 
+as the most recent addition to `s`, `pr_LR: comp pr_L pr_R`,
+and simply multiplies them together. Standard primitive
 recursion is able to do the job but causes some headaches
 to fish up the right values hidden somewhere along a much
 bigger sequence of values. Example files of all these
