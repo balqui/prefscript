@@ -1,0 +1,8 @@
+Folder with scripts for versions 1.0, 1.1, and 1.2.
+
+Names with "primrec" mean primitive recursion is used.
+Names with "ppr" mean parameterized primitive recursion is used.
+All those will not work with 1.0 or 1.1, only 1.2 or beyond.
+Likewise disordered scripts like add3reord will only work with 1.2.
+
+
