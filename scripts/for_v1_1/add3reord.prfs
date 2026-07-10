@@ -1,4 +1,6 @@
 .about Jutge P41221: read 3 numbers and add them (but will fail with negative values)
+.about Same as add3.prfs except that the definition of add3 comes before that of
+.about pair_1st_sum_rest and v1.1 complains but v1.2 should not anymore.
 .about Import pr_LR and pr_RR and such
 .import script_proj
 .pragma input: intseq

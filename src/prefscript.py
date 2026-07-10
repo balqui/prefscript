@@ -276,7 +276,7 @@ class PReFScript:
                               info = f"Imported script {filename} not found.")
 
 
-    def load(self, filename, main = True):
+    def load(self, filename, main = False):
         'load in definitions from .prfs file(s) - use .import to recurse into further loading'
         # ~ if filename.endswith('.prfs'):
             # ~ self.valid &= self.synt_err_handler.report(nonfatal = True, 
@@ -296,10 +296,17 @@ class PReFScript:
                     "pragmas in main file are stored"
                     self.pragmas[what[0]] = what[1]
                 elif what[0] == 'extended' and what[1] == 'True':
-                    "pragmas in imported files are ignored except extended when set to True"
-                    if self.pragmas['extended'] != 'True':
-                        self.valid &= self.synt_err_handler.report(nonfatal = True, 
-                            info = f"Warning: the .pragma extended declaration found in {filename} affects globally.")
+                    '''
+                    pragmas in imported files are ignored except extended when set to True - 
+                    v1.2: now this is done with no warning, while v1.1 would warn about it,
+                    but it was ugly to get the warning when calling PReFScript.load from
+                    inside the interpreter, also the message is not that useful and the
+                    current plan is that for 2.0 onwards "extended" will be the default
+                    and expressed in a different way
+                    '''
+                    # ~ if self.pragmas['extended'] != 'True':
+                        # ~ self.valid &= self.synt_err_handler.report(nonfatal = True, 
+                            # ~ info = f"Warning: the .pragma extended declaration found in {filename} affects globally.")
                     self.pragmas[what[0]] = what[1]
             if label == 'about':
                 self.abouts.append('about ' + filename + ': ' + what) 
@@ -385,7 +392,7 @@ def run():
             action = "version", version = f'{__version__}')
     args = aparser.parse_args()
     f = PReFScript()
-    f.load(args.filename)
+    f.load(args.filename, main = True)
     if f.valid:
         f.gen_py()
     if f.valid:
