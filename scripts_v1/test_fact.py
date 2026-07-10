@@ -1,6 +1,6 @@
 from time import process_time
-from prefscript import PReFScript
-import scaff.cantorpairs as cp
+from prefscript import PReFScript, cp, __version__
+print(__version__)
 
 ff = PReFScript()
 ff.load("fact_00.prfs")

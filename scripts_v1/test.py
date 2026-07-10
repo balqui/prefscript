@@ -1,6 +1,7 @@
 # ~ import scaff.cantorpairs as cp
 # ~ from prefscript import PReFScript
-from prefscript import PReFScript, cp
+from prefscript import PReFScript, cp, __version__
+print(__version__)
 my_fs = PReFScript()
 # ~ my_fs = PReFScript("Store Gödel numbers")
 my_fs.load("script_sign.prfs")

@@ -1,0 +1,31 @@
+.pragma extended True
+.pragma main readexp
+.pragma input intseq
+.import script_sign
+.import script_proj
+
+10 define: zero
+           [ is it zero? ]
+           comp neg sign
+
+60 define: pair_base_with_one_less_exp
+           [ base is parameter, left of left, paired to last in seq of values]
+           pair pr_LL pr_LR
+
+65 define: step_ppr
+           [ recursive call of exp w par prim rec]
+           comp mul pair_base_with_one_less_exp
+
+70 define: exp
+           [ exp ]
+           parprimrec zero k_1 step_ppr
+
+90 define: adapt
+           [ adapt input to intseq: remove EOD zero ]
+           pair pr_L pr_LR
+
+100 define: readexp
+           [ adapt reading then exp ]
+           comp exp adapt
+           
+

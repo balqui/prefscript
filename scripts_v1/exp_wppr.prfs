@@ -1,3 +1,4 @@
+.about  Joint script with the code of exp via both primrec and parprimrec to ease the comparative
 .pragma extended True
 .pragma main readexp
 .pragma input intseq

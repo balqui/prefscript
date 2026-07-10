@@ -52,14 +52,6 @@
            [ aux for recursive call of exp ]
            compair proj pr_R mirror
 
-65 define: step_ppr
-           [ recursive call of exp w par prim rec]
-           compair mul pr_LL pr_LR
-
-70 define: exp
-           [ exp ]
-           parprimrec zero k_1 step_ppr
-
 75 define: step_pr
            [ recursive call of exp ]
            compair mul pr_LL base_to_red_exp

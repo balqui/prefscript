@@ -1,6 +1,7 @@
 '''
 Author: Jose L Balcazar, ORCID 0000-0003-4248-4528, april 2023 onwards 
 Copyleft: MIT License (https://en.wikipedia.org/wiki/MIT_License)
+Obsolete, target is before class FunData existed.
 '''
 
 from prefscript import PReFScript

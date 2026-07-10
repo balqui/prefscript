@@ -3,7 +3,7 @@
 
 Author: Jose L Balcazar, ORCID 0000-0003-4248-4528
 
-Documentation for version: 1.1
+Documentation for version: 1.2
 
 Copyleft: MIT License (https://en.wikipedia.org/wiki/MIT_License)
 
@@ -90,7 +90,7 @@ sequences of natural numbers, a Cantor-like encoding is used.
 
 Before proceeding to our form of partial recursive functions,
 please see first the companion repository 
-[cantorpairs](https://github.com/balqui/cantorpairs).
+[`cantorpairs`](https://github.com/balqui/cantorpairs).
 Its README file describes the available functions and their usages.
 It is a submodule of `prefscript` and provides the
 related names `dp`, `pr_L`, `pr_R`, `tup_e`, `tup_i`, `s_tup`, `pr`
@@ -160,12 +160,12 @@ natural number_ (that might be useful for human readers to label and
 reorder parts of the script) followed by the keyword "define:" 
 (with the colon) and then, in sequence, the _name_ of the function
 being defined, a human-oriented description in square brackets,
-and _how_ it is constructed out of _other previously defined 
-functions_ in the script:
+and _how_ it is constructed out of other functions in the script:
 "pair" followed by two function names for the function that 
 pairs their output up, "comp" followed by two function names 
 for the composition function, or "mu" followed by a test function
-in order to define a function by minimization (linear search).
+in order to define a function by minimization (linear search
+as described above).
 
 Names must be Python identifiers: they consist of letters, numbers,
 or underscores and cannot start with a number.
@@ -204,7 +204,7 @@ pairs `<x.y>` to answer 0 or 1 according to whether
 The well-aligned format exemplified by cases 10 and 50 is not
 compulsory, as can be seen in the other cases, but is highly
 recommended. The repository includes 
-[a few examples](https://github.com/balqui/prefscript/tree/main/scripts)
+[`a few examples`](https://github.com/balqui/prefscript/tree/main/scripts_v1)
 of such files, some intended to be imported from other files.
 
 Add a first line with the contents `.pragma main: sign` to
@@ -216,7 +216,7 @@ for additional useful extensions.
 
 ### Importing PReFScript objects
 
-Scripts are maintained in objects of the class PReFScript,
+Scripts are maintained in objects of the class `PReFScript`,
 that can be imported into your own Python program. 
 Thus, you have available two main ways of programming in 
 PReFScript: through the stand-alone interpreter as described
@@ -235,9 +235,12 @@ so that you have available the auxiliary tupling functions
 mentioned earlier; one way to do this is:
 
 ```
->>> from prefscript import PReFScript, cantorpairs as cp
+>>> from prefscript import PReFScript, cp
 ```
 
+where `cantorpairs` gets renamed `cp` as inside `prefscript`
+(but `import cantorpairs` would work as well).
+ 
 #### Handling PReFScript objects directly
 
 The `define` method of PReFScript objects allows one to add 
@@ -350,7 +353,9 @@ an `int`, or a sequence of `int`, or that no input will be read.
 In the second case, the main function will receive a single `int`
 encoding the whole sequence as per the `tup_i` encoding function
 in `cantorpairs`; the user must mark the end of the sequence in
-the usual way (ctrl-D).
+the usual way (ctrl-D on Linux). Remember that all integers in PReFScript
+are unsigned (that is, natural numbers): negative values are
+disallowed.
 
 `.pragma output:` followed by one of the keywords `int` (default)
 or `bool` or `ascii`; in the two latter cases, the integer computed
@@ -359,15 +364,19 @@ by the main function will be converted into a Boolean value or a
 
 `.pragma extended:` followed by value `False` (default) or `True`.
 
-If `True` then a number of extensions are enabled, namely, the 
-capabilities of defining functions as arbitrary ASCII constants, 
-as `compair` compositions that merge into a single shot a `pair` 
-with a `comp`, or as `primrec` for primitive recursion (faster 
-than the dismal delay introduced by `mu`-based primitive recursion).
-
-More precisely, `compair f g h` takes three function names and
+If `True` then a number of extensions are enabled, namely: first, 
+the capability of defining functions as arbitrary ASCII constants
+or as `compair` compositions that merge into a single shot a `pair` 
+with a `comp`: `compair f g h` takes three function names and
 forms an intermediate function as `pair g h` composing then `f`
-with it; whereas `primrec f g h` defines a new function `s` by
+with it.
+
+Second, the capability of defining functions as possibly 
+parameterized primitive recursion, faster than the dismal 
+delay introduced by its equivalence via `mu`-based primitive 
+recursion.
+ 
+More precisely, `primrec f g h` defines a new function `s` by
 _course-of-values primitive recursion:_ for a given input `x`,
 `f` tests `x` for being a base case, `g` is applied to `x` if
 it is a base case (that is, when `f(x)` returned nonzero) and, 
@@ -375,5 +384,40 @@ in recursive cases, `h` is applied to a pair that has `x` as
 left component and, as right component, a tuple containing 
 all the values `s(x-1)`, `s(x-2)`, ..., `s(1)`, `s(0)`.
 
+Its parameterized version `parprimrec f g h` is almost the
+same, only that not _all_ of the input `x` is employed to
+construct the sequence of values: the recursion traverses
+only `pr_R(x)`, which is also the part tested for base cases, 
+leaving room in `pr_L(x)` for an invariant parameter. 
+All the while, the whole of `x` is used to call both 
+the `base` and the `recurse` functions to which, hence,
+both parts are available. Thus, for example, for 
+`zero: comp neg sign` which tests for zero and 
+`step: comp mul pair pr_LL pr_LR` one obtains the
+exponential `pr_L` (parameter) raised to the power `pr_R`
+(part traversed by the sequence of values): when `pr_L(x)` 
+is the base and `pr_R(x)` the desired exponent, the `step`
+is given the pair of `x` and the current sequence of values,
+`<x.s>`, and gets the base as `pr_LL`, the exponent to
+one value less as most recent addition to `s`, `pr_LR`,
+and just multiplies them together. Standard primitive
+recursion is able to do the job but causes some headaches
+to fish up the right values hidden somewhere along a much
+bigger sequence of values. Example files of all these
+variants are provided in the 
+[`examples`](https://github.com/balqui/prefscript/tree/main/scripts_v1)
+folder.
 
 
+### About the current version
+
+Up to version v1.1, functions were to be constructed out of 
+other _previously defined_ functions in the script. The
+current version allows for any ordering of the functions
+in the script. Parameterized primitive recursion is also
+only possible in the current version, which will be also
+less fussy and complain less as warnings have been reduced.
+The current version has seen also quite some refactoring
+of the source code, with a view to the future, planned
+version 2.0 which we hope to ship out by the early fall
+of 2026.
