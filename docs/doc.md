@@ -204,7 +204,7 @@ pairs `<x.y>` to answer 0 or 1 according to whether
 The well-aligned format exemplified by cases 10 and 50 is not
 compulsory, as can be seen in the other cases, but is highly
 recommended. The repository includes 
-[`a few examples`](https://github.com/balqui/prefscript/tree/main/scripts_v1)
+[`a few examples`](https://github.com/balqui/prefscript/tree/main/examples)
 of such files, some intended to be imported from other files.
 
 Add a first line with the contents `.pragma main: sign` to
@@ -271,7 +271,7 @@ id
 add
  Addition x+y of the two components of input <x.y>
 
-[...] shows the basic functions that are always available from the beginning
+[...] (shows the basic functions that are always available from the beginning)
 
 >>> my_fs.dialog()
 Function name? const_pair_1
@@ -297,7 +297,7 @@ const_pair_1
 >>> 
 >>> my_fs.list(w_code = 1)
 
-[...] as before but now includes the two newly defined functions
+[...] (as before but now includes the two newly defined functions)
 
 const_pair_1
  The constant <1.1> function
@@ -336,8 +336,11 @@ Lines in a `.prfs` script may contain directives.
 Starting the line with `.about` indicates that the rest of the line is a 
 human-oriented explanation; the directive `.import` followed by a
 `filename` requires the interpreter to load in, at that point, 
-the contents of `filename.prfs`; and the `.pragma` directives
+the contents of `filename.prfs` (expected to reside in the working folder); 
+and the `.pragma` directives
 are explained next. None of these directives is absolutely required.
+Useful examples may be `hw.prfs` and `is_pyth_02.prfs` in the `examples`
+folder.
 
 #### Currently valid pragmas
 
@@ -410,7 +413,7 @@ recursion is able to do the job but causes some headaches
 to fish up the right values hidden somewhere along a much
 bigger sequence of values. Example files of all these
 variants are provided in the 
-[`examples`](https://github.com/balqui/prefscript/tree/main/scripts_v1)
+[`examples`](https://github.com/balqui/prefscript/tree/main/examples)
 folder.
 
 

@@ -1,0 +1,18 @@
+.about  with main but loopy
+.pragma main: m
+
+0 define: m
+          [ ]
+          comp p q
+
+1 define: p
+          [ ]
+          comp k_1 r
+
+2 define: q
+          [ ]
+          comp p k_1
+
+3 define: r
+          [ ]
+          comp k_1 q
