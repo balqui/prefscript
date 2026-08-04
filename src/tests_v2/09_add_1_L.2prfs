@@ -1,0 +1,16 @@
+main: add_1_L
+
+add_1_L: pair 
+           comp add pair pr_L k_1
+           pr_R
+
+k_0: comp diff pair k_1 k_1
+piggyback1: pair id k_1
+piggyback0: pair id k_0
+pr_L: comp proj piggyback0
+pr_R: comp s_tup piggyback1
+swap: pair pr_R pr_L
+
+
+
+

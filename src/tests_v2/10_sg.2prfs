@@ -1,0 +1,6 @@
+main: sg
+ant: comp diff pair id k_1
+sg: comp diff pair id ant
+
+
+

@@ -1,0 +1,6 @@
+main: sq
+dupl: pair id id
+sq: comp mul dupl
+
+
+
