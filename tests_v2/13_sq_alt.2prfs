@@ -1,0 +1,11 @@
+# Testing comments and main direct into a complex funspec
+
+main: comp mul dupl
+
+// Both CPP-style and sh-style comments ignored
+
+dupl: pair id id
+
+
+
+

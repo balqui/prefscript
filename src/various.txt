@@ -1,4 +1,5 @@
-Just little by little, a grammar with only defun and comp:
+Just little by little, I started with a grammar with only 
+defun and comp:
 
 %import common.CNAME
 %import common.WS
@@ -156,3 +157,31 @@ I planned for @dataclass(frozen = True)
 so that objects are immutable & hashable.
 I gave up this when I decided to walk up
 the AST via a transformer.
+
+22/ Time to systematize the evolution of the
+pragma directive:
+
+main:     REMOVED, replaced by the 'main' 
+          declaration following the generally 
+          applicable syntax;
+
+input:    TO BE DECIDED;
+
+output:   TO BE DECIDED;
+
+extended: REMOVED, 'compair' disappears as now
+          it is unnecessary while 'asciiconst', 
+          'primrec' and 'parprimrec' will be part 
+          of the language proper;
+
+strict:   NEW potential option to do the converse 
+          operation of 'extended': check that 
+          'asciiconst', 'primrec' and 'parprimrec' 
+          are not employed.
+
+23/ What about '.about' and '.import' ? Now both
+shell and cpp comments are ignored and thus .about
+should be unnecessary.
+
+24/ At some point in time I will need namespaces.
+

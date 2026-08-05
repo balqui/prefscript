@@ -33,8 +33,12 @@ prfs2_grammar = '''
 
 %import common.CNAME
 %import common.WS
+%import common.SH_COMMENT
+%import common.CPP_COMMENT
 
 %ignore WS
+%ignore SH_COMMENT
+%ignore CPP_COMMENT
 
 program : defun+
 
@@ -44,6 +48,8 @@ funspec : CNAME                            -> single
         | "comp" funspec funspec           -> comp
         | "pair" funspec funspec           -> pair
         | "mu" funspec                     -> mu
+        | "(" funspec ")"                  -> parenth
+
 '''
 
 prfsparser = Lark(prfs2_grammar, parser='lalr', start = 'program').parse
@@ -63,17 +69,9 @@ class ScriptMaker(Transformer):
     ScriptMaker objects contain a local PReFScript that is 
     "in construction": currently a dict from nicknames to 
     FunData's.. They transform each AST 'funspec' node into 
-    a FunData which gets added to the script 
+    a FunData which gets added to the script, returning its name.
     
-    
-    in the corresponding parent node. ????
-    
-    The 'program' adds the 
-    most shallow level
-
-    DO I NEED TO DO THAT?
-
-    and returns the finally constructed script.
+    The 'program' simply returns the finally constructed script.
 
     Instead of inheriting the name, we set up surrogates and
     leave for later the name change if convenient.
@@ -89,6 +87,9 @@ class ScriptMaker(Transformer):
             self.script.define(FunData(nm))
             # ~ print(f"Creating {nm} as pending.")
         return nm
+
+    def parenth(self, same):
+        return same
 
     def comp(self, left, right):
         nm = funfact()
