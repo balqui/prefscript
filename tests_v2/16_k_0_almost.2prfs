@@ -1,0 +1,11 @@
+// Two compatible definitions of k_0.
+// As of mid Thermidor 2026, wrong because the two 
+// temporary surrogates of pair k_1 k_1 are different.
+// One day this will be accepted as correct.
+
+main: k_0
+k_0: comp diff pair k_1 k_1
+k_0: comp diff pair k_1 k_1
+
+
+

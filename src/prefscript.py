@@ -30,7 +30,8 @@ if f := ap.parse_args().f:
     scr.to_python('main')
     mainf = scr.pycode['main']
     if not scr.valid:
-        scr.list(w_code = 1)
+        pass
+        # ~ scr.list(w_code = 1)
     else:
         # ~ print("\nTests:")
         while n := input("In: "):

@@ -1,0 +1,7 @@
+// Wrong: two incompatible definitions of k_0
+main: k_0
+k_0: comp diff pair k_1 k_1
+k_0: comp diff pair k_1 id
+
+
+

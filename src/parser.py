@@ -83,6 +83,7 @@ class ScriptMaker(Transformer):
 
     def single(self, cname):
         nm = cname.value
+        assert not seemsfactgen(nm), f"Error: name {nm} is disallowed."
         if nm not in self.script:
             self.script.define(FunData(nm))
             # ~ print(f"Creating {nm} as pending.")
