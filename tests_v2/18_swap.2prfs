@@ -1,0 +1,22 @@
+// The swap function with comments and docstrings. 
+// These lines are ignored by the parser.
+
+main: 
+
+     "swaps the two values of the input pair <x.y> into <y.x>"
+
+     swap
+
+pr_L: "left projection"  comp proj piggyback0
+pr_R: "right projection" comp s_tup piggyback1
+
+# Also shell-style comments can be used, they get ignored as well.
+
+k_0: comp diff pair k_1 k_1
+piggyback1: pair id k_1
+piggyback0: pair id k_0
+
+swap: pair pr_R pr_L
+
+
+

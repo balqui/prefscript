@@ -185,3 +185,8 @@ should be unnecessary.
 
 24/ At some point in time I will need namespaces.
 
+25/ The optional docstring must be [docstring].
+Gemini suggested that docstring? would work but
+it does not as it mishandles the None if missing
+and the number of arguments in the semantic
+routine does not match.

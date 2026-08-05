@@ -35,6 +35,7 @@ prfs2_grammar = '''
 %import common.WS
 %import common.SH_COMMENT
 %import common.CPP_COMMENT
+%import common.ESCAPED_STRING
 
 %ignore WS
 %ignore SH_COMMENT
@@ -42,7 +43,9 @@ prfs2_grammar = '''
 
 program : defun+
 
-defun   : CNAME ":" funspec
+defun   : CNAME ":" [docstring] funspec
+
+docstring: ESCAPED_STRING
 
 funspec : CNAME                            -> single
         | "comp" funspec funspec           -> comp
@@ -116,15 +119,18 @@ class ScriptMaker(Transformer):
     def program(self, *defuns):
         return self.script
 
-    def defun(self, cname, alias):
+    def defun(self, cname, docstring, alias):
         "To attempt to simplify and refactor at some point"
         nm = cname.value
         if seemsfactgen(alias):
             "override name"
             fspec = self.script[alias]
+            if docstring is not None:
+                assert not fspec.docst, f"Unexpectedly found already a previous docstring in {nm}."
+                fspec.docst = docstring
+            fspec.fname = nm
             # ~ print(f"Overriding name {alias}, now {nm}.")
             self.script.remove(alias)
-            fspec.fname = nm
             self.script.define(fspec)
         elif nm in self.script:
             assert self.script[nm].howdf == "pending", f"Seems I have two defs of {self.script[nm]}."
