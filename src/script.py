@@ -28,7 +28,6 @@ Open: shall we keep pragmas? Maybe just command line flags?
 import cantorpairs as cp
 from fundata import FunData
 from basicfun import BasicFun
-from synterr import SyntErr
 
 __version__ = "2.0"
 
@@ -59,7 +58,6 @@ class PReFScript(dict):
         self.valid = True     # program is correct until proven wrong
         # ~ self.pragmas = ddict(str)
         self.pycode = dict()  # namespace for its own lambdas
-        self.synt_err_handler = SyntErr()
         # ~ self.store_gnums = store_goedel_numbers # doubtful, leave for now
 
     def list(self, what = None, w_code = 0):
@@ -122,9 +120,9 @@ class PReFScript(dict):
             "make sure never to loop on it"
             self.pycode[name] = "None"
             assert name in self, \
-                f"Function '{name}' not found but required by {need}." 
+                f"Function {name} not found but required by {need}." 
             assert self[name].howdf != "pending", \
-                f"Function '{name}' undefined but required by {need}."
+                f"Function {name} undefined but required by {need}."
             if self[name].howdf != "ascii_const":
                 "the def_on part of an ascii_const is a mere string already handled"
                 for nname in self[name].defon:
