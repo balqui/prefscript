@@ -7,7 +7,7 @@ main:
 
      swap
 
-pr_L: "left projection"  comp proj piggyback0
+pr_L: "left projection"  comp proj  piggyback0
 pr_R: "right projection" comp s_tup piggyback1
 
 # Also shell-style comments can be used, they get ignored as well.

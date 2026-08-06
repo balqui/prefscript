@@ -17,9 +17,8 @@ how it is constructed and the tuple of function
 identifiers that participate in its definition;
 would allow one to detect duplicates. 
 
-Open: SyntErr might be replaceable by a combination
-of assert's and whatever Lark offers for handling
-errors, this is to be reviewed.
+Replaced SyntErr by assert's, to be combined with 
+whatever Lark offers for handling errors.
 
 Open: shall we keep pragmas? Maybe just command line flags?
 '''
@@ -104,10 +103,9 @@ class PReFScript(dict):
         nick = new_funct.fname
         if nick in self and self[nick].howdf != "pending":
             'repeated nick, check for consistency, MAYBE INSUFFICIENT'
-            if (self[nick].howdf != new_funct.howdf or
-                self[nick].defon != new_funct.defon):
-                    self.valid &= self.synt_err_handler.report(nonfatal = False,
-                    info = f"Repeated, inconsistent definitions for function '{nick}' found.")
+            assert (self[nick].howdf == new_funct.howdf and
+                    self[nick].defon == new_funct.defon), \
+                    f"Repeated, inconsistent definitions for function '{nick}' found."
         else:
             self[nick] = new_funct
 
@@ -115,27 +113,24 @@ class PReFScript(dict):
         "for placeholders, use with care"
         del self[nick]
 
-    def gen_py(self, name, need = 'pragma main'):
-        "I guess 'pragma main' is not the right message anymore"
-        if name not in self.pycode:
+    def gen_py(self, name, need = 'PReFScript syntax specs'):
+        if name in self.pycode:
+            "already seen, just ensure we are not in a definition loop"
+            assert self.pycode[name] != "None", \
+                f"Function '{name}' belongs to a disallowed definition loop."
+        else:
             "make sure never to loop on it"
             self.pycode[name] = "None"
-            if name in self and self[name].howdf != "pending":
-                if self[name].howdf != "ascii_const":
-                    "the def_on part of an ascii_const is a mere string already handled"
-                    for nname in self[name].defon:
-                        "we need first the recursive calls"
-                        self.gen_py(nname, name)
+            assert name in self, \
+                f"Function '{name}' not found but required by {need}." 
+            assert self[name].howdf != "pending", \
+                f"Function '{name}' undefined but required by {need}."
+            if self[name].howdf != "ascii_const":
+                "the def_on part of an ascii_const is a mere string already handled"
+                for nname in self[name].defon:
+                    "we need first the recursive calls"
+                    self.gen_py(nname, name)
                 self.pycode[name] = eval(self[name].rawpy, globals() | self.pycode)
-            else:
-                "newly found undefined name"
-                self.valid &= self.synt_err_handler.report(nonfatal = False, 
-                    info = f"Function '{name}' not found but needed by {need}.")
-                # ~ print("!!!!!!!!!!!!!", self.valid)
-        elif self.pycode[name] == "None":
-            "already attempted, make sure not to fall in a definition loop"
-            self.valid &= self.synt_err_handler.report(nonfatal = False, 
-                info = f"Function '{name}' belongs to a disallowed definition loop.")
 
     def to_python(self, what):
         'returns the Python-runnable version of the function'

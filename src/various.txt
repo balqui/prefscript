@@ -86,6 +86,7 @@ h: comp add add
 
 10/ About comp add add: add(39) = add(<2.6>) = 8 and then
 (add add) (39) = add(add(39)) = add(8) = add(<1.2>) = 3.
+Also (add add) (39) = 7.
 
 11/ All the comp cases return a named function with a 
 surrogate identifier. I must accept the synonimy from
@@ -190,3 +191,51 @@ Gemini suggested that docstring? would work but
 it does not as it mishandles the None if missing
 and the number of arguments in the semantic
 routine does not match.
+
+
+
+
+
+
+
+
+
+
+>>> from script import PReFScript, cp
+>>> cp.dp(9, 3)
+88
+>>> cp.dp(10, 3)
+102
+>>> cp.dp(11, 3)
+117
+>>> cp.dp(12, 3)
+133
+>>> cp.dp(9, 4)
+101
+>>> cp.dp(8, 4)
+87
+>>> cp.dp(7, 4)
+74
+>>> cp.dp(6, 4)
+62
+>>> cp.dp(5, 4)
+51
+>>> cp.dp(4, 4)
+41
+>>> cp.dp(3, 4)
+32
+>>> 
+
+
+
+
+>>> cp.tup_e(3, 7, 1, 2, 8)
+21140785117636835458384
+>>> cp.tup_e(3, 2, 1, 2, 1)
+179011585
+>>> cp.tup_e(3, 2, 1, 2)
+142849
+>>> cp.tup_e(3, 2, 1, 2, 1, 0)
+10051422224
+>>> cp.tup_e(2, 2, 0, 0, 0, 0)
+4659

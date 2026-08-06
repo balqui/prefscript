@@ -1,0 +1,40 @@
+# Compute quotient of truncated integer division.
+# Careful: will loop forever if denominator is zero.
+# If div receives <numer.denom> then
+# test_quotient keeps receiving <<numer.denom>.q> 
+# for candidate quotients q.
+# Must answer positively for the first q such that q+1 is 
+# too large: (q+1)*denom > numer.
+
+main: div
+
+numer: pr_LL
+denom: pr_RL
+
+div: mu test_quotient
+
+test_quotient:
+    "receive <<numer.denom>.q>, check (q+1)*denom > numer"
+    comp gt pair (comp mul pair next denom) numer
+
+next: 
+    "receive <<numer.denom>.q>, compute q+1"
+    comp add (comp piggyback1 pr_R)
+
+gt:
+    "test x > y given <x.y>"
+    comp sign diff
+
+ant: comp diff pair id k_1
+sign: comp diff pair id ant
+
+pr_LL: comp pr_L pr_L
+pr_RL: "pr_R on pr_L" comp pr_R pr_L
+pr_RR: comp pr_R pr_R
+pr_LR: "pr_L on pr_R" comp pr_L pr_R
+
+k_0: comp diff pair k_1 k_1
+piggyback1: pair id k_1
+piggyback0: pair id k_0
+pr_L: comp proj piggyback0
+pr_R: comp s_tup piggyback1

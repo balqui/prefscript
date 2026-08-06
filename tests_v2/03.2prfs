@@ -1,0 +1,4 @@
+main: f
+f: comp comp g h comp h g
+g: comp g g
+h: comp add add
