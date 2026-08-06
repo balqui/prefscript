@@ -117,10 +117,10 @@ class PReFScript(dict):
             assert self.pycode[name] != "None", \
                 f"Function '{name}' belongs to a disallowed definition loop."
         else:
-            "make sure never to loop on it"
-            self.pycode[name] = "None"
+            self.pycode[name] = "None" # make sure never to loop on it
             assert name in self, \
                 f"Function {name} not found but required by {need}." 
+                                       # that assert never seems to fail
             assert self[name].howdf != "pending", \
                 f"Function {name} undefined but required by {need}."
             if self[name].howdf != "ascii_const":
