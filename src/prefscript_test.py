@@ -15,29 +15,52 @@ __version__ = "2.0"
 
 from parser import prfsparser, ScriptMaker
 from script import PReFScript
-from argparse import ArgumentParser
 
-ap = ArgumentParser()
-ap.add_argument('f', nargs='?', default=None)
+import subprocess
+from pathlib import Path
 
-if f := ap.parse_args().f:
-    with open(f) as ff:
-        ast = prfsparser(ff.read())
-    print(ast.pretty())
-    scrmk = ScriptMaker(PReFScript())
-    scr = scrmk.transform(ast)
-    # ~ scr.list()
-    scr.to_python('main')
-    mainf = scr.pycode['main']
-    if not scr.valid:
-        pass
-        # ~ scr.list(w_code = 1)
-    else:
-        # ~ print("\nTests:")
-        # ~ while n := input("In: "):
-            # ~ n = int(n)
-            # ~ print("Out:", mainf(n))
-        while n := input():
-            n = int(n)
-            print(n, mainf(n))
-    exit()
+TEST_DIR = Path("../tests_v2")
+INTERPRETER = "./prefscript.py"
+
+# NOT COUNTING the files in folder err
+expected_outputs = (39, 3, 3, 0, 2, 1521, 6, 43, 49, 38, 1, 2, 16, 1521, 0, 43, 0, 3) 
+
+# ~ def run_test(source_code: str):
+    # ~ result = subprocess.run(
+        # ~ [INTERPRETER],          # Called directly without 'python3'
+        # ~ input=source_code,      # Feeds string directly into stdin (like cat file | interpreter)
+        # ~ capture_output=True,
+        # ~ text=True
+    # ~ )
+    
+    # ~ return result.stdout, result.stderr, result.returncode
+
+
+def run_tests():
+    # Discover all test files (e.g., .pref or .prefscript)
+    test_files = sorted(TEST_DIR.glob("*.2prfs"))
+    print(f"{len(test_files)} files found in {TEST_DIR}.")
+    passed = 0
+
+    for test_path, expected in zip(test_files, expected_outputs):
+        # ~ print(f"Test of {test_path}...\n")
+        # Call your interpreter as a subprocess
+        result = subprocess.run(
+            [INTERPRETER, str(test_path)],
+            input="39\n\n",
+            capture_output=True,
+            text=True
+        )
+
+        # Check execution status
+        if result.returncode == 0 and result.stdout.strip() == str(expected):
+            passed += 1
+        else:
+            print(f"[FAIL] {test_path}")
+            print(f"Error output: {result.stderr.strip()}")
+            break
+    print(f"{passed} passed.")
+
+
+if __name__ == "__main__":
+    run_tests()

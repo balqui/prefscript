@@ -23,7 +23,7 @@ ap.add_argument('f', nargs='?', default=None)
 if f := ap.parse_args().f:
     with open(f) as ff:
         ast = prfsparser(ff.read())
-    print(ast.pretty())
+    # ~ print(ast.pretty())
     scrmk = ScriptMaker(PReFScript())
     scr = scrmk.transform(ast)
     # ~ scr.list()
@@ -39,7 +39,7 @@ if f := ap.parse_args().f:
             # ~ print("Out:", mainf(n))
         while n := input():
             n = int(n)
-            print(n, mainf(n))
+            print(mainf(n))
     exit()
     
 
