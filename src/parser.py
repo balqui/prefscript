@@ -43,9 +43,9 @@ prfs2_grammar = '''
 
 program : defun+
 
-defun   : CNAME ":" [docstring] funspec
+defun   : CNAME ":" docstring funspec
 
-docstring: ESCAPED_STRING
+docstring: ESCAPED_STRING*
 
 funspec : CNAME                            -> single
         | "comp" funspec funspec           -> comp
@@ -119,26 +119,32 @@ class ScriptMaker(Transformer):
     def program(self, *defuns):
         return self.script
 
+    def docstring(self, *docstrings):
+        "They are tokens, but somehow each can be handled as string"
+        return ' '.join(ds.strip('"') for ds in docstrings)
+
     def defun(self, cname, docstring, alias):
-        "To attempt to simplify and refactor at some point"
+        "First two cases are functions already in the script"
         nm = cname.value
         if seemsfactgen(alias):
-            "override name"
+            "name to override"
             fspec = self.script[alias]
-            if docstring is not None:
-                assert not fspec.docst, f"Unexpectedly found already a previous docstring in {nm}."
+            if docstring:
+                assert not fspec.docst, f"Unexpectedly found already" \
+                       " a previous docstring in {nm}."
                 fspec.docst = docstring
             fspec.fname = nm
-            # ~ print(f"Overriding name {alias}, now {nm}.")
             self.script.remove(alias)
-            self.script.define(fspec)
         elif nm in self.script:
-            assert self.script[nm].howdf == "pending", f"Seems I have two defs of {self.script[nm]}."
-            # ~ print(f"Completing pending {nm} as alias of {alias}.")
-            self.script.remove(nm)
-            self.script.define(FunData(nm, howdf = "alias", defon = (alias,))) # creating new one
+            "pending name to be completed"
+            assert self.script[nm].howdf == "pending", \
+                   f"Seems that you have two defs of {self.script[nm]}."
+            self.script.remove(nm) # o/w defining it will fail
+            fspec = FunData(nm, docst = docstring,
+                            howdf = "alias", defon = (alias,))
         else:
-            # ~ print(f"Creating {nm} as alias of {alias}.")
-            self.script.define(FunData(nm, howdf = "alias", defon = (alias,)))
+            fspec = FunData(nm, docst = docstring,
+                            howdf = "alias", defon = (alias,))
+        self.script.define(fspec)
         return nm
 

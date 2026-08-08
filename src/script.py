@@ -31,13 +31,22 @@ from basicfun import BasicFun
 
 __version__ = "2.0"
 
+def sq(z):
+    ls = list()
+    while z != 0:
+        ls.append(cp.pr_L(z))
+        z = cp.pr_R(z)
+    return ls
+
 # A handful of ancillary functions
 
 def mu(x, test):
     "ancillary linear search function for implementing mu-minimization"
     z = 0
     while not test(cp.dp(x, z)):
+        print(" ==", x, cp.pr_L(x), cp.pr_R(x), z, sq(z))
         z += 1
+    print("===", x, cp.pr_L(x), cp.pr_R(x), z, sq(z))
     return z
 
 
@@ -72,10 +81,13 @@ class PReFScript(dict):
         def list_one(fdat, w_code):
             s = f"{fdat.fname}: " 
             if fdat.docst:
-                s += f"[{fdat.docst}]"
+                s += f"[{fdat.docst}] "
             if w_code:
                 'add how it is defined'
-                s += f", {fdat.howdf} on {fdat.defon}"
+                if fdat.howdf == "basic":
+                    s += "basic"
+                else:
+                    s += f"{fdat.howdf} on {', '.join(fdat.defon)}"
             if w_code == 2:
                 s += f"; {fdat.rawpy}."
             else:

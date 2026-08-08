@@ -1,6 +1,16 @@
-main: f
-f: h
-h: comp add add
+main: 
+  "doc main"
+  f
+
+f: 
+  "doc f 1"
+  "doc f 2"
+  h
+
+h: 
+  "doc h"
+  comp add add
+
 g: comp g g
 
 

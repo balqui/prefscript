@@ -29,6 +29,7 @@ if f := ap.parse_args().f:
     # ~ scr.list()
     scr.to_python('main')
     mainf = scr.pycode['main']
+    # ~ scr.list(w_code = 1)
     if not scr.valid:
         pass
         # ~ scr.list(w_code = 1)

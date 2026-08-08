@@ -1,0 +1,174 @@
+# Factorial on mu-based linear search, no extended pragma.
+# Complete script without imports as a stand-alone example.
+# Dismal slow, don't attempt to compute fact(5), takes years; 
+# and even fact(4) will demand hours and over 38GB memory 
+
+main: fact
+
+fact_course_of_values:
+    "the full sequence of course-of-values of x!, namely:"
+    "<x!, (x-1)!, ... 1!, 0!>"
+
+    mu valid_course_of_values
+
+fact:
+    "most recent one in the full course of values"
+    comp pr_L fact_course_of_values
+
+
+valid_course_of_values:
+    "test: given <x.z> with input x and candidate sequence z to be"
+    "the course of values of fact of x, is it really correct?"
+    comp neg is_there_wrong_place
+
+find_wrong_place:
+    "given <x.z>, answer sentinel value x+1 if there is no wrong place"
+    "in z as course of values and the first wrong place otherwise, <= x"
+    mu test_wrong_place_or_sentinel
+
+is_there_wrong_place:
+    "given input and candidate sequence, <x.z>, is z wrong as the"
+    "course of values of fact of x? binarize by subtracting from x+1"
+    "the wrong place or the x+1 sentinel if all correct"
+    comp diff pair add_1_to_L find_wrong_place
+
+add_1_to_L:
+    "given <u.v>, return u+1"
+    comp add comp piggyback_1 pr_L
+
+test_wrong_place_or_sentinel:
+    "given input and candidate sequence, plus position k in sequence z,"
+    "before x-th, < <x.z> . k >, is that position of z wrong? or is it" 
+    "already x+1 and we can stop the search?"
+    comp disj pair test_wrong_place sentinel
+
+test_wrong_place:
+    "given < <x.z> . k >, input, sequence and position, is position k"
+    "of sequence z wrong, be it not 1 at the last x-th or a mismatched" 
+    "product before x-th"
+    comp disj pair wrong_product wrong_init
+
+sentinel:
+    "given < <x.z> . k >, stop when k > x, i.e. at x+1"
+    comp gt pair pr_R pr_LL
+
+wrong_init:
+    "given input, sequence and position, < <x.z> . k >," 
+    "check that k coincides with x but z[k] is not 1"
+    comp conj pair current_not_1 input_equals_position
+
+wrong_product:
+    "given < <x.z> . k >, check k < x and z[k] is not (x-k)*z[k+1]"
+    comp conj pair current_in_range current_is_wrong
+
+current:
+    "given input, sequence and position, < <x.z> . k >, find z[k]"
+    comp proj pair_sequence_position
+
+pair_sequence_position:
+    "given < <x.z> . k >, return <z.k>"
+    pair pr_RL pr_R
+
+current_not_1:
+    "given < <x.z> . k >, check z[k] is not 1"
+    comp ineq pair current k_1
+
+current_in_range:
+    "given input, sequence and position, < <x.z> . k >, check x > k"
+    comp gt pair_input_position
+
+pair_input_position:
+    "given < <x.z> . k >, return <x.k>"
+    pair pr_LL pr_R
+
+current_is_wrong:
+    "given < <x.z> . k >, check z[k] is not (x-k)*z[k+1]"
+    comp ineq pair 
+        current 
+        comp mul pair 
+            input_minus_position 
+            (comp proj_next pair_sequence_position)
+
+proj_next:
+    "given <z.k>, return z[k+1]"
+    comp proj pair pr_L (comp add comp piggyback_1 pr_R)
+
+input_minus_position:
+    "given < <x.z> . k >, return (x - k)"
+    comp diff pair_input_position
+
+input_equals_position:
+    "given < <x.z> . k >, return x == k"
+    comp eq pair_input_position
+
+swap: pair pr_R pr_L
+
+ant: comp diff pair id k_1
+sign: comp diff pair id ant
+
+pr_L: "left projection"  comp proj  piggyback_0
+pr_R: "right projection" comp s_tup piggyback_1
+
+k_0: comp diff pair k_1 k_1
+piggyback_1: pair id k_1
+piggyback_0: pair id k_0
+
+dupl: pair id id
+
+swap_diff:
+    "diff(<y.x>)"
+    comp diff swap
+
+piggyfront_1:
+    "Pairs up 1 with given u: <1.u>"
+    pair k_1 id
+
+neg:
+    "Negation: 0 from 1, 1 from 0"
+    "Larger values interpreted like 1"
+    comp diff piggyfront_1
+
+conj:
+    "boolean and if larger values interpreted like 1"
+    mul
+
+disj:
+    "boolean or"
+    comp sign add
+
+gt:
+    "x > y in <x.y>"
+    comp sign diff
+
+lt:
+    "x < y in <x.y>"
+    comp sign swap_diff
+
+both_compar:
+    "Pair of x < y and x > y"
+    pair lt gt
+
+ineq:
+    "Different x and y in <x.y>?"
+    comp add both_compar
+
+eq:
+    "Is it <x.x> for some x?"
+    comp neg ineq
+
+pr_LR:
+    "pr_L on pr_R"
+    comp pr_L pr_R
+
+pr_LL:
+    "pr_L on pr_L"
+    comp pr_L pr_L
+
+pr_RR:
+    "pr_R on pr_R"
+    comp pr_R pr_R
+
+pr_RL:
+    "pr_R on pr_L"
+    comp pr_R pr_L
+     
