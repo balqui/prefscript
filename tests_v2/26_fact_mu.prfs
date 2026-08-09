@@ -1,7 +1,10 @@
 # Factorial on mu-based linear search, no extended pragma.
 # Complete script without imports as a stand-alone example.
-# Dismal slow, don't attempt to compute fact(5), takes years; 
-# and even fact(4) will demand hours and over 38GB memory 
+# Dismal slow, even fact(4) will demand hours and over 38GB 
+# memory as it tests all possible sequence numbers, the whole 
+# way up to <24,6,2,1,1> = 21691016. Don't attempt to compute 
+# fact(5), it would take years to reach 235252701330937 = 
+# <120,24,6,2,1,1>.
 
 main: fact
 

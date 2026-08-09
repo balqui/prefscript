@@ -44,9 +44,9 @@ def mu(x, test):
     "ancillary linear search function for implementing mu-minimization"
     z = 0
     while not test(cp.dp(x, z)):
-        print(" ==", x, cp.pr_L(x), cp.pr_R(x), z, sq(z))
+        # ~ print(f"mu loop: {x} = <{cp.pr_L(x)}.{cp.pr_R(x)}> = {sq(x)} running {z} = {sq(z)}")
         z += 1
-    print("===", x, cp.pr_L(x), cp.pr_R(x), z, sq(z))
+    # ~ print(f"mu last: {x} = <{cp.pr_L(x)}.{cp.pr_R(x)}> = {sq(x)} running {z} = {sq(z)}")
     return z
 
 
