@@ -63,31 +63,31 @@ len: mu comp diff pair k_1 s_tup
 
 succ: comp add piggyback_1
 
-# Rest is almost basics from factorial
+# Rest is basics from factorial
 
 swap: pair pr_R pr_L
 
 ant: comp diff pair id k_1
+
 sign: comp diff pair id ant
 
 pr_L: "left projection"  comp proj  piggyback_0
+
 pr_R: "right projection" comp s_tup piggyback_1
 
 k_0: comp diff pair k_1 k_1
-k_2: comp add pair k_1 k_1
+
 piggyback_1: pair id k_1
-piggyback_2: pair id k_2
+
 piggyback_0: pair id k_0
-
-dupl: pair id id
-
-swap_diff:
-    "diff(<y.x>)"
-    comp diff swap
 
 piggyfront_1:
     "Pairs up 1 with given u: <1.u>"
     pair k_1 id
+
+swap_diff:
+    "diff(<y.x>)"
+    comp diff swap
 
 neg:
     "Negation: 0 from 1, 1 from 0"
