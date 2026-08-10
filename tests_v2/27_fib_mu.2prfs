@@ -1,8 +1,10 @@
 # Fibonacci numbers via mu-based linear search.
 # Complete script without imports as a stand-alone example.
-# Probably slow.
+# Slow, the sequence for 5th (namely 5) is 1510053496,
+# and for 6th (namely 8) is 1140130793226365769.
+# Neither has been tested on my laptop so far.
 
-main: valid_fib_sequence
+main: fib
 
 fib:
     "fib(x) returns the x-th Fibonacci number, indexing from 0"
@@ -17,16 +19,16 @@ valid_fib_sequence:
     comp conj pair good_length valid_nums
 
 good_length:
-    "given <x.z>, is z a sequence of x values?"
-    comp eq pair pr_L (comp len pr_R)
+    "given <x.z>, is z a sequence of x+1 values?"
+    comp eq pair (comp succ pr_L) (comp len pr_R)
 
 valid_nums:
-    "given <x.z> where z can be assumed a sequence of length x,"
+    "given <x.z> where z can be assumed a sequence of length x+1,"
     "is it a sequence made up according to the Fibonacci rule?"
-    comp eq pair (mu find_wrong_place_or_sentinel) pr_L
+    comp eq pair (mu find_wrong_place_or_sentinel) (comp succ pr_L)
 
 find_wrong_place_or_sentinel:
-    "given <<x.z>.k>, is k > x or z[k] wrong?"
+    "given <<x.z>.k>, is either k > x or z[k] wrong?"
     comp disj pair (comp gt pair pr_R pr_LL) wrong_position
 
 wrong_position:
@@ -36,27 +38,30 @@ wrong_position:
 wrong_0:
     "given <<x.z>.k>, is k = x and z[k] wrongly nonzero?"
     comp conj pair (comp eq pair pr_R pr_LL) 
-                   (comp ineq pair (comp proj pair pr_LR pr_R) k_0)
+                   (comp ineq pair (comp proj pair pr_RL pr_R) k_0)
 
 wrong_1:
-    "given <<x.z>.k>, is k = x-1 and z[k] wrongly different from 1?"
-    comp conj pair (comp eq pair pr_R (comp diff pair pr_LL k_1)) 
-                   (comp ineq pair (comp proj pair pr_LR pr_R) k_1)
+    "given <<x.z>.k>, is k+1 = x and z[k] wrongly different from 1?"
+    comp conj pair (comp eq pair comp succ pr_R pr_LL) 
+                   (comp ineq pair (comp proj pair pr_RL pr_R) k_1)
 
 wrong_beyond:
-    "given <<x.z>.k>, is z[k] wrongly different from adequate sum?"
-    comp ineq pair (comp proj pair pr_RL pr_L)
-                   (comp add pair proj_next proj_next_next)
+    "given <<x.z>.k>, is x > k+1 and z[k] wrongly different from adequate sum?"
+    comp conj pair (comp gt pair pr_LL comp succ pr_R)
+                   comp ineq pair (comp proj pair pr_RL pr_R)
+                                  (comp add pair proj_next proj_next_next)
 
 proj_next:
     "given <<x.z>.k>, return z[k+1]"
-    comp proj pair pr_RL (comp add comp piggyback_1 pr_R)
+    comp proj pair pr_RL (comp succ pr_R)
 
 proj_next_next:
     "given <<x.z>.k>, return z[k+2]"
-    comp proj pair pr_RL (comp add comp piggyback_2 pr_R)
+    comp proj pair pr_RL (comp succ comp succ pr_R)
 
 len: mu comp diff pair k_1 s_tup
+
+succ: comp add piggyback_1
 
 # Rest is almost basics from factorial
 
