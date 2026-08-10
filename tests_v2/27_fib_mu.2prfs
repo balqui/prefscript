@@ -1,7 +1,7 @@
 # Fibonacci numbers via mu-based linear search.
 # Complete script without imports as a stand-alone example.
-# Slow, the sequence for 5th (namely 5) is 1510053496,
-# and for 6th (namely 8) is 1140130793226365769.
+# Slow, the sequence for 6th (namely 5) is 1510053496,
+# and for 7th (namely 8) is 1140130793226365769.
 # Neither has been tested on my laptop so far.
 
 main: fib
