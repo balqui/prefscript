@@ -1,0 +1,135 @@
+# Fibonacci numbers via mu-based linear search.
+# Complete script without imports as a stand-alone example.
+# Probably slow.
+
+main: valid_fib_sequence
+
+fib:
+    "fib(x) returns the x-th Fibonacci number, indexing from 0"
+    comp pr_L fib_sequence
+
+fib_sequence:
+    "given x returns the sequence of the first x Fibonacci numbers"
+    mu valid_fib_sequence
+
+valid_fib_sequence:
+    "given <x.z>, is z the sequence of the first x Fibonacci numbers?"
+    comp conj pair good_length valid_nums
+
+good_length:
+    "given <x.z>, is z a sequence of x values?"
+    comp eq pair pr_L (comp len pr_R)
+
+valid_nums:
+    "given <x.z> where z can be assumed a sequence of length x,"
+    "is it a sequence made up according to the Fibonacci rule?"
+    comp eq pair (mu find_wrong_place_or_sentinel) pr_L
+
+find_wrong_place_or_sentinel:
+    "given <<x.z>.k>, is k > x or z[k] wrong?"
+    comp disj pair (comp gt pair pr_R pr_LL) wrong_position
+
+wrong_position:
+    "given <<x.z>.k>, is z[k] wrong?"
+    comp disj pair wrong_0 (comp disj pair wrong_1 wrong_beyond)
+
+wrong_0:
+    "given <<x.z>.k>, is k = x and z[k] wrongly nonzero?"
+    comp conj pair (comp eq pair pr_R pr_LL) 
+                   (comp ineq pair (comp proj pair pr_LR pr_R) k_0)
+
+wrong_1:
+    "given <<x.z>.k>, is k = x-1 and z[k] wrongly different from 1?"
+    comp conj pair (comp eq pair pr_R (comp diff pair pr_LL k_1)) 
+                   (comp ineq pair (comp proj pair pr_LR pr_R) k_1)
+
+wrong_beyond:
+    "given <<x.z>.k>, is z[k] wrongly different from adequate sum?"
+    comp ineq pair (comp proj pair pr_RL pr_L)
+                   (comp add pair proj_next proj_next_next)
+
+proj_next:
+    "given <<x.z>.k>, return z[k+1]"
+    comp proj pair pr_RL (comp add comp piggyback_1 pr_R)
+
+proj_next_next:
+    "given <<x.z>.k>, return z[k+2]"
+    comp proj pair pr_RL (comp add comp piggyback_2 pr_R)
+
+len: mu comp diff pair k_1 s_tup
+
+# Rest is almost basics from factorial
+
+swap: pair pr_R pr_L
+
+ant: comp diff pair id k_1
+sign: comp diff pair id ant
+
+pr_L: "left projection"  comp proj  piggyback_0
+pr_R: "right projection" comp s_tup piggyback_1
+
+k_0: comp diff pair k_1 k_1
+k_2: comp add pair k_1 k_1
+piggyback_1: pair id k_1
+piggyback_2: pair id k_2
+piggyback_0: pair id k_0
+
+dupl: pair id id
+
+swap_diff:
+    "diff(<y.x>)"
+    comp diff swap
+
+piggyfront_1:
+    "Pairs up 1 with given u: <1.u>"
+    pair k_1 id
+
+neg:
+    "Negation: 0 from 1, 1 from 0"
+    "Larger values interpreted like 1"
+    comp diff piggyfront_1
+
+conj:
+    "boolean and if larger values interpreted like 1"
+    mul
+
+disj:
+    "boolean or"
+    comp sign add
+
+gt:
+    "x > y in <x.y>"
+    comp sign diff
+
+lt:
+    "x < y in <x.y>"
+    comp sign swap_diff
+
+both_compar:
+    "Pair of x < y and x > y"
+    pair lt gt
+
+ineq:
+    "Different x and y in <x.y>?"
+    comp add both_compar
+
+eq:
+    "Is it <x.x> for some x?"
+    comp neg ineq
+
+pr_LR:
+    "pr_L on pr_R"
+    comp pr_L pr_R
+
+pr_LL:
+    "pr_L on pr_L"
+    comp pr_L pr_L
+
+pr_RR:
+    "pr_R on pr_R"
+    comp pr_R pr_R
+
+pr_RL:
+    "pr_R on pr_L"
+    comp pr_R pr_L
+     

@@ -1,4 +1,4 @@
-# Factorial on mu-based linear search, no extended pragma.
+# Factorial on mu-based linear search.
 # Complete script without imports as a stand-alone example.
 # Dismal slow, even fact(4) will demand hours and over 38GB 
 # memory as it tests all possible sequence numbers, the whole 
@@ -52,7 +52,7 @@ test_wrong_place:
     comp disj pair wrong_product wrong_init
 
 sentinel:
-    "given < <x.z> . k >, stop when k > x, i.e. at x+1"
+    "given < <x.z> . k >, stop when k > x, e.g. at x+1"
     comp gt pair pr_R pr_LL
 
 wrong_init:
