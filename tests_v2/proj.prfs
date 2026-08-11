@@ -1,0 +1,17 @@
+# Projections to import
+
+k_0: comp diff pair k_1 k_1
+
+piggyback1: pair id k_1
+piggyback0: pair id k_0
+
+pr_L: "left projection"  comp proj  piggyback0
+pr_R: "right projection" comp s_tup piggyback1
+
+pr_LL: comp pr_L pr_L
+pr_RR: comp pr_R pr_R
+
+pr_RL: "pr_R on pr_L" comp pr_R pr_L
+pr_LR: "pr_L on pr_R" comp pr_L pr_R
+
+swap: pair pr_R pr_L

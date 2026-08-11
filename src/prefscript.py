@@ -24,23 +24,23 @@ if f := ap.parse_args().f:
     with open(f) as ff:
         ast = prfsparser(ff.read())
     # ~ print(ast.pretty())
-    scrmk = ScriptMaker(PReFScript())
+    scrmk = ScriptMaker(PReFScript(), f)
     scr = scrmk.transform(ast)
     # ~ scr.list()
     scr.to_python('main')
     mainf = scr.pycode['main']
     # ~ scr.list(w_code = 1)
-    if not scr.valid:
-        pass
+    # ~ if not scr.valid:
+        # ~ pass
         # ~ scr.list(w_code = 1)
-    else:
+    # ~ else:
         # ~ print("\nTests:")
         # ~ while n := input("In: "):
             # ~ n = int(n)
             # ~ print("Out:", mainf(n))
-        while n := input():
-            n = int(n)
-            print(mainf(n))
+    while n := input():
+        n = int(n)
+        print(mainf(n))
     exit()
     
 
@@ -90,8 +90,8 @@ while p := input("Program choice (0-4): "):
     # ~ scr.list(w_code = 2)
     scr.to_python('main')
     mainf = scr.pycode['main']
-    if not scr.valid:
-        break
+    # ~ if not scr.valid:
+        # ~ break
     print("\nTests:")
     while n := input():
         n = int(n)

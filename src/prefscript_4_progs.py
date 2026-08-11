@@ -63,8 +63,8 @@ while p := input("Program choice (0-4): "):
     # ~ scr.list(w_code = 2)
     scr.to_python('main')
     mainf = scr.pycode['main']
-    if not scr.valid:
-        break
+    # ~ if not scr.valid:
+        # ~ break
     print("\nTests:")
     while n := input():
         n = int(n)

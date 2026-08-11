@@ -1,0 +1,4 @@
+import "30_circ_imp_0.2prfs"
+
+main: g
+g: comp add h

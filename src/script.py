@@ -64,7 +64,7 @@ class PReFScript(dict):
         '''
         super().__init__(self)
         self |= BasicFun()    # initialize with the basic functions
-        self.valid = True     # program is correct until proven wrong
+        # ~ self.valid = True     # program is correct until proven wrong
         # ~ self.pragmas = ddict(str)
         self.pycode = dict()  # namespace for its own lambdas
         # ~ self.store_gnums = store_goedel_numbers # doubtful, leave for now
@@ -146,5 +146,5 @@ class PReFScript(dict):
         'returns the Python-runnable version of the function'
         if what not in self.pycode:
             self.gen_py(what)
-        if self.valid:
-            return self.pycode[what]
+        # ~ if self.valid:
+        return self.pycode[what]

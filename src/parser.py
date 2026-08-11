@@ -11,6 +11,9 @@ Copyleft: MIT License (https://en.wikipedia.org/wiki/MIT_
 
 from lark import Lark, Transformer, v_args
 from fundata import FunData
+from script import PReFScript       # for the recursive calls on imports
+
+FILENAMES = set()                   # main and imported
 
 # A handful of ancillary functions
 
@@ -41,17 +44,19 @@ prfs2_grammar = '''
 %ignore SH_COMMENT
 %ignore CPP_COMMENT
 
-program : defun+
+program   : importing* defun+
 
-defun   : CNAME ":" docstring funspec
+importing : "import" ESCAPED_STRING
 
-docstring: ESCAPED_STRING*
+defun     : CNAME ":" docstring funspec
 
-funspec : CNAME                            -> single
-        | "comp" funspec funspec           -> comp
-        | "pair" funspec funspec           -> pair
-        | "mu" funspec                     -> mu
-        | "(" funspec ")"                  -> parenth
+docstring : ESCAPED_STRING*
+
+funspec   : CNAME                            -> single
+          | "comp" funspec funspec           -> comp
+          | "pair" funspec funspec           -> pair
+          | "mu" funspec                     -> mu
+          | "(" funspec ")"                  -> parenth
 
 '''
 
@@ -80,9 +85,11 @@ class ScriptMaker(Transformer):
     leave for later the name change if convenient.
     '''
 
-    def __init__(self, script):
+    def __init__(self, script, filename, imported = False):
         super().__init__(self)
         self.script = script
+        self.imported = imported
+        FILENAMES.add(filename)                        #### TEMPORARY, MUST BE FULL PATH
 
     def single(self, cname):
         nm = cname.value
@@ -124,8 +131,11 @@ class ScriptMaker(Transformer):
         return ' '.join(ds.strip('"') for ds in docstrings)
 
     def defun(self, cname, docstring, alias):
-        "First two cases are functions already in the script"
+        "First two cases after skipping main are functions already in the script"
         nm = cname.value
+        if nm == "main" and self.imported:
+            "ignore it"
+            return ''
         if seemsfactgen(alias):
             "name to override"
             fspec = self.script[alias]
@@ -147,4 +157,21 @@ class ScriptMaker(Transformer):
                             howdf = "alias", defon = (alias,))
         self.script.define(fspec)
         return nm
+
+    def importing(self, filename):
+        # ~ filename = "tests_v2/" + filename.strip('"')       #### TEMPORARY, MUST HANDLE FULL PATH
+        filename = filename.strip('"')       #### TEMPORARY, MUST HANDLE FULL PATH
+        print(f"Must import /{filename}/")
+        if filename not in FILENAMES:
+            FILENAMES.add(filename)                        #### TEMPORARY, MUST BE FULL PATH
+            local_ast = prfsparser(open(filename).read())  #### TEMPORARY, MUST BE try/except
+            print(local_ast.pretty())
+            local_scrmk = ScriptMaker(PReFScript(), filename, imported = True)
+            local_scr = local_scrmk.transform(local_ast)
+            self.script |= local_scr
+        else:
+            print(f"Redundant import on {filename}.")
+            return ''
+
+
 

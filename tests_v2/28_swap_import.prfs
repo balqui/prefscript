@@ -1,0 +1,14 @@
+# Like 18 but importing the projections instead
+
+import "29_prLR.2prfs"
+
+main: 
+
+     "swaps the two values of the input pair <x.y> into <y.x>"
+
+     swap
+
+swap: pair pr_R pr_L
+
+
+
