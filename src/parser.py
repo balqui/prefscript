@@ -161,6 +161,8 @@ class ScriptMaker(Transformer):
     def importing(self, filename):
         # ~ filename = "tests_v2/" + filename.strip('"')       #### TEMPORARY, MUST HANDLE FULL PATH
         filename = filename.strip('"')       #### TEMPORARY, MUST HANDLE FULL PATH
+        if not filename.endswith(".prfs"):
+            filename += ".prfs"
         print(f"Must import /{filename}/")
         if filename not in FILENAMES:
             FILENAMES.add(filename)                        #### TEMPORARY, MUST BE FULL PATH

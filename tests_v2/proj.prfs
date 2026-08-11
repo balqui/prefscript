@@ -1,12 +1,20 @@
-# Projections to import
+# Projections to import.
+
+# Arbitrary main, ignored upon import.
+
+main: dupl
+
+
+
+dupl: pair id id
 
 k_0: comp diff pair k_1 k_1
 
-piggyback1: pair id k_1
-piggyback0: pair id k_0
+piggyback_1: pair id k_1
+piggyback_0: pair id k_0
 
-pr_L: "left projection"  comp proj  piggyback0
-pr_R: "right projection" comp s_tup piggyback1
+pr_L: "left projection"  comp proj  piggyback_0
+pr_R: "right projection" comp s_tup piggyback_1
 
 pr_LL: comp pr_L pr_L
 pr_RR: comp pr_R pr_R

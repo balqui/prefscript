@@ -1,0 +1,63 @@
+# Boolean-related functions to import.
+
+import "proj.prfs"
+
+# Arbitrary main, ignored upon import.
+
+main: eq
+
+
+
+neg:
+    "Negation: 0 from 1, 1 from 0"
+    "Larger values interpreted like 1"
+    comp diff piggyfront_1
+
+conj:
+    "boolean and if larger values interpreted like 1"
+    mul
+
+disj:
+    "boolean or"
+    comp sign add
+
+ant: comp diff piggyback_1
+
+succ: comp add piggyback_1
+
+sign: comp diff pair id ant
+
+sg: sign
+
+swap: pair pr_R pr_L
+
+swap_diff:
+    "diff(<y.x>)"
+    comp diff swap
+
+piggyfront_1:
+    "Pairs up 1 with given u: <1.u>"
+    pair k_1 id
+
+gt:
+    "x > y in <x.y>"
+    comp sign diff
+
+lt:
+    "x < y in <x.y>"
+    comp sign swap_diff
+
+both_compar:
+    "Pair of x < y and x > y"
+    pair lt gt
+
+ineq:
+    "Different x and y in <x.y>?"
+    comp add both_compar
+
+eq:
+    "Is it <x.x> for some x?"
+    comp neg ineq
+
+
+
