@@ -23,3 +23,8 @@ pr_RL: "pr_R on pr_L" comp pr_R pr_L
 pr_LR: "pr_L on pr_R" comp pr_L pr_R
 
 swap: pair pr_R pr_L
+
+piggyfront_1:
+    "Pairs up 1 with given u: <1.u>"
+    pair k_1 id
+

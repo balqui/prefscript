@@ -2,7 +2,7 @@
 Project started mid Germinal 2003:
 PReFScript: A Partial Recursive Functions Lab
 
-Module version mid Thermidor 2026:
+Module version late Thermidor 2026:
 pref_script.py: class PReFScript storing all the functions in one script
 
 Author: Jose L Balcazar, ORCID 0000-0003-4248-4528, april 2023 onwards 
@@ -31,22 +31,21 @@ from basicfun import BasicFun
 
 __version__ = "2.0"
 
+# A handful of ancillary functions, more to come
+
 def sq(z):
+    "list form of the sequence encoded by z"
     ls = list()
     while z != 0:
         ls.append(cp.pr_L(z))
         z = cp.pr_R(z)
     return ls
 
-# A handful of ancillary functions
-
 def mu(x, test):
     "ancillary linear search function for implementing mu-minimization"
     z = 0
     while not test(cp.dp(x, z)):
-        # ~ print(f"mu loop: {x} = <{cp.pr_L(x)}.{cp.pr_R(x)}> = {sq(x)} running {z} = {sq(z)}")
         z += 1
-    # ~ print(f"mu last: {x} = <{cp.pr_L(x)}.{cp.pr_R(x)}> = {sq(x)} running {z} = {sq(z)}")
     return z
 
 
@@ -56,8 +55,9 @@ class PReFScript(dict):
     def __init__(self): #, store_goedel_numbers = ""):
         '''
         Maps each nick to a FunData; initially already contains
-        the basic functions. Additional separate dicts with pragmas 
-        and runnable functions; plus minor other fields. 
+        the basic functions. Additional separate dict with runnable 
+        functions; may keep getting other fields for pragmas 
+        and other minor infos. 
         Goedel number handling and raw Python strings: pending.
         Doubles as a dependency graph via the 'defon' fields
         in the FunData instances.
@@ -72,8 +72,8 @@ class PReFScript(dict):
     def list(self, what = None, w_code = 0):
         '''
         if what is None: list everything
-        else: search for that what on the dict.
-        Delegate one day the w_code and gnum to FunData.
+        else: search for that 'what' in the dict.
+        Pending: delegate one day the w_code and gnum to FunData.
         w_code 0: no code, 1: how and on what, 2: strcode also
         Gödel number printed depending on self.store_gnums and 
         how big it is

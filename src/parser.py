@@ -2,7 +2,7 @@
 Project started mid Germinal 2003:
 PReFScript: A Partial Recursive Functions Lab
 
-Module version mid Thermidor 2026:
+Module version late Thermidor 2026:
 prfs_parser.py: Lark-based parser of PReFScript 2.0 onwards.
 
 Author: Jose L Balcazar, ORCID 0000-0003-4248-4528, april 2023 onwards 
@@ -13,7 +13,9 @@ from lark import Lark, Transformer, v_args
 from fundata import FunData
 from script import PReFScript       # for the recursive calls on imports
 
-FILENAMES = set()                   # main and imported
+FILENAMES = set()                   # main and imported, eventually 
+                                    # to be handled in some other way,
+                                    # purpose is to avoid import cycles
 
 # A handful of ancillary functions
 
@@ -27,7 +29,7 @@ def funfactgen():
 funfact = funfactgen().__next__
 
 def seemsfactgen(nm):
-    return nm.startswith('___')
+    return nm.startswith('___') and nm[3:].isdigit()
 
 
 # Grammar, parser and semantic transformer
@@ -75,9 +77,10 @@ class ScriptMaker(Transformer):
     to the subtree funspec's.
 
     ScriptMaker objects contain a local PReFScript that is 
-    "in construction": currently a dict from nicknames to 
-    FunData's.. They transform each AST 'funspec' node into 
+    "in construction": they transform each AST 'funspec' node into 
     a FunData which gets added to the script, returning its name.
+    Imports are handled via recursive calls on a fresh script that
+    gets added to the script under construction afterwards.
     
     The 'program' simply returns the finally constructed script.
 
@@ -96,7 +99,6 @@ class ScriptMaker(Transformer):
         assert not seemsfactgen(nm), f"Error: name {nm} is disallowed."
         if nm not in self.script:
             self.script.define(FunData(nm))
-            # ~ print(f"Creating {nm} as pending.")
         return nm
 
     def parenth(self, same):
@@ -106,24 +108,21 @@ class ScriptMaker(Transformer):
         nm = funfact()
         fdat = FunData(nm, howdf = "comp", defon = (left, right))
         self.script.define(fdat)
-        # ~ print(f"Creating {fdat.fname} by composing {left} and {right}.")
         return nm
 
     def pair(self, left, right):
         nm = funfact()
         fdat = FunData(nm, howdf = "pair", defon = (left, right))
         self.script.define(fdat)
-        # ~ print(f"Creating {fdat.fname} by pairing {left} and {right}.")
         return nm
 
     def mu(self, test):
         nm = funfact()
         fdat = FunData(nm, howdf = "mu", defon = (test,))
         self.script.define(fdat)
-        # ~ print(f"Creating {fdat.fname} by minimization on {test}.")
         return nm
 
-    def program(self, *defuns):
+    def program(self, *imports_and_defuns):
         return self.script
 
     def docstring(self, *docstrings):
@@ -134,7 +133,7 @@ class ScriptMaker(Transformer):
         "First two cases after skipping main are functions already in the script"
         nm = cname.value
         if nm == "main" and self.imported:
-            "ignore it"
+            "silently ignore it"
             return ''
         if seemsfactgen(alias):
             "name to override"
@@ -163,17 +162,14 @@ class ScriptMaker(Transformer):
         filename = filename.strip('"')       #### TEMPORARY, MUST HANDLE FULL PATH
         if not filename.endswith(".prfs"):
             filename += ".prfs"
-        print(f"Must import /{filename}/")
+        # ~ print(f"Must import /{filename}/")
         if filename not in FILENAMES:
             FILENAMES.add(filename)                        #### TEMPORARY, MUST BE FULL PATH
             local_ast = prfsparser(open(filename).read())  #### TEMPORARY, MUST BE try/except
-            print(local_ast.pretty())
+            # ~ print(local_ast.pretty())
             local_scrmk = ScriptMaker(PReFScript(), filename, imported = True)
             local_scr = local_scrmk.transform(local_ast)
             self.script |= local_scr
-        else:
-            print(f"Redundant import on {filename}.")
-            return ''
-
-
-
+        # ~ else:
+            # ~ print(f"Redundant import on {filename}.")
+        return ''

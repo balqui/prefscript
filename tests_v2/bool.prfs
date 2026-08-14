@@ -35,10 +35,6 @@ swap_diff:
     "diff(<y.x>)"
     comp diff swap
 
-piggyfront_1:
-    "Pairs up 1 with given u: <1.u>"
-    pair k_1 id
-
 gt:
     "x > y in <x.y>"
     comp sign diff
