@@ -1,0 +1,73 @@
+# Standard functions to import: projections and boolean operations
+
+k_0: comp diff pair k_1 k_1
+
+piggyback_1: pair id k_1
+piggyback_0: pair id k_0
+
+pr_L: "left projection"  comp proj  piggyback_0
+pr_R: "right projection" comp s_tup piggyback_1
+
+pr_LL: comp pr_L pr_L
+pr_RR: comp pr_R pr_R
+
+pr_RL: "pr_R on pr_L" comp pr_R pr_L
+pr_LR: "pr_L on pr_R" comp pr_L pr_R
+
+swap: pair pr_R pr_L
+
+dupl: pair id id
+
+piggyfront_1:
+    "Pairs up 1 with given u: <1.u>"
+    pair k_1 id
+
+neg:
+    "Negation: 0 from 1, 1 from 0"
+    "Larger values interpreted like 1"
+    comp diff piggyfront_1
+
+conj:
+    "boolean and if larger values interpreted like 1"
+    mul
+
+disj:
+    "boolean or"
+    comp sign add
+
+ant: comp diff piggyback_1
+
+succ: comp add piggyback_1
+
+sign: comp diff pair id ant
+
+sg: sign
+
+swap: pair pr_R pr_L
+
+swap_diff:
+    "diff(<y.x>)"
+    comp diff swap
+
+gt:
+    "x > y in <x.y>"
+    comp sign diff
+
+lt:
+    "x < y in <x.y>"
+    comp sign swap_diff
+
+both_compar:
+    "Pair of x < y and x > y"
+    pair lt gt
+
+ineq:
+    "Different x and y in <x.y>?"
+    comp add both_compar
+
+eq:
+    "Is it <x.x> for some x?"
+    comp neg ineq
+
+
+
