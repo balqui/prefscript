@@ -3,9 +3,10 @@ Project started mid Germinal 2003:
 PReFScript: A Partial Recursive Functions Lab
 
 Module version early Thermidor 2026:
-fundata: class FunData storing all necessary information about one function
+fundata: class FunData storing all necessary information about 
+one partial recursive function
 
-Author: Jose L Balcazar, ORCID 0000-0003-4248-4528, april 2023 onwards 
+Author: Jose L Balcazar, ORCID 0000-0003-4248-4528
 Copyleft: MIT License (https://en.wikipedia.org/wiki/MIT_License)
 
 For the time being, we maintain the most basic information: 
@@ -22,12 +23,11 @@ In the future we might add the Goedel number if not too big
 (which actually repeats the previous info), the docstring and
 who knows exactly what else.
 
-Nicknames are alphanum strings not starting with a number (no surprise);
-they must NOT start with three underscores.
+Nicknames are alphanum strings not starting with a number (no surprise); 
+they must NOT consist of three underscores followed by digits.
 
-The runnable Python code might be a field derived from rawpy
-as a @property but I need it to be a separate dict so as to
-pass it together with globals to eval.
+The runnable Python code is a separate dict so as to pass it together 
+with globals to eval.
 
 Open: where do we handle the decision whether to 
 store (some) Goedel numbers? And where do we store them?
@@ -75,6 +75,9 @@ class FunData:
     # ~ def copy(self, **changes) -> Self:
         # ~ "Creates a duplicate of self, optionally overriding fields."
         # ~ return replace(self, **changes)
+
+
+# ~ Old code to show how gnum's are to be handled in due time:
 
                 # ~ if self.store_gnums and on_what[0] in self.gnums and on_what[1] in self.gnums:
                     # ~ gnum = cp.dp(1, cp.dp(self.gnums[on_what[0]], self.gnums[on_what[1]]))

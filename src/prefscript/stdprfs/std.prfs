@@ -1,4 +1,8 @@
-# Standard functions to import: projections and boolean operations
+# Standard functions to import: 
+# projections, boolean operations and auxiliary simple functions
+
+main: k_0 # Just to avoid a "missing main" error 
+          # in case the file is run directly by mistake
 
 k_0: comp diff pair k_1 k_1
 

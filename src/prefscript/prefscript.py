@@ -17,82 +17,46 @@ from parser import prfsparser, ScriptMaker
 from script import PReFScript
 from argparse import ArgumentParser
 
-ap = ArgumentParser()
-ap.add_argument('f', nargs='?', default=None)
+from pathlib import Path
 
-if f := ap.parse_args().f:
+# ~ from prefscript import __version__
+
+ap = ArgumentParser(
+    # ~ prog = 'PReFScript',
+    description = 'An interpreter of a scripting language '
+                  'based on the partial recursive functions.')
+ap.add_argument('filename', nargs='?', default=None, 
+                help="file containing the script "
+                      "(suffix .prfs assumed)")
+ap.add_argument('-V', '--version', action='version', version=f"{ap.prog} v. {__version__}")
+ap.add_argument("-I", "--import_folder", nargs=1, 
+    help="additional folder where to search for imported files",
+    action="extend")
+ap.add_argument("--showtree", 
+    help="Display the Abstract Syntax Tree of the script",
+    action="store_true")
+
+# ~ to add: version, import folder, show tree, 
+
+app = ap.parse_args()
+
+if (f := app.filename) is not None:
+    import_folder = app.import_folder
+    if import_folder is not None:
+        import_folder = import_folder[0]
     with open(f) as ff:
         ast = prfsparser(ff.read())
-    # ~ print(ast.pretty())
-    scrmk = ScriptMaker(PReFScript(), f)
+    if app.showtree:
+        print(ast.pretty())
+    scrmk = ScriptMaker(PReFScript(), Path(f).resolve(), import_folder)
     scr = scrmk.transform(ast)
     # ~ scr.list()
     scr.to_python('main')
     mainf = scr.pycode['main']
-    # ~ scr.list(w_code = 1)
-    # ~ if not scr.valid:
-        # ~ pass
-        # ~ scr.list(w_code = 1)
-    # ~ else:
-        # ~ print("\nTests:")
-        # ~ while n := input("In: "):
-            # ~ n = int(n)
-            # ~ print("Out:", mainf(n))
     while n := input():
         n = int(n)
         print(mainf(n))
     exit()
+else:
+    print("Try prefscript --help")
     
-
-programs = { 
-
-0: '''
-main: id
-''',
-
-1: '''
-main: f
-f: h
-h: comp add add
-''',
-
-2: '''
-main: f
-f: h
-h: comp add add
-g: comp g g
-''',
-
-3: '''
-main: f
-f: comp comp g h comp h g
-g: comp g g
-h: comp add add
-''',
-
-4: '''
-main: f
-h: comp add add
-'''
-
-}
-
-# add(39) = add(<2.6>) = 8
-# (add add) (39) = add(add(39)) = add(8) = add(<1.2>) = 3 
-# (add add) (8295) = add(add(8295)) = add(add(<32.90>)) = add(128) = add(<7.8>) = 15 
-# (add add) (545) = add(add(545)) = add(add(<16.16>)) = add(32) = add(<3.4>) = 7 
-
-while p := input("Program choice (0-4): "):
-    ast = prfsparser(programs[int(p)])
-    print(ast.pretty())
-    scrmk = ScriptMaker(PReFScript())
-    scr = scrmk.transform(ast)
-    # ~ scr.list(w_code = 2)
-    scr.to_python('main')
-    mainf = scr.pycode['main']
-    # ~ if not scr.valid:
-        # ~ break
-    print("\nTests:")
-    while n := input():
-        n = int(n)
-        print(mainf(n))

@@ -1,4 +1,4 @@
-import "31_circ_imp_1.2prfs"
+import "31_circ_imp_1.prfs"
 
 main: f
 f: comp comp g h comp h g

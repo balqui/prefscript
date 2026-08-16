@@ -5,7 +5,7 @@ PReFScript: A Partial Recursive Functions Lab
 Module version late Thermidor 2026:
 pref_script.py: class PReFScript storing all the functions in one script
 
-Author: Jose L Balcazar, ORCID 0000-0003-4248-4528, april 2023 onwards 
+Author: Jose L Balcazar, ORCID 0000-0003-4248-4528
 Copyleft: MIT License (https://en.wikipedia.org/wiki/MIT_License)
 
 Functions are stored in FunData instances.
@@ -28,8 +28,6 @@ Open: shall we keep pragmas? Maybe just command line flags?
 import cantorpairs as cp
 from fundata import FunData
 from basicfun import BasicFun
-
-__version__ = "2.0"
 
 # A handful of ancillary functions, more to come
 

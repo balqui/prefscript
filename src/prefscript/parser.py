@@ -3,19 +3,20 @@ Project started mid Germinal 2003:
 PReFScript: A Partial Recursive Functions Lab
 
 Module version late Thermidor 2026:
-prfs_parser.py: Lark-based parser of PReFScript 2.0 onwards.
+Lark-based parser and script maker for PReFScript 2.0 onwards.
 
-Author: Jose L Balcazar, ORCID 0000-0003-4248-4528, april 2023 onwards 
+Author: Jose L Balcazar, ORCID 0000-0003-4248-4528
 Copyleft: MIT License (https://en.wikipedia.org/wiki/MIT_
 '''
 
 from lark import Lark, Transformer, v_args
 from fundata import FunData
+from pathlib import Path            # for handling imported files
 from script import PReFScript       # for the recursive calls on imports
 
-FILENAMES = set()                   # main and imported, eventually 
-                                    # to be handled in some other way,
-                                    # purpose is to avoid import cycles
+FILENAMES = set()                   # main and imported in order to 
+                                    # avoid import cycles - a bit ugly,
+                                    # consider designing some other way
 
 # A handful of ancillary functions
 
@@ -88,11 +89,17 @@ class ScriptMaker(Transformer):
     leave for later the name change if convenient.
     '''
 
-    def __init__(self, script, filename, imported = False):
+    def __init__(self, script, filename, import_folder = None, imported = False):
+        "filename must be an already resolved Path()"
         super().__init__(self)
         self.script = script
         self.imported = imported
-        FILENAMES.add(filename)                        #### TEMPORARY, MUST BE FULL PATH
+        if import_folder is not None:
+            self.import_folder = Path(import_folder)
+        else:
+            self.import_folder = None
+        self.filename = filename
+        FILENAMES.add(self.filename)
 
     def single(self, cname):
         nm = cname.value
@@ -158,18 +165,36 @@ class ScriptMaker(Transformer):
         return nm
 
     def importing(self, filename):
-        # ~ filename = "tests_v2/" + filename.strip('"')       #### TEMPORARY, MUST HANDLE FULL PATH
-        filename = filename.strip('"')       #### TEMPORARY, MUST HANDLE FULL PATH
+        filename = filename.strip('"')
         if not filename.endswith(".prfs"):
             filename += ".prfs"
-        # ~ print(f"Must import /{filename}/")
-        if filename not in FILENAMES:
-            FILENAMES.add(filename)                        #### TEMPORARY, MUST BE FULL PATH
-            local_ast = prfsparser(open(filename).read())  #### TEMPORARY, MUST BE try/except
-            # ~ print(local_ast.pretty())
-            local_scrmk = ScriptMaker(PReFScript(), filename, imported = True)
+        importpath = None
+        if self.import_folder is not None:
+            "first try where explicitly specified"
+            path = self.import_folder / filename
+            if path.exists():
+                assert filename != "std.prfs", \
+                    "Filename std.prfs is reserved and " \
+                    "importing a nonstandard std is disallowed."
+                importpath = path
+        if importpath is None:
+            "unsuccessful, now try local"
+            path = self.filename.parent / filename
+            if path.exists():
+                assert filename != "std.prfs", \
+                    "Filename std.prfs is reserved and " \
+                    "importing a nonstandard std is disallowed."
+                importpath = path
+        if importpath is None:
+            "unsuccessful, now try the stdprfs folder"
+            path = Path(__file__).parent / "stdprfs" / filename
+            if path.exists():
+                importpath = path
+        assert importpath is not None, f"Did not find {filename} to import."
+        if importpath not in FILENAMES:
+            FILENAMES.add(importpath)
+            local_ast = prfsparser(open(importpath).read())
+            local_scrmk = ScriptMaker(PReFScript(), importpath, imported = True)
             local_scr = local_scrmk.transform(local_ast)
             self.script |= local_scr
-        # ~ else:
-            # ~ print(f"Redundant import on {filename}.")
         return ''

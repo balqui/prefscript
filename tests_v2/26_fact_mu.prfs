@@ -6,7 +6,7 @@
 # fact(5), it would take years to reach 235252701330937 = 
 # <120,24,6,2,1,1>.
 
-import "bool.prfs"
+import "std"
 
 main: fact
 

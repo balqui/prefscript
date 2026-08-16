@@ -6,13 +6,8 @@ Module version early Thermidor 2026:
 basicfun: class BasicFun to have everything that concerns the list 
 of basic functions in a single place. A dict of FunData.
 
-Author: Jose L Balcazar, ORCID 0000-0003-4248-4528, april 2023 onwards 
+Author: Jose L Balcazar, ORCID 0000-0003-4248-4528
 Copyleft: MIT License (https://en.wikipedia.org/wiki/MIT_License)
-
-Open: should this be instead a subclass of FunData? 
-Current answer: if yes, then this forces basic to be 
-nonfrozen so no advantage; am now trying to use FunData 
-objects directly. I need them compatible in the AST transformer.
 '''
 
 from fundata import FunData
