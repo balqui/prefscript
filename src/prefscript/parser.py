@@ -165,32 +165,36 @@ class ScriptMaker(Transformer):
         return nm
 
     def importing(self, filename):
+
+        def attempt(candidate, filename, cnt):
+            "try candidate folder, careful with std.prfs"
+            path = (candidate / filename).resolve()
+            if path.exists():
+                assert filename != "std.prfs" or cnt == 0, \
+                    "Presence of a nonstandard std.prfs file in " \
+                    f"path {path} is disallowed."
+                return path
+
         filename = filename.strip('"')
         if not filename.endswith(".prfs"):
             filename += ".prfs"
-        importpath = None
+
+        import_folders = list()
         if self.import_folder is not None:
-            "first try where explicitly specified"
-            path = self.import_folder / filename
-            if path.exists():
-                assert filename != "std.prfs", \
-                    "Filename std.prfs is reserved and " \
-                    "importing a nonstandard std is disallowed."
-                importpath = path
-        if importpath is None:
-            "unsuccessful, now try local"
-            path = self.filename.parent / filename
-            if path.exists():
-                assert filename != "std.prfs", \
-                    "Filename std.prfs is reserved and " \
-                    "importing a nonstandard std is disallowed."
-                importpath = path
-        if importpath is None:
-            "unsuccessful, now try the stdprfs folder"
-            path = Path(__file__).parent / "stdprfs" / filename
-            if path.exists():
-                importpath = path
+            import_folders.append(self.import_folder)
+        import_folders.append(self.filename.parent)
+        import_folders.append(Path(__file__).parent / "stdprfs")
+
+        importpath = None
+        cnt = len(import_folders)
+        for candidate in import_folders:
+            "ordered search for the imported file"
+            cnt -= 1
+            importpath = attempt(candidate, filename, cnt)
+            if importpath is not None:
+                break
         assert importpath is not None, f"Did not find {filename} to import."
+
         if importpath not in FILENAMES:
             FILENAMES.add(importpath)
             local_ast = prfsparser(open(importpath).read())
