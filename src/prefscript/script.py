@@ -29,8 +29,6 @@ import cantorpairs as cp
 from fundata import FunData
 from basicfun import BasicFun
 
-# A handful of ancillary functions, more to come
-
 def sq(z):
     "list form of the sequence encoded by z"
     ls = list()

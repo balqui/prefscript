@@ -56,10 +56,26 @@ pragma names that will be preserved: ascii const output, sequence input, maybe p
 the other way around with a pragma "reduced"; main with silent default was initially
 planned to stay but now I think it will not as just said above)
 
+will need a way (a pragma?) to keep running v1.2
+
 consider moving import to a pragma using / namespace merging a "std" with all the function 
 definitions and some form of import
 
 consider removing the word pragma
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

@@ -52,7 +52,7 @@ class FunData:
     howdf: str = "pending"  # Checked for validity in __post_init__.
     defon: Tuple[str, ...] = tuple()
     rawpy: str = ""
-    index: int = -1
+    index: int = -1         # Goedel nums, but only if requested
 
     def __post_init__(self):
         match self.howdf:
@@ -77,86 +77,3 @@ class FunData:
         # ~ return replace(self, **changes)
 
 
-# ~ Old code to show how gnum's are to be handled in due time:
-
-                # ~ if self.store_gnums and on_what[0] in self.gnums and on_what[1] in self.gnums:
-                    # ~ gnum = cp.dp(1, cp.dp(self.gnums[on_what[0]], self.gnums[on_what[1]]))
-                    # ~ if gnum < LIMIT_GNUM:
-                        # ~ self.gnums[nick] = gnum
-                    # ~ else:
-                        # ~ self.valid &= self.synt_err_handler.report(nonfatal = False, 
-                            # ~ info = f"Gödel number for '{nick}' too large, omitted.")
-
-            # ~ elif new_funct['how_def'] == "pair":
-                # ~ self.strcode[nick] = "lambda x: cp.dp(" + on_what[0] + "(x), " + on_what[1] + "(x))"
-                # ~ if self.store_gnums and on_what[0] in self.gnums and on_what[1] in self.gnums:
-                    # ~ gnum = cp.dp(2, cp.dp(self.gnums[on_what[0]], self.gnums[on_what[1]]))
-                    # ~ if gnum < LIMIT_GNUM:
-                        # ~ self.gnums[nick] = gnum
-                    # ~ else:
-                        # ~ self.valid &= self.synt_err_handler.report(nonfatal = False, 
-                            # ~ info = f"Gödel number for '{nick}' too large, omitted.")
-    
-            # ~ elif new_funct['how_def'] == "mu":
-                # ~ self.strcode[nick] = "lambda x: mu(x, " + on_what[0] + ")"
-                # ~ if self.store_gnums and on_what[0] in self.gnums:
-                    # ~ gnum = cp.dp(3, self.gnums[on_what[0]])
-                    # ~ if gnum < LIMIT_GNUM:
-                        # ~ self.gnums[nick] = gnum
-                    # ~ else:
-                        # ~ self.valid &= self.synt_err_handler.report(nonfatal = False, 
-                            # ~ info = f"Gödel number for '{nick}' too large, omitted.")
-
-            # ~ elif new_funct['how_def'] == "compair":
-                # ~ if not self.pragmas['extended']:
-                    # ~ self.valid &= self.synt_err_handler.report(nonfatal = True, 
-                                  # ~ info = "Use of compair requires '.pragma extended: True', changed.")
-                # ~ self.pragmas['extended'] = 'True'
-                # ~ self.strcode[nick] = "lambda x: " + on_what[0] + "( cp.dp(" + on_what[1] + "(x), " + on_what[2] + "(x)))"
-                # ~ if (self.store_gnums and on_what[0] in self.gnums and 
-                    # ~ on_what[1] in self.gnums and on_what[2] in self.gnums):
-                    # ~ gnum = cp.dp(1, cp.dp(self.gnums[on_what[0]],
-                           # ~ cp.dp(2, cp.dp(self.gnums[on_what[1]], self.gnums[on_what[2]]))))
-                    # ~ if gnum < LIMIT_GNUM:
-                        # ~ self.gnums[nick] = gnum
-                    # ~ else:
-                        # ~ self.valid &= self.synt_err_handler.report(nonfatal = False, 
-                            # ~ info = f"Gödel number for '{nick}' too large, omitted.")
-
-            # ~ elif new_funct['how_def'] == "primrec":
-                # ~ if not self.pragmas['extended']:
-                    # ~ self.valid &= self.synt_err_handler.report(nonfatal = True, 
-                                  # ~ info = "Use of primrec requires '.pragma extended: True', changed.")
-                # ~ self.pragmas['extended'] = 'True'
-                # ~ self.strcode[nick] = "prim_rec(" + on_what[0] + ", " + on_what[1] + ", " + on_what[2] + ")"
-                # ~ if (self.store_gnums and on_what[1] in self.gnums and on_what[2] in self.gnums):
-                    # ~ gnum = cp.dp(4, cp.dp(int(on_what[0]),
-                               # ~ cp.dp(self.gnums[on_what[1]], self.gnums[on_what[2]])))
-                    # ~ if gnum < LIMIT_GNUM:
-                        # ~ self.gnums[nick] = gnum
-                    # ~ else:
-                        # ~ self.valid &= self.synt_err_handler.report(nonfatal = False, 
-                            # ~ info = f"Gödel number for '{nick}' too large, omitted.")
-
-            # ~ elif new_funct['how_def'] == "parprimrec":
-                # ~ if not self.pragmas['extended']:
-                    # ~ self.valid &= self.synt_err_handler.report(nonfatal = True, 
-                                  # ~ info = "Use of parprimrec requires '.pragma extended: True', changed.")
-                # ~ self.pragmas['extended'] = 'True'
-                # ~ self.strcode[nick] = "par_prim_rec(" + on_what[0] + ", " + on_what[1] + ", " + on_what[2] + ")"
-                # ~ if (self.store_gnums and on_what[1] in self.gnums and on_what[2] in self.gnums):
-                    # ~ gnum = cp.dp(5, cp.dp(int(on_what[0]),
-                               # ~ cp.dp(self.gnums[on_what[1]], self.gnums[on_what[2]])))
-                    # ~ if gnum < LIMIT_GNUM:
-                        # ~ self.gnums[nick] = gnum
-                    # ~ else:
-                        # ~ self.valid &= self.synt_err_handler.report(nonfatal = False, 
-                            # ~ info = f"Gödel number for '{nick}' too large, omitted.")
-
-            # ~ else:
-                # ~ "ascii_const, as no other 'how' captured by parser - kept out of the Goedel numbering for the time being"
-                # ~ if not self.pragmas['extended']:
-                    # ~ self.valid &= self.synt_err_handler.report(nonfatal = True, 
-                                  # ~ info = "Use of ascii constants requires '.pragma extended: True', changed.")
-                # ~ self.pragmas['extended'] = 'True'
-                # ~ self.strcode[nick] = "lambda x: str2int( '" + on_what[0] + "' )"

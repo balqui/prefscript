@@ -1,2 +1,2 @@
 
-__version__ = "2.0"
+# ~ from prefscript.prefscript import __version__
