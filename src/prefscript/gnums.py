@@ -2,13 +2,49 @@
 Refactoring of a fragment of a piece of code written by Gemini, 
 Aug 17th 2026; see gnums_full.py for the prompt and the whole 
 program previous to refactoring.
+
+Consider printing only a few digits plus an ellipsis in case of
+Goedel numbers too high.
 '''
 
-from lark import Lark, Transformer, Tree, Token
-from rich import print as rprint
-from rich.tree import Tree as RichTree
+from lark import Lark, Transformer, v_args # Tree, Token
+# ~ from rich import print as rprint
+# ~ from rich.tree import Tree as RichTree
 
 import cantorpairs as cp
+
+from fundata import FunData
+from parser import funfact, seemsfactgen
+
+# A handful of ancillary constants and functions
+
+LIMIT_GNUM = 2 << 999 # 1000 bits ~ about 300 decimal digits
+
+def sss(index):
+    if index == -1:
+        return ''
+    else:
+        h = cp.pr_L(index)
+        if h in (0, 3):
+            "basic or mu case, single defon"
+            d = str(cp.pr_R(index))
+        else:
+            d = f"<{cp.pr_L(cp.pr_R(index))}.{cp.pr_R(cp.pr_R(index))}>"
+        return f" = <{h}.{d}>"
+
+def strfundata(fdat):
+    "FunData fields appropriate for Goedel num viewing"
+    s = fdat.fname 
+    if fdat.howdf == "basic":
+        s += f": {fdat.howdf}, "
+    else:
+        s += f": {fdat.howdf}("
+        s += ','.join(f"{ff}" for ff in fdat.defon) + "), "
+    if fdat.index == -1:
+        s += "[Goedel number inavailable, probably too huge]"
+    else:
+        s += f"{fdat.index}{sss(fdat.index)}"
+    return s
 
 @v_args(inline=True)
 class GNumCalc(Transformer):
@@ -16,6 +52,10 @@ class GNumCalc(Transformer):
     Similar to ScriptMaker; differences: docstrings and import are
     fully ignored here but Goedel numbers are set in the index field.
     '''
+
+    def __init__(self, script):
+        super().__init__(self)
+        self.script = script
 
     def single(self, cname):
         nm = cname.value
@@ -30,34 +70,42 @@ class GNumCalc(Transformer):
     def comp(self, left, right):
         nm = funfact()
         fdat = FunData(nm, howdf = "comp", defon = (left, right))
+        gnum = cp.dp(1, cp.dp(self.script[left].index, self.script[right].index))
+        if gnum < LIMIT_GNUM:
+            fdat.index = gnum
         self.script.define(fdat)
         return nm
 
     def pair(self, left, right):
         nm = funfact()
         fdat = FunData(nm, howdf = "pair", defon = (left, right))
+        gnum = cp.dp(2, cp.dp(self.script[left].index, self.script[right].index))
+        if gnum < LIMIT_GNUM:
+            fdat.index = gnum
         self.script.define(fdat)
         return nm
 
     def mu(self, test):
         nm = funfact()
         fdat = FunData(nm, howdf = "mu", defon = (test,))
+        gnum = cp.dp(3, self.script[test].index)
+        if gnum < LIMIT_GNUM:
+            fdat.index = gnum
         self.script.define(fdat)
         return nm
 
     def program(self, *defuns):
-        print(f"In 'program' received {len(defuns)} subtrees: \n{defuns}")
+        for name in sorted(self.script, key = lambda nm: self.script[nm].index):
+            if name != "main":
+                print(strfundata(self.script[name]))
         return defuns
 
     def docstring(self, *docstrings):
-        pass
+        return ''
 
     def defun(self, cname, docstring, alias):
         "First two cases after skipping main are functions already in the script"
         nm = cname.value
-        if nm == "main" and self.imported:
-            "silently ignore it"
-            return ''
         if seemsfactgen(alias):
             "name to override"
             fspec = self.script[alias]
@@ -71,39 +119,56 @@ class GNumCalc(Transformer):
             "pending name to be completed"
             assert self.script[nm].howdf == "pending", \
                    f"Seems that you have two defs of {self.script[nm]}."
+            idx = self.script[nm].index
             self.script.remove(nm) # o/w defining it will fail
             fspec = FunData(nm, docst = docstring,
-                            howdf = "alias", defon = (alias,))
+                            howdf = "alias", defon = (alias,), index = idx)
         else:
             fspec = FunData(nm, docst = docstring,
-                            howdf = "alias", defon = (alias,))
+                            howdf = "alias", defon = (alias,), index = self.script[alias].index)
         self.script.define(fspec)
         return nm
 
     def importing(self, filename):
-        pass
+        return ''
 
+class ShowGNums(GNumCalc):
 
+    def print(self, ast):
+        rprint(build_rich_tree(self.transform(ast)))
 
-    def number(self, args):
-        token = args[0]
-        val = int(token.value)
-        # Wrap token in a tree node or store value
-        node = Tree("number", [token])
-        node.value = val
-        return node
+    def tprint(self, ast):
+        "for initial testing during development"
+        print(ast.pretty())
 
-    def add(self, args):
-        left, right = args[0], args[1]
-        node = Tree("add", [left, right])
-        node.value = left.value + right.value
-        return node
+    def gprint(self, ast):
+        "for initial testing during development"
+        self.transform(ast)
+        # ~ print(f"Got {asts} of len {len(asts)} for gprint.")
+        # ~ for ast in asts:
+            # ~ print(ast.pretty())
 
-    def mul(self, args):
-        left, right = args[0], args[1]
-        node = Tree("mul", [left, right])
-        node.value = left.value * right.value
-        return node
+'''
+
+    # ~ def number(self, args):
+        # ~ token = args[0]
+        # ~ val = int(token.value)
+        # ~ # Wrap token in a tree node or store value
+        # ~ node = Tree("number", [token])
+        # ~ node.value = val
+        # ~ return node
+
+    # ~ def add(self, args):
+        # ~ left, right = args[0], args[1]
+        # ~ node = Tree("add", [left, right])
+        # ~ node.value = left.value + right.value
+        # ~ return node
+
+    # ~ def mul(self, args):
+        # ~ left, right = args[0], args[1]
+        # ~ node = Tree("mul", [left, right])
+        # ~ node.value = left.value * right.value
+        # ~ return node
 
 # 3. Convert Lark AST -> Rich Tree with labels
 def build_rich_tree(lark_node, rich_parent=None) -> RichTree:
@@ -127,20 +192,6 @@ def build_rich_tree(lark_node, rich_parent=None) -> RichTree:
 
     return tree
 
-class ShowGNums(GNumCalc):
-
-    def print(self, ast):
-        rprint(build_rich_tree(self.transform(ast)))
-
-    def tprint(self, ast):
-        "for initial testing during development"
-        print(ast.pretty())
-
-    def gprint(self, *asts):
-        "for initial testing during development"
-        print(f"Got {asts} of len {len(asts)} for gprint.")
-        for ast in asts:
-            print(ast.pretty())
 
 # ~ Old code to show how gnum's are to be handled in due time:
 
@@ -225,3 +276,4 @@ class ShowGNums(GNumCalc):
                                   # ~ info = "Use of ascii constants requires '.pragma extended: True', changed.")
                 # ~ self.pragmas['extended'] = 'True'
                 # ~ self.strcode[nick] = "lambda x: str2int( '" + on_what[0] + "' )"
+'''

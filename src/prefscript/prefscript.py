@@ -42,7 +42,7 @@ ap.add_argument("-I", "--import_folder", nargs=1,
 ap.add_argument("--show_parsing", 
     help="Display the Abstract Syntax Tree of the script",
     action="store_true") 
-ap.add_argument("-G", "--Goedelnums", 
+ap.add_argument("-G", "--Goedel_nums", 
     help="Show Goedel numbers of functions while not too large.",
     action="store_true") 
 
@@ -56,12 +56,15 @@ if (f := app.filename) is not None:
         import_folder = import_folder[0]
     with open(f) as ff:
         ast = prfsparser(ff.read())     # maybe a sequence
-    if app.Goedelnums:
-        from gnums import ShowGNums
-        ShowGNums().gprint(ast)         # don't use print while testing
-    elif app.show_parsing:
+    run = True
+    if app.show_parsing:
         print(ast.pretty())
-    else:
+        run = False
+    if app.Goedel_nums:
+        from gnums import ShowGNums
+        ShowGNums(PReFScript()).gprint(ast)         # don't use print while testing
+        run = False
+    if run:
         scrmk = ScriptMaker(PReFScript(), Path(f).resolve(), import_folder)
         scr = scrmk.transform(ast)
         scr.to_python('main')

@@ -29,13 +29,15 @@ import cantorpairs as cp
 from fundata import FunData
 from basicfun import BasicFun
 
-def sq(z):
-    "list form of the sequence encoded by z"
-    ls = list()
-    while z != 0:
-        ls.append(cp.pr_L(z))
-        z = cp.pr_R(z)
-    return ls
+# ~ def sq(z):
+    # ~ "list form of the sequence encoded by z"
+    # ~ ls = list()
+    # ~ while z != 0:
+        # ~ ls.append(cp.pr_L(z))
+        # ~ z = cp.pr_R(z)
+    # ~ return ls
+
+# ~ if needed try cp.seq instead
 
 def mu(x, test):
     "ancillary linear search function for implementing mu-minimization"

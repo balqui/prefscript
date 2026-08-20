@@ -1,0 +1,5 @@
+main: sq
+dupl: 
+   "make two copies of input" 
+   pair id id
+sq: "multiply them" comp mul dupl
