@@ -3,26 +3,13 @@
 
 Author: Jose L Balcazar, ORCID 0000-0003-4248-4528
 
-Documentation for version: 2.0
+Documentation for version: 1.2
 
 Copyleft: MIT License (https://en.wikipedia.org/wiki/MIT_License)
 
-A Python-based environment to explore and experiment with 
-partial recursive functions; naturally doubles as a (stateless, 
-purely functional) programming language, although it is not 
-intended to be used much as such.
-
-### Installation
-
-The usual options should work: pipx (less fussy), pip (which might 
-complain about breaking system packages), or uv. Version 2.0 offers
-only functionality compatible with pipx, a feature in which it differs
-from V1.*.
-
-The install command will create a command `prefscript` that you can 
-call from the command line. It is suggested that your very first call 
-is `prefscript --help`.
-
+A Python-based environment to explore and experiment with partial 
+recursive functions; naturally doubles as a (purely functional) 
+programming language, although it is not intended to be used much as such.
 
 <!--- 
 
@@ -41,7 +28,9 @@ Mention somewhere that repeated consistent definitions are ignored.
 
 TEST: `pip install --index-url https://test.pypi.org/simple/ --no-deps prefscript`
 
-FROM V1 DOCS:
+---> 
+
+### Installation
 
 There are two installation options.
 
@@ -87,14 +76,10 @@ It may be easier to learn to use PReFScript by installing
 it in this way and then importing its main objects as
 explained below, rather than from the stand-alone interpreter.
 
----> 
-
-
-
 ### Elementary notions
 
 In PReFScript, a script is a sequence of functions, each defined 
-in terms of other ones and of a few basic functions via the 
+in terms of the previous ones and of a few basic functions via the 
 partial recursion rules of composition and minimization. 
 
 All functions are from the natural numbers into the natural numbers 

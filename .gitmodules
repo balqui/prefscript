@@ -1,3 +1,6 @@
 [submodule "src/cantorpairs"]
 	path = src/prefscript/cantorpairs
 	url = git@github.com:balqui/cantorpairs.git
+[submodule "src/prefscript/pytokr"]
+	path = src/prefscript/pytokr
+	url = https://github.com/balqui/pytokr.git

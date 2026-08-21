@@ -19,6 +19,7 @@ NEXT:
 - Goedel number generation should be much closer to
   Python source generation than it is right now.
   Must refactor the whole of it.
+- A minimal GUI on Windows?
 '''
 
 from parser import prfsparser, ScriptMaker
