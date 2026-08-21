@@ -11,6 +11,7 @@ Copyleft: MIT License (https://en.wikipedia.org/wiki/MIT_License)
 '''
 
 from fundata import FunData
+# ~ import cantorpairs.src.cantorpairs as cp
 import cantorpairs as cp
     
 class BasicFun(dict):

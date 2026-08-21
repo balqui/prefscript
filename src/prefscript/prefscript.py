@@ -39,7 +39,7 @@ ap.add_argument('-V', '--version', action='version', version=f"{ap.prog} v. {__v
 ap.add_argument("-I", "--import_folder", nargs=1, 
     help="additional folder where to search for imported files",
     action="extend")
-ap.add_argument("--show_parsing", 
+ap.add_argument("-P", "--show_parsing", 
     help="Display the Abstract Syntax Tree of the script",
     action="store_true") 
 ap.add_argument("-G", "--Goedel_nums", 

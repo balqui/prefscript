@@ -1,0 +1,8 @@
+# Minimal std import
+
+import "std"
+
+main: k_0
+
+
+
