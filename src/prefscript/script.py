@@ -17,27 +17,21 @@ how it is constructed and the tuple of function
 identifiers that participate in its definition;
 would allow one to detect duplicates. 
 
-Replaced SyntErr by assert's, to be combined with 
-whatever Lark offers for handling errors.
+Replaced SyntErr first by assert's and subsequently
+by cp.ensure.that() - to be combined with whatever 
+Lark offers for handling errors.
 
 Open: shall we keep pragmas? Maybe just command line flags?
-'''
 
-# ~ from collections import defaultdict as ddict # maybe for pragmas?
+Remember that now cp.seq and cp.ensure are available.
+'''
 
 import cantorpairs as cp
 from fundata import FunData
 from basicfun import BasicFun
 
-# ~ def sq(z):
-    # ~ "list form of the sequence encoded by z"
-    # ~ ls = list()
-    # ~ while z != 0:
-        # ~ ls.append(cp.pr_L(z))
-        # ~ z = cp.pr_R(z)
-    # ~ return ls
 
-# ~ if needed try cp.seq instead
+
 
 def mu(x, test):
     "ancillary linear search function for implementing mu-minimization"
@@ -50,31 +44,27 @@ def mu(x, test):
 
 class PReFScript(dict):
 
-    def __init__(self): #, store_goedel_numbers = ""):
+    def __init__(self):
         '''
         Maps each nick to a FunData; initially already contains
         the basic functions. Additional separate dict with runnable 
         functions; may keep getting other fields for pragmas 
         and other minor infos. 
-        Goedel number handling and raw Python strings: pending.
+        Goedel number handling and raw Python strings: pending to
+        undergo refactoring.
         Doubles as a dependency graph via the 'defon' fields
         in the FunData instances.
         '''
         super().__init__(self)
         self |= BasicFun()    # initialize with the basic functions
-        # ~ self.valid = True     # program is correct until proven wrong
-        # ~ self.pragmas = ddict(str)
         self.pycode = dict()  # namespace for its own lambdas
-        # ~ self.store_gnums = store_goedel_numbers # doubtful, leave for now
 
     def list(self, what = None, w_code = 0):
         '''
         if what is None: list everything
         else: search for that 'what' in the dict.
-        Pending: delegate one day the w_code and gnum to FunData.
-        w_code 0: no code, 1: how and on what, 2: strcode also
-        Gödel number printed depending on self.store_gnums and 
-        how big it is
+        Pending: delegate one day the w_code to FunData.
+        w_code 0: no code, 1: how and on what, 2: strcode 
         '''
         def list_one(fdat, w_code):
             s = f"{fdat.fname}: " 
@@ -98,22 +88,14 @@ class PReFScript(dict):
             for nick in self:
                 print(list_one(self[nick], w_code))
 
-            # ~ if self.store_gnums:
-                # ~ if nick in self.gnums:
-                    # ~ gnum = self.gnums[nick]
-                    # ~ print(" Gödel number:", gnum,
-                          # ~ "= <" + str(cp.pr_L(gnum)) + "." + str(cp.pr_R(gnum)) + ">")
-                # ~ else:
-                    # ~ self.valid &= self.synt_err_handler(fatal = False, info = "Gödel number too large, omitted.")
-
     def define(self, new_funct):
         'here comes a new function to add to the collection'
         nick = new_funct.fname
         if nick in self and self[nick].howdf != "pending":
             'repeated nick, check for consistency, MAYBE INSUFFICIENT'
-            assert (self[nick].howdf == new_funct.howdf and
-                    self[nick].defon == new_funct.defon), \
-                    f"Repeated, inconsistent definitions for function '{nick}' found."
+            cp.ensure.that(self[nick].howdf == new_funct.howdf and
+                self[nick].defon == new_funct.defon, f"Repeated, " +
+                "inconsistent definitions for function '{nick}' found.")
         else:
             self[nick] = new_funct
 
@@ -124,15 +106,15 @@ class PReFScript(dict):
     def gen_py(self, name, need = 'PReFScript syntax specs'):
         if name in self.pycode:
             "already seen, just ensure we are not in a definition loop"
-            assert self.pycode[name] != "None", \
-                f"Function '{name}' belongs to a disallowed definition loop."
+            cp.ensure.that(self.pycode[name] != "None", 
+                f"Function '{name}' belongs to a disallowed definition loop.")
         else:
             self.pycode[name] = "None" # make sure never to loop on it
-            assert name in self, \
-                f"Function {name} not found but required by {need}." 
-                                       # that assert never seems to fail
-            assert self[name].howdf != "pending", \
-                f"Function {name} undefined but required by {need}."
+            cp.ensure.that(name in self,
+                f"Function {name} not found but required by {need}.") 
+                                # that test never seems to fail
+            cp.ensure.that(self[name].howdf != "pending",
+                f"Function {name} undefined but required by {need}.")
             if self[name].howdf != "ascii_const":
                 "the def_on part of an ascii_const is a mere string already handled"
                 for nname in self[name].defon:
@@ -144,5 +126,4 @@ class PReFScript(dict):
         'returns the Python-runnable version of the function'
         if what not in self.pycode:
             self.gen_py(what)
-        # ~ if self.valid:
         return self.pycode[what]

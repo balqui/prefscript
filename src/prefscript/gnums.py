@@ -8,15 +8,19 @@ Goedel numbers too high.
 '''
 
 from lark import Lark, Transformer, v_args # Tree, Token
-# ~ from rich import print as rprint
-# ~ from rich.tree import Tree as RichTree
+from pathlib import Path                   # for handling imported files
 
 import cantorpairs as cp
 
 from fundata import FunData
-from parser import funfact, seemsfactgen
+from parser import funfact, seemsfactgen, prfsparser
+from script import PReFScript       # for the recursive calls on imports
 
 # A handful of ancillary constants and functions
+
+FILENAMES = set()                   # main and imported in order to 
+                                    # avoid import cycles - a bit ugly,
+                                    # consider designing some other way
 
 LIMIT_GNUM = 2 << 999 # 1000 bits ~ about 300 decimal digits
 
@@ -36,30 +40,39 @@ def strfundata(fdat):
     "FunData fields appropriate for Goedel num viewing"
     s = fdat.fname 
     if fdat.howdf == "basic":
-        s += f": {fdat.howdf}, "
+        s += f": {fdat.howdf},"
     else:
         s += f": {fdat.howdf}("
-        s += ','.join(f"{ff}" for ff in fdat.defon) + "), "
-    if fdat.index == -1:
-        s += "[Goedel number inavailable, probably too huge]"
-    else:
-        s += f"{fdat.index}{sss(fdat.index)}"
+        s += ','.join(f"{ff}" for ff in fdat.defon) + "),"
+    if fdat.index > -1:
+        s += f" {fdat.index}{sss(fdat.index)}"
     return s
+
 
 @v_args(inline=True)
 class GNumCalc(Transformer):
     '''
-    Similar to ScriptMaker; differences: docstrings and import are
-    fully ignored here but Goedel numbers are set in the index field.
+    Very similar to ScriptMaker; much more than initially expected.
+    Sometime in the future try to refactor everything so as to use
+    here instead a ScriptMaker and change ONLY in PReFScript gen_py 
+    into gen_gnum.
     '''
 
-    def __init__(self, script):
+    def __init__(self, script, filename, import_folder = None, imported = False):
+        "filename must be an already resolved Path()"
         super().__init__(self)
         self.script = script
+        self.imported = imported
+        if import_folder is not None:
+            self.import_folder = Path(import_folder)
+        else:
+            self.import_folder = None
+        self.filename = filename
+        FILENAMES.add(self.filename)
 
     def single(self, cname):
         nm = cname.value
-        assert not seemsfactgen(nm), f"Error: name {nm} is disallowed."
+        cp.ensure.that(not seemsfactgen(nm), f"Error: name {nm} is disallowed.")
         if nm not in self.script:
             self.script.define(FunData(nm))
         return nm
@@ -70,35 +83,51 @@ class GNumCalc(Transformer):
     def comp(self, left, right):
         nm = funfact()
         fdat = FunData(nm, howdf = "comp", defon = (left, right))
-        gnum = cp.dp(1, cp.dp(self.script[left].index, self.script[right].index))
-        if gnum < LIMIT_GNUM:
-            fdat.index = gnum
+        fdat.index = self.newGnum(1, (left, right))
         self.script.define(fdat)
         return nm
 
     def pair(self, left, right):
         nm = funfact()
         fdat = FunData(nm, howdf = "pair", defon = (left, right))
-        gnum = cp.dp(2, cp.dp(self.script[left].index, self.script[right].index))
-        if gnum < LIMIT_GNUM:
-            fdat.index = gnum
+        fdat.index = self.newGnum(2, (left, right))
         self.script.define(fdat)
         return nm
 
     def mu(self, test):
         nm = funfact()
         fdat = FunData(nm, howdf = "mu", defon = (test,))
-        gnum = cp.dp(3, self.script[test].index)
-        if gnum < LIMIT_GNUM:
-            fdat.index = gnum
+        fdat.index = self.newGnum(3, (test,))
         self.script.define(fdat)
         return nm
 
+    def newGnum(self, code, defon):
+        cp.ensure.that(len(defon) > 0, f"Something is wrong combining {defon}")
+        if all(self.script[d].index > -1 for d in defon):
+            for ii, d in enumerate(reversed(defon)):
+                if ii == 0:
+                    nn = self.script[d].index
+                else:
+                    nn = cp.dp(self.script[d].index, nn)
+            nn = cp.dp(code, nn)
+            if nn < LIMIT_GNUM:
+                return nn
+        return -1
+
     def program(self, *defuns):
-        for name in sorted(self.script, key = lambda nm: self.script[nm].index):
-            if name != "main":
-                print(strfundata(self.script[name]))
-        return defuns
+        if not self.imported:
+            "main file, output Goedel numbers now"
+            toohuge = list()
+            for name in sorted(self.script, key = lambda nm: self.script[nm].index):
+                if self.script[name].index == -1:
+                    toohuge.append(name) 
+                elif name != "main":
+                    print(strfundata(self.script[name]))
+            if toohuge:
+                print("\nGoedel numbers unavailable, possibly too huge, for:")
+                for name in toohuge:
+                    print(strfundata(self.script[name]))
+        return self.script
 
     def docstring(self, *docstrings):
         return ''
@@ -110,15 +139,15 @@ class GNumCalc(Transformer):
             "name to override"
             fspec = self.script[alias]
             if docstring:
-                assert not fspec.docst, f"Unexpectedly found already" \
-                       " a previous docstring in {nm}."
+                cp.ensure.that(not fspec.docst, 
+                    f"Unexpectedly found already a previous docstring in {nm}.")
                 fspec.docst = docstring
             fspec.fname = nm
             self.script.remove(alias)
         elif nm in self.script:
             "pending name to be completed"
-            assert self.script[nm].howdf == "pending", \
-                   f"Seems that you have two defs of {self.script[nm]}."
+            cp.ensure.that(self.script[nm].howdf == "pending",
+                f"Seems that you have two defs of {self.script[nm]}.")
             idx = self.script[nm].index
             self.script.remove(nm) # o/w defining it will fail
             fspec = FunData(nm, docst = docstring,
@@ -126,120 +155,66 @@ class GNumCalc(Transformer):
         else:
             fspec = FunData(nm, docst = docstring,
                             howdf = "alias", defon = (alias,), index = self.script[alias].index)
-        self.script.define(fspec)
+        if fspec.fname != "main" or not self.imported:
+            "the only main stored is the one of the main file"
+            self.script.define(fspec)
         return nm
 
+
     def importing(self, filename):
+
+        def attempt(candidate, filename, cnt):
+            "try candidate folder, careful with std.prfs"
+            path = (candidate / filename).resolve()
+            if path.exists():
+                cp.ensure.that(filename != "std.prfs" or cnt == 0, 
+                    "Presence of a nonstandard std.prfs file in " +
+                    f"path {path} is disallowed.")
+                return path
+
+        filename = filename.strip('"')
+        if not filename.endswith(".prfs"):
+            filename += ".prfs"
+
+        import_folders = list()
+        if self.import_folder is not None:
+            import_folders.append(self.import_folder)
+        import_folders.append(self.filename.parent)
+        import_folders.append(Path(__file__).parent / "stdprfs")
+
+        importpath = None
+        cnt = len(import_folders)
+        for candidate in import_folders:
+            "ordered search for the imported file"
+            cnt -= 1
+            importpath = attempt(candidate, filename, cnt)
+            if importpath is not None:
+                break
+        cp.ensure.that(importpath is not None, 
+            f"Did not find {filename} to import.")
+        if importpath not in FILENAMES:
+            FILENAMES.add(importpath)
+            local_ast = prfsparser(open(importpath).read())
+            local_scrmk = GNumCalc(PReFScript(), importpath, self.import_folder, imported = True)
+            local_scr = local_scrmk.transform(local_ast)
+            self.script |= local_scr
         return ''
 
-class ShowGNums(GNumCalc):
 
-    def print(self, ast):
-        rprint(build_rich_tree(self.transform(ast)))
+class ShowGNums(GNumCalc):
 
     def tprint(self, ast):
         "for initial testing during development"
         print(ast.pretty())
 
     def gprint(self, ast):
-        "for initial testing during development"
+        "printing actually occurs in the semantic routine for program"
         self.transform(ast)
-        # ~ print(f"Got {asts} of len {len(asts)} for gprint.")
-        # ~ for ast in asts:
-            # ~ print(ast.pretty())
 
 '''
-
-    # ~ def number(self, args):
-        # ~ token = args[0]
-        # ~ val = int(token.value)
-        # ~ # Wrap token in a tree node or store value
-        # ~ node = Tree("number", [token])
-        # ~ node.value = val
-        # ~ return node
-
-    # ~ def add(self, args):
-        # ~ left, right = args[0], args[1]
-        # ~ node = Tree("add", [left, right])
-        # ~ node.value = left.value + right.value
-        # ~ return node
-
-    # ~ def mul(self, args):
-        # ~ left, right = args[0], args[1]
-        # ~ node = Tree("mul", [left, right])
-        # ~ node.value = left.value * right.value
-        # ~ return node
-
-# 3. Convert Lark AST -> Rich Tree with labels
-def build_rich_tree(lark_node, rich_parent=None) -> RichTree:
-    # Format current node label with color markup
-    if isinstance(lark_node, Tree):
-        val = getattr(lark_node, "value", "?")
-        label = f"[bold cyan]{lark_node.data.upper()}[/bold cyan] [yellow](val = {val})[/yellow]"
-    else:  # Leaf Token
-        label = f"[green]NUMBER[/green]: {lark_node.value}"
-
-    # Create root or add child
-    if rich_parent is None:
-        tree = RichTree(label)
-    else:
-        tree = rich_parent.add(label)
-
-    # Recurse children
-    if isinstance(lark_node, Tree):
-        for child in lark_node.children:
-            build_rich_tree(child, rich_parent=tree)
-
-    return tree
-
-
 # ~ Old code to show how gnum's are to be handled in due time:
 
-                # ~ if self.store_gnums and on_what[0] in self.gnums and on_what[1] in self.gnums:
-                    # ~ gnum = cp.dp(1, cp.dp(self.gnums[on_what[0]], self.gnums[on_what[1]]))
-                    # ~ if gnum < LIMIT_GNUM:
-                        # ~ self.gnums[nick] = gnum
-                    # ~ else:
-                        # ~ self.valid &= self.synt_err_handler.report(nonfatal = False, 
-                            # ~ info = f"Gödel number for '{nick}' too large, omitted.")
-
-            # ~ elif new_funct['how_def'] == "pair":
-                # ~ self.strcode[nick] = "lambda x: cp.dp(" + on_what[0] + "(x), " + on_what[1] + "(x))"
-                # ~ if self.store_gnums and on_what[0] in self.gnums and on_what[1] in self.gnums:
-                    # ~ gnum = cp.dp(2, cp.dp(self.gnums[on_what[0]], self.gnums[on_what[1]]))
-                    # ~ if gnum < LIMIT_GNUM:
-                        # ~ self.gnums[nick] = gnum
-                    # ~ else:
-                        # ~ self.valid &= self.synt_err_handler.report(nonfatal = False, 
-                            # ~ info = f"Gödel number for '{nick}' too large, omitted.")
-    
-            # ~ elif new_funct['how_def'] == "mu":
-                # ~ self.strcode[nick] = "lambda x: mu(x, " + on_what[0] + ")"
-                # ~ if self.store_gnums and on_what[0] in self.gnums:
-                    # ~ gnum = cp.dp(3, self.gnums[on_what[0]])
-                    # ~ if gnum < LIMIT_GNUM:
-                        # ~ self.gnums[nick] = gnum
-                    # ~ else:
-                        # ~ self.valid &= self.synt_err_handler.report(nonfatal = False, 
-                            # ~ info = f"Gödel number for '{nick}' too large, omitted.")
-
-            # ~ elif new_funct['how_def'] == "compair":
-                # ~ if not self.pragmas['extended']:
-                    # ~ self.valid &= self.synt_err_handler.report(nonfatal = True, 
-                                  # ~ info = "Use of compair requires '.pragma extended: True', changed.")
-                # ~ self.pragmas['extended'] = 'True'
-                # ~ self.strcode[nick] = "lambda x: " + on_what[0] + "( cp.dp(" + on_what[1] + "(x), " + on_what[2] + "(x)))"
-                # ~ if (self.store_gnums and on_what[0] in self.gnums and 
-                    # ~ on_what[1] in self.gnums and on_what[2] in self.gnums):
-                    # ~ gnum = cp.dp(1, cp.dp(self.gnums[on_what[0]],
-                           # ~ cp.dp(2, cp.dp(self.gnums[on_what[1]], self.gnums[on_what[2]]))))
-                    # ~ if gnum < LIMIT_GNUM:
-                        # ~ self.gnums[nick] = gnum
-                    # ~ else:
-                        # ~ self.valid &= self.synt_err_handler.report(nonfatal = False, 
-                            # ~ info = f"Gödel number for '{nick}' too large, omitted.")
-
-            # ~ elif new_funct['how_def'] == "primrec":
+           # ~ elif new_funct['how_def'] == "primrec":
                 # ~ if not self.pragmas['extended']:
                     # ~ self.valid &= self.synt_err_handler.report(nonfatal = True, 
                                   # ~ info = "Use of primrec requires '.pragma extended: True', changed.")

@@ -7,12 +7,17 @@ Lark-based parser and script maker for PReFScript 2.0 onwards.
 
 Author: Jose L Balcazar, ORCID 0000-0003-4248-4528
 Copyleft: MIT License (https://en.wikipedia.org/wiki/MIT_
+
+Refactor one day: split in different files the grammar and parser
+from the semantic routines in the Transform subclass.
 '''
 
 from lark import Lark, Transformer, v_args
 from fundata import FunData
 from pathlib import Path            # for handling imported files
 from script import PReFScript       # for the recursive calls on imports
+
+from cantorpairs import ensure
 
 FILENAMES = set()                   # main and imported in order to 
                                     # avoid import cycles - a bit ugly,
@@ -103,7 +108,7 @@ class ScriptMaker(Transformer):
 
     def single(self, cname):
         nm = cname.value
-        assert not seemsfactgen(nm), f"Error: name {nm} is disallowed."
+        ensure.that(not seemsfactgen(nm), f"Error: name {nm} is disallowed.")
         if nm not in self.script:
             self.script.define(FunData(nm))
         return nm
@@ -146,15 +151,15 @@ class ScriptMaker(Transformer):
             "name to override"
             fspec = self.script[alias]
             if docstring:
-                assert not fspec.docst, f"Unexpectedly found already" \
-                       " a previous docstring in {nm}."
+                ensure.that(not fspec.docst, 
+                    f"Unexpectedly found already a previous docstring in {nm}.")
                 fspec.docst = docstring
             fspec.fname = nm
             self.script.remove(alias)
         elif nm in self.script:
             "pending name to be completed"
-            assert self.script[nm].howdf == "pending", \
-                   f"Seems that you have two defs of {self.script[nm]}."
+            ensure.that(self.script[nm].howdf == "pending",
+                f"Seems that you have two defs of {self.script[nm]}.")
             self.script.remove(nm) # o/w defining it will fail
             fspec = FunData(nm, docst = docstring,
                             howdf = "alias", defon = (alias,))
@@ -170,9 +175,9 @@ class ScriptMaker(Transformer):
             "try candidate folder, careful with std.prfs"
             path = (candidate / filename).resolve()
             if path.exists():
-                assert filename != "std.prfs" or cnt == 0, \
-                    "Presence of a nonstandard std.prfs file in " \
-                    f"path {path} is disallowed."
+                ensure.that(filename != "std.prfs" or cnt == 0, 
+                    "Presence of a nonstandard std.prfs file in " +
+                    f"path {path} is disallowed.")
                 return path
 
         filename = filename.strip('"')
@@ -193,8 +198,8 @@ class ScriptMaker(Transformer):
             importpath = attempt(candidate, filename, cnt)
             if importpath is not None:
                 break
-        assert importpath is not None, f"Did not find {filename} to import."
-
+        ensure.that(importpath is not None, 
+            f"Did not find {filename} to import.")
         if importpath not in FILENAMES:
             FILENAMES.add(importpath)
             local_ast = prfsparser(open(importpath).read())

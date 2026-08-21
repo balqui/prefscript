@@ -10,26 +10,26 @@ Author: Jose L Balcazar, ORCID 0000-0003-4248-4528, april 2023 onwards
 Copyleft: MIT License (https://en.wikipedia.org/wiki/MIT_License)
 
 NEXT:
-- Goedel numbers (could be a pragma? or a CLI flag? 
-                  or both by setting up a CLI flag for pragmas?)
 - pr / ppr
 - asciiconst
-- inputs: none, seq, pair?
-- outputs: bool, ascii
+- inputs: none, seq, pair? Maybe via CLI flag
+- outputs: bool, ascii     Maybe via CLI flag
 - close issues (prepare first a list)
 - document v2
+- Goedel number generation should be much closer to
+  Python source generation than it is right now.
+  Must refactor the whole of it.
 '''
 
 from parser import prfsparser, ScriptMaker
 from script import PReFScript
-from argparse import ArgumentParser
 
+from argparse import ArgumentParser
 from pathlib import Path
 
 __version__ = "2.0"
 
 ap = ArgumentParser(
-    # ~ prog = 'PReFScript',
     description = 'An interpreter of a scripting language '
                   'based on the partial recursive functions.')
 ap.add_argument('filename', nargs='?', default=None, 
@@ -46,8 +46,6 @@ ap.add_argument("-G", "--Goedel_nums",
     help="Show Goedel numbers of functions while not too large.",
     action="store_true") 
 
-# ~ to add: version, import folder, show tree, 
-
 app = ap.parse_args()
 
 if (f := app.filename) is not None:
@@ -55,14 +53,15 @@ if (f := app.filename) is not None:
     if import_folder is not None:
         import_folder = import_folder[0]
     with open(f) as ff:
-        ast = prfsparser(ff.read())     # maybe a sequence
+        ast = prfsparser(ff.read())
     run = True
     if app.show_parsing:
         print(ast.pretty())
         run = False
     if app.Goedel_nums:
         from gnums import ShowGNums
-        ShowGNums(PReFScript()).gprint(ast)         # don't use print while testing
+        gen_gnums = ShowGNums(PReFScript(), Path(f).resolve(), import_folder)
+        gen_gnums.gprint(ast)
         run = False
     if run:
         scrmk = ScriptMaker(PReFScript(), Path(f).resolve(), import_folder)

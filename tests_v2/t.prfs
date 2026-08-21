@@ -1,0 +1,2 @@
+import "std"
+main: swap

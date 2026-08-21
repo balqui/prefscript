@@ -35,9 +35,9 @@ store (some) Goedel numbers? And where do we store them?
 Open: do I really need the copy() method?
 '''
 
-# ~ import cantorpairs as cp # only needed by gnums, if at all
-from dataclasses import dataclass #, replace #, field
+from dataclasses import dataclass #, replace #, field # for copy...
 from typing import Tuple
+from cantorpairs import ensure
 
 @dataclass
 class FunData:
@@ -66,14 +66,12 @@ class FunData:
             case 'mu' if len(self.defon) == 1:
                 self.rawpy = f"lambda x: mu(x, {self.defon[0]})"
             case 'pr' | 'ppr': pass
-            case '_'   : 
-                assert False, (f"Bad 'how defined' or wrong number "
-                               f"of args for it in {self}")
+            case _:
+                ensure.that(False, (f"Bad 'how defined' or wrong number "
+                               f"of args for it in {self}"))
 
 
 # ~ if copy() is ever uncommented, it needs from dataclasses import replace
     # ~ def copy(self, **changes) -> Self:
         # ~ "Creates a duplicate of self, optionally overriding fields."
         # ~ return replace(self, **changes)
-
-
