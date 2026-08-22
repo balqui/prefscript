@@ -44,16 +44,23 @@ def rec(recurse, base, is_base):
     primitive recursion with parameters: base receives input pair
     <param.val>, base only val, recurse receives
     <param.<indval.sq>> for sq the course of values up to indval-1
+    NOW I BELIEVE I CANNOT AFFORD THAT STRUCTURE AND ACTUALLY NEED
+    <<param.indval>.sq>> for sq the course of values up to indval
+    as o/w I don't grab the indval correctly in base cases of fib.
     '''
 
     def c_of_v(z):
         "create the adequate course of values"
         x = cp.pr_R(z)
         p = cp.pr_L(z)
+        print(f"p: {p}, x: {x}, z: {z} = <{p}.{x}> = {cp.dp(p, x)}")
         sq = 0 # empty sequence
         for y in range(x + 1):
+            "the z sent to base is the wrong one for small y = 0 e.g."
             new = base(z) if is_base(y) else recurse(cp.dp(p, cp.dp(y, sq)))
+            print(f"c-of-v, new: {new} = fib_step on <{p}.<{y}.{sq}>>) is_base: {is_base(y)}") 
             sq = cp.dp(new, sq)
+            print(f"c-of-v, new sq: {sq} = {cp.seq(sq)}") 
         return sq
 
     return lambda x: cp.pr_L(c_of_v(x))
