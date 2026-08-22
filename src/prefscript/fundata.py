@@ -65,10 +65,12 @@ class FunData:
                 self.rawpy = f"lambda x: cp.dp({self.defon[0]}(x), {self.defon[1]}(x))"
             case 'mu' if len(self.defon) == 1:
                 self.rawpy = f"lambda x: mu(x, {self.defon[0]})"
-            case 'pr' | 'ppr': pass
+            case 'rec' if len(self.defon) == 3: 
+                self.rawpy = f"lambda x: rec({self.defon[0]}, {self.defon[1]}, {self.defon[2]})(x)"
+            # ~ case 'pr' | 'ppr': pass     # deprecated!
             case _:
                 ensure.that(False, (f"Bad 'how defined' or wrong number "
-                               f"of args for it in {self}"))
+                               f"of arguments for it in {self}"))
 
 
 # ~ if copy() is ever uncommented, it needs from dataclasses import replace

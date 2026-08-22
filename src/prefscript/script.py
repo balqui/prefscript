@@ -30,8 +30,7 @@ import cantorpairs as cp
 from fundata import FunData
 from basicfun import BasicFun
 
-
-
+# A handful of ancillary functions
 
 def mu(x, test):
     "ancillary linear search function for implementing mu-minimization"
@@ -40,6 +39,24 @@ def mu(x, test):
         z += 1
     return z
 
+def rec(recurse, base, is_base):
+    '''
+    primitive recursion with parameters: base receives input pair
+    <param.val>, base only val, recurse receives
+    <param.<indval.sq>> for sq the course of values up to indval-1
+    '''
+
+    def c_of_v(z):
+        "create the adequate course of values"
+        x = cp.pr_R(z)
+        p = cp.pr_L(z)
+        sq = 0 # empty sequence
+        for y in range(x + 1):
+            new = base(z) if is_base(y) else recurse(cp.dp(p, cp.dp(y, sq)))
+            sq = cp.dp(new, sq)
+        return sq
+
+    return lambda x: cp.pr_L(c_of_v(x))
 
 
 class PReFScript(dict):

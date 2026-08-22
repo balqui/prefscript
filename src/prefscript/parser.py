@@ -65,6 +65,7 @@ funspec   : CNAME                            -> single
           | "pair" funspec funspec           -> pair
           | "mu" funspec                     -> mu
           | "(" funspec ")"                  -> parenth
+          | "rec" funspec funspec funspec    -> rec
 
 '''
 
@@ -131,6 +132,12 @@ class ScriptMaker(Transformer):
     def mu(self, test):
         nm = funfact()
         fdat = FunData(nm, howdf = "mu", defon = (test,))
+        self.script.define(fdat)
+        return nm
+
+    def rec(self, recurse, base, is_base):
+        nm = funfact()
+        fdat = FunData(nm, howdf = "rec", defon = (recurse, base, is_base))
         self.script.define(fdat)
         return nm
 

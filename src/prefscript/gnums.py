@@ -5,6 +5,9 @@ program previous to refactoring.
 
 Consider printing only a few digits plus an ellipsis in case of
 Goedel numbers too high.
+
+Should be a variant of gen_py instead. Idea of a tree on top of
+rich may be good too.
 '''
 
 from lark import Lark, Transformer, v_args # Tree, Token
