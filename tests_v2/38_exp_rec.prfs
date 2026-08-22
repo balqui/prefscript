@@ -1,0 +1,27 @@
+# Exponential via recursion.
+# Able to construct an encoding of the sequence of values, 
+# hundreds of digits long, e.g. beyond 13!. Delay starts
+# to be noticeable around 20!
+
+import "std"
+
+main: exp
+
+exp: 
+    "expects <base.power> so that base is the extra parameter;"
+    "recursive function on step to recurse, base case, is_base test"
+    "the is_base test will be checked just for pr_R"
+    rec fact_step k_1 is_zero
+
+# exp step receives info coded as <<base.induct_exponent>.induct_seq>>
+
+fact_step:
+    "find the pr_RL-exponent power by multiplying the pr_LL base"
+    "times the previous power, to be found in the head pr_L of" 
+    "the sequence of values up to that previous, which is pr_R"
+    comp mul pair pr_LL pr_LR
+
+is_zero:
+    "is the relevant part of input zero, that is, base case?"
+    comp neg comp gt pair id k_0
+
