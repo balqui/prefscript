@@ -1,0 +1,38 @@
+# Fibonacci sequence via recursion.
+
+import "std"
+
+main: fib
+
+fib: 
+    "recursion has an extra parameter that is not necessary"
+    "for computing the factorial, we fix it at 1"
+    comp fib_extra_param piggyfront_1
+
+fib_extra_param:
+    "recursive function on step to recurse, base case, is_base test"
+    "the is_base test will be checked just for pr_R"
+    rec fib_step pr_R is_zero_or_one
+
+# sort of <param.<indval.sq>> for sq the course of values up to indval-1
+# rethink if it gets recoded as <<param.indval>.sq>>
+
+fib_step:
+    "add the head pr_L and the next-to-head pr_LR of the sequence"
+    "of values so far, to be found in pr_RR"
+    comp add pair pr_LRR pr_LRRR
+
+pr_LRR: 
+    "pr_L on pr_RR" 
+    comp pr_L pr_RR
+
+pr_RRR: comp pr_R pr_RR
+
+pr_LRRR: 
+    "pr_L on pr_RRR" 
+    comp pr_L pr_RRR
+
+is_zero_or_one:
+    "is the relevant part of input below 2, that is, base case?"
+    comp neg comp gt pair id k_1
+
