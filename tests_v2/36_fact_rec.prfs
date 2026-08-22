@@ -1,7 +1,7 @@
 # Factorial via recursion.
 # Able to construct an encoding of the sequence of values, 
-# hundreds of digits long, e.g. for 13!. Not sure where 
-# it stops providing values within reasonable time.
+# hundreds of digits long, e.g. beyond 13!. Delay starts
+# to be noticeable around 20!
 
 import "std"
 
@@ -17,18 +17,13 @@ fact_extra_param:
     "the is_base test will be checked just for pr_R"
     rec fact_step k_1 is_zero
 
-# sort of <param.<indval.sq>> for sq the course of values up to indval-1
-# rethink if it gets recoded as <<param.indval>.sq>>
+# fact step receives info coded as <<param.induct_val>.induct_seq>>
 
 fact_step:
-    "find the factorial of pr_LR multiplying it by the factorial"
+    "find the factorial of pr_RL multiplying it by the factorial"
     "of its anterior, to be found in the head pr_L of the sequence"
-    "of values of factorials up to that anterior, which is pr_RR"
-    comp mul pair pr_LR pr_LRR
-
-pr_LRR: 
-    "pr_L on pr_RR" 
-    comp pr_L pr_RR
+    "of values of factorials up to that anterior, which is pr_R"
+    comp mul pair pr_RL pr_LR
 
 is_zero:
     "is the relevant part of input zero, that is, base case?"

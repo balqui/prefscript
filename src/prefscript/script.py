@@ -53,14 +53,11 @@ def rec(recurse, base, is_base):
         "create the adequate course of values"
         x = cp.pr_R(z)
         p = cp.pr_L(z)
-        print(f"p: {p}, x: {x}, z: {z} = <{p}.{x}> = {cp.dp(p, x)}")
         sq = 0 # empty sequence
         for y in range(x + 1):
-            "the z sent to base is the wrong one for small y = 0 e.g."
-            new = base(z) if is_base(y) else recurse(cp.dp(p, cp.dp(y, sq)))
-            print(f"c-of-v, new: {new} = fib_step on <{p}.<{y}.{sq}>>) is_base: {is_base(y)}") 
+            z = cp.dp(p, y)
+            new = base(z) if is_base(y) else recurse(cp.dp(z, sq))
             sq = cp.dp(new, sq)
-            print(f"c-of-v, new sq: {sq} = {cp.seq(sq)}") 
         return sq
 
     return lambda x: cp.pr_L(c_of_v(x))
