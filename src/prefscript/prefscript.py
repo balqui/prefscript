@@ -10,9 +10,7 @@ Author: Jose L Balcazar, ORCID 0000-0003-4248-4528, april 2023 onwards
 Copyleft: MIT License (https://en.wikipedia.org/wiki/MIT_License)
 
 NEXT:
-- ascii_const
 - inputs: none, seq, pair? Maybe via CLI flag
-- outputs: bool, ascii     Maybe via CLI flag
 - close issues (prepare first a list)
 - document v2
 - Goedel number generation should be much closer to
@@ -48,6 +46,7 @@ ap.add_argument("-G", "--Goedel_nums",
     help="Show Goedel numbers of functions while not too large.",
     action="store_true") 
 ap.add_argument("-W", "--write", 
+    default = "int",
     help="int (default) or ascii" \
          " (obtain then write an ascii7 string from the output)") 
 
@@ -69,9 +68,10 @@ if (f := app.filename) is not None:
         gen_gnums.gprint(ast)
         run = False
     if run:
-        cp.ensure.that(app.write in ("int", "ascii"), 
+        cp.ensure.that(app.write in (None, "int", "ascii", "bool"), 
                        f"Unknown --write value {app.write}")
-        outf = int2str if app.write == "ascii" else lambda x: x
+        outf = int2str if app.write == "ascii" \
+                       else lambda x: eval(app.write)(x)
         scrmk = ScriptMaker(PReFScript(), Path(f).resolve(), import_folder)
         scr = scrmk.transform(ast)
         scr.to_python('main')
