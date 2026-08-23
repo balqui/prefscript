@@ -64,8 +64,9 @@ funspec   : CNAME                            -> single
           | "comp" funspec funspec           -> comp
           | "pair" funspec funspec           -> pair
           | "mu" funspec                     -> mu
-          | "(" funspec ")"                  -> parenth
           | "rec" funspec funspec funspec    -> rec
+          | "(" funspec ")"                  -> parenth
+          | "ascii_const" ESCAPED_STRING     -> ascii_const
 
 '''
 
@@ -106,6 +107,12 @@ class ScriptMaker(Transformer):
             self.import_folder = None
         self.filename = filename
         FILENAMES.add(self.filename)
+
+    def ascii_const(self, strconst):
+        nm = funfact()
+        fdat = FunData(nm, howdf = "ascii_const", defon = (strconst,))
+        self.script.define(fdat)
+        return nm
 
     def single(self, cname):
         nm = cname.value

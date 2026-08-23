@@ -59,6 +59,8 @@ class FunData:
             case 'pending' | 'basic': pass
             case 'alias' if len(self.defon) == 1:
                 self.rawpy = f"lambda x: {self.defon[0]}(x)"
+            case 'ascii_const' if len(self.defon) == 1:
+                self.rawpy = f"lambda x: str2int({self.defon[0]})"
             case 'comp' if len(self.defon) == 2:
                 self.rawpy = f"lambda x: {self.defon[0]}({self.defon[1]}(x))"
             case 'pair' if len(self.defon) == 2:

@@ -10,8 +10,7 @@ Author: Jose L Balcazar, ORCID 0000-0003-4248-4528, april 2023 onwards
 Copyleft: MIT License (https://en.wikipedia.org/wiki/MIT_License)
 
 NEXT:
-- pr / ppr
-- asciiconst
+- ascii_const
 - inputs: none, seq, pair? Maybe via CLI flag
 - outputs: bool, ascii     Maybe via CLI flag
 - close issues (prepare first a list)
@@ -22,11 +21,13 @@ NEXT:
 - A minimal GUI on Windows?
 '''
 
+import cantorpairs as cp
 from parser import prfsparser, ScriptMaker
 from script import PReFScript
 
 from argparse import ArgumentParser
 from pathlib import Path
+from ascii7io import int2str
 
 __version__ = "2.0"
 
@@ -46,6 +47,9 @@ ap.add_argument("-P", "--show_parsing",
 ap.add_argument("-G", "--Goedel_nums", 
     help="Show Goedel numbers of functions while not too large.",
     action="store_true") 
+ap.add_argument("-W", "--write", 
+    help="int (default) or ascii" \
+         " (obtain then write an ascii7 string from the output)") 
 
 app = ap.parse_args()
 
@@ -65,13 +69,16 @@ if (f := app.filename) is not None:
         gen_gnums.gprint(ast)
         run = False
     if run:
+        cp.ensure.that(app.write in ("int", "ascii"), 
+                       f"Unknown --write value {app.write}")
+        outf = int2str if app.write == "ascii" else lambda x: x
         scrmk = ScriptMaker(PReFScript(), Path(f).resolve(), import_folder)
         scr = scrmk.transform(ast)
         scr.to_python('main')
         mainf = scr.pycode['main']
         while n := input():
             n = int(n)
-            print(mainf(n))
+            print(outf(mainf(n)))
         exit()
 else:
     print("Try prefscript --help")

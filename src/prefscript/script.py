@@ -29,6 +29,7 @@ Remember that now cp.seq and cp.ensure are available.
 import cantorpairs as cp
 from fundata import FunData
 from basicfun import BasicFun
+from ascii7io import str2int
 
 # A handful of ancillary functions
 
@@ -136,8 +137,10 @@ class PReFScript(dict):
                                 # that test never seems to fail
             cp.ensure.that(self[name].howdf != "pending",
                 f"Function {name} undefined but required by {need}.")
-            if self[name].howdf != "ascii_const":
-                "the def_on part of an ascii_const is a mere string already handled"
+            if self[name].howdf == "ascii_const":
+                "the def_on part of an ascii_const is already handled"
+                self.pycode[name] = eval(self[name].rawpy, globals() | self.pycode)
+            else:
                 for nname in self[name].defon:
                     "we need first the recursive calls"
                     self.gen_py(nname, name)
