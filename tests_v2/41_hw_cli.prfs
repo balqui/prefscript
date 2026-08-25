@@ -1,0 +1,4 @@
+# Hello World, tune output through CLI flags
+
+main: ascii_const "Hello, World!"
+

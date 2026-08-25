@@ -7,7 +7,11 @@
 # Must answer positively for the first q such that 
 # q+1 is too large: (q+1)*denom > numer.
 
-# import "proj"
+# Example pragmas: import just bool from another path and read a pair
+
+#pragma read: intpair
+#pragma import_folder: err
+
 import "bool"
 
 main: div

@@ -1,4 +1,4 @@
-# Hello World with output ascii and input none pragmas
+# Hello World with output ascii and input nothing pragmas
 #pragma read: nothing
 #pragma write: ascii 
 

@@ -1,0 +1,25 @@
+# Compute quotient of truncated integer division.
+# Import-based variant.
+# Careful: will loop forever if denominator is zero.
+# If div receives <numer.denom> then
+# test_quotient keeps receiving <<numer.denom>.q> 
+# for candidate quotients q.
+# Must answer positively for the first q such that 
+# q+1 is too large: (q+1)*denom > numer.
+
+import "std"
+
+main: div
+
+numer: pr_LL
+denom: pr_RL
+
+div: mu test_quotient
+
+test_quotient:
+    "receive <<numer.denom>.q>, check (q+1)*denom > numer"
+    comp gt pair (comp mul pair next denom) numer
+
+next: 
+    "receive <<numer.denom>.q>, compute q+1"
+    comp succ pr_R
