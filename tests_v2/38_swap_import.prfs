@@ -1,6 +1,7 @@
 # Like 18 but importing the projections instead
 
-import "29_prLR.2prfs"
+#pragma import_folder: err
+import "proj.prfs"
 
 main: 
 

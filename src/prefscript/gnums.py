@@ -1,13 +1,20 @@
 '''
-Refactoring of a fragment of a piece of code written by Gemini, 
-Aug 17th 2026; see gnums_full.py for the prompt and the whole 
-program previous to refactoring.
+Project started mid Germinal 2003:
+PReFScript: A Partial Recursive Functions Lab
 
-Consider printing only a few digits plus an ellipsis in case of
-Goedel numbers too high.
+Module version early Fructidor 2026:
+computes Goedel numbers up to a limit.
 
-Should be a variant of gen_py instead. Idea of a tree on top of
-rich may be good too.
+Author: Jose L Balcazar, ORCID 0000-0003-4248-4528
+Copyleft: MIT License (https://en.wikipedia.org/wiki/MIT_
+
+Should be a variant of gen_py instead. 
+
+Gemini suggested the idea of a tree on top of rich and to
+consider printing only a few digits plus an ellipsis in 
+case of Goedel numbers too high. These may be very good 
+ideas for the future. See gnums_full.py for the prompt 
+and the whole Gemini program of Aug 17th 2026; 
 '''
 
 from lark import Lark, Transformer, v_args # Tree, Token

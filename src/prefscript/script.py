@@ -2,8 +2,8 @@
 Project started mid Germinal 2003:
 PReFScript: A Partial Recursive Functions Lab
 
-Module version late Thermidor 2026:
-pref_script.py: class PReFScript storing all the functions in one script
+Module version early Fructidor 2026:
+class PReFScript storing all the functions in one script.
 
 Author: Jose L Balcazar, ORCID 0000-0003-4248-4528
 Copyleft: MIT License (https://en.wikipedia.org/wiki/MIT_License)
@@ -20,8 +20,6 @@ would allow one to detect duplicates.
 Replaced SyntErr first by assert's and subsequently
 by cp.ensure.that() - to be combined with whatever 
 Lark offers for handling errors.
-
-Open: shall we keep pragmas? Maybe just command line flags?
 
 Remember that now cp.seq and cp.ensure are available.
 '''

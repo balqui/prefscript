@@ -2,7 +2,7 @@
 Project started mid Germinal 2003:
 PReFScript: A Partial Recursive Functions Lab
 
-Module version early Thermidor 2026:
+Module version early Fructidor 2026:
 fundata: class FunData storing all necessary information about 
 one partial recursive function
 
@@ -19,18 +19,11 @@ along the way.
 Uses __post_init__ to raise a ValueError exception if howdf is not 
 valid. Open: add a custom exception? Current answer: maybe.
 
-In the future we might add the Goedel number if not too big 
-(which actually repeats the previous info), the docstring and
-who knows exactly what else.
-
 Nicknames are alphanum strings not starting with a number (no surprise); 
 they must NOT consist of three underscores followed by digits.
 
 The runnable Python code is a separate dict so as to pass it together 
 with globals to eval.
-
-Open: where do we handle the decision whether to 
-store (some) Goedel numbers? And where do we store them?
 
 Open: do I really need the copy() method?
 '''
