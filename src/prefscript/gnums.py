@@ -23,7 +23,8 @@ from pathlib import Path                   # for handling imported files
 import cantorpairs as cp
 
 from fundata import FunData
-from parser import funfact, seemsfactgen, prfsparser
+from parser import prfsparser
+from codegen import funfact, seemsfactgen
 from script import PReFScript       # for the recursive calls on imports
 
 # A handful of ancillary constants and functions
