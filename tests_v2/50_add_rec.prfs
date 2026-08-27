@@ -1,0 +1,47 @@
+# Recursive construction of addition on top of successor.
+# We are only allowed to use add within the program to get 
+# the successor by adding 1.
+
+main: add_recurs
+
+add_recurs:
+    "gets <x.y>, finds x+y via a recursive construction"
+    "x remains as parameter, y as inductive variable"
+    rec add_1_to_prev base is_zero
+
+is_zero:
+    "is the relevant part of input zero, that is, base case?"
+    comp neg (comp gt pair id k_0)
+
+base:
+    "gets called on <x.y> when y is zero hence sum is x"
+    pr_L
+
+add_1_to_prev:
+    "gets <<x.y>.sq> where sq is the whole course-of-values sequence"
+    "that is sq is <(x+(y-1)).(x+(y-2)). ... .(x+0)>"
+    "must take the most recent one and add 1 to it"
+    "pr_R takes sq, then pr_L its leftmost x+y-1"
+    comp succ comp pr_L pr_R
+
+
+
+succ:
+    comp add pair id k_1
+
+
+
+pr_L: comp proj piggyback0
+pr_R: comp s_tup piggyback1
+
+k_0: comp diff pair k_1 k_1
+piggyback1: pair id k_1
+piggyback0: pair id k_0
+
+gt:
+    "test x > y given <x.y>"
+    comp sign diff
+
+neg: comp diff pair k_1 id
+ant: comp diff pair id k_1
+sign: comp diff pair id ant

@@ -114,8 +114,8 @@ class PReFScript(dict):
         if nick in self and self[nick].howdf != "pending":
             'repeated nick, check for consistency, MAYBE INSUFFICIENT'
             cp.ensure.that(self[nick].howdf == new_funct.howdf and
-                self[nick].defon == new_funct.defon, f"Repeated, " +
-                "inconsistent definitions for function '{nick}' found.")
+               self[nick].defon == new_funct.defon, "Repeated, " +
+               f"inconsistent definitions for function '{nick}' found.")
         else:
             self[nick] = new_funct
 

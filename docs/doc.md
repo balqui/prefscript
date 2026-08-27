@@ -225,7 +225,7 @@ specifications: two for `comp` and `pair`, one for `mu` (the test
 function), and three for `rec`.
 
 Parentheses surrounding any function specification are always allowed
-but never compulsory; users can employ them to clarify their code.
+but never compulsory; users can employ them at will to clarify their code.
 Parentheses surrounding anything that does not conform syntactically
 to a function specification are disallowed.
 
@@ -268,6 +268,44 @@ sequence of values of the function itself that is being defined
 for all pairs `<param.val>` for `val` between 0 and `input-1`, 
 leaving `param` always invariant. Using these values, `recurse`
 must obtain the value of the function for `z = <param.input>`.
+
+As an example (somewhat incomplete in that some simple 
+but not basic functions are still missing, such as the 
+constant 0 function `k_0`, the `gt` comparison or the 
+left and right projections) we see how to define the 
+addition via recursion on top of the "add one"
+function `succ`. The main function is `add_recurs`, the 
+recursive version of addition, which gets `<x.y>` and must
+find `x+y` via a recursive construction. Arbitrarily we
+assign roles: `x` remains as parameter, `y` is taken as 
+inductive variable. To check the base case, `is_zero` will
+receive `y`, and then the sum to be computed is `x`.
+
+The recursive step `add_1_to_prev` gets `<<x.y>.sq>` as input, 
+where `sq` is the whole course-of-values sequence; that is,
+`<(x+(y-1)).(x+(y-2)). ... .(x+0)>`. This function must take 
+the most recent one and add 1 to it: a call to `pr_R` 
+selects `sq`, then the composition with `pr_L` fetches its 
+leftmost value, namely `x+y-1`, to which we must add 1.
+
+'''
+
+main: add_recurs
+
+add_recurs:
+    rec add_1_to_prev base is_zero
+
+is_zero:
+    comp neg (comp gt pair id k_0)
+
+base:
+    "gets called on <x.y> when y is zero hence sum is x"
+    pr_L
+
+add_1_to_prev:
+    comp succ comp pr_L pr_R
+
+'''
 
 <!--- 
 
