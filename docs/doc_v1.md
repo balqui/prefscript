@@ -79,7 +79,7 @@ explained below, rather than from the stand-alone interpreter.
 ### Elementary notions
 
 In PReFScript, a script is a sequence of functions, each defined 
-in terms of the previous ones and of a few basic functions via the 
+in terms of others and of a few basic functions via the 
 partial recursion rules of composition and minimization. 
 
 All functions are from the natural numbers into the natural numbers 

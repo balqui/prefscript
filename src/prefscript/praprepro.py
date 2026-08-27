@@ -13,7 +13,8 @@ from re import compile as re_compile, finditer as re_finditer, MULTILINE
 
 class PraPrePro:
     '''
-    An re-based mini-parser to pre-process pragmas before
+    The PRAgma PRE-PROcessor.
+    an re-based mini-parser to pre-process pragmas before
     sending the source to the Lark-based PReFScript parser.
     '''
 

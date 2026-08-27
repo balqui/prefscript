@@ -1,9 +1,7 @@
 # PReFScript: 
 ## Partial Recursive Functions for Scripting
 
-Author: Jose L Balcazar, ORCID 0000-0003-4248-4528
-
-Documentation for version: 2.0
+Author: José Luis Balcázar, ORCID 0000-0003-4248-4528
 
 Copyleft: MIT License (https://en.wikipedia.org/wiki/MIT_License)
 
@@ -11,6 +9,12 @@ A Python-based environment to explore and experiment with
 partial recursive functions; naturally doubles as a (stateless, 
 purely functional) programming language, although it is not 
 intended to be used much as such.
+
+Documentation for version: 2.0, **not** backwards-compatible.
+
+Deprecated documentation for previous versions can be found in
+[doc_v1.md](https://github.com/balqui/prefscript/blob/main/docs/doc_v1.md).
+
 
 ### Installation
 
@@ -87,6 +91,17 @@ It may be easier to learn to use PReFScript by installing
 it in this way and then importing its main objects as
 explained below, rather than from the stand-alone interpreter.
 
+ = = =
+ 
+An extended variant of the system allows for some more basic functions:
+see below under Directives.
+
+ = = =
+ 
+The traditional scheme of primitive recursion is available in
+an extended version of `prefscript`; see below under Directives.
+
+
 ---> 
 
 
@@ -94,7 +109,7 @@ explained below, rather than from the stand-alone interpreter.
 ### Elementary notions
 
 In PReFScript, a script is a sequence of functions, each defined 
-in terms of other ones and of a few basic functions via the 
+in terms of others and of a few basic functions via the 
 partial recursion rules of composition and minimization. 
 
 All functions are from the natural numbers into the natural numbers 
@@ -108,25 +123,29 @@ please see first the companion repository
 [`cantorpairs`](https://github.com/balqui/cantorpairs).
 Its README file describes the available functions and their usages.
 It is a submodule of `prefscript` and provides the
-related names `dp`, `pr_L`, `pr_R`, `tup_e`, `tup_i`, `s_tup`, `pr`
+related names `dp`, `pr_L`, `pr_R`, `tup_e`, `tup_i`, `s_tup`, `pr`, `seq`
 as described there.
 
 #### Basic partial recursive functions
 
 The always available basic functions include: 
-`k_1`, the constant 1 function;
-`id`, the identity function;
-addition and multiplication, `add` and `mul` respectively,
+
+- `k_1`, the constant 1 function;
+
+- `id`, the identity function;
+
+- addition and multiplication, `add` and `mul` respectively,
 that interpret the single number received as the Cantor encoding
 of a pair `<x.y>` and compute the corresponding operation on `x` and 
-`y`; modified difference `diff` that receives likewise a Cantor-encoded
+`y`; 
+
+- modified difference `diff` that receives likewise a Cantor-encoded
 pair  `<x.y>` and computes `max(0, x - y)` so that we always stay
-within the natural numbers; and two functions related to projections
+within the natural numbers; and 
+
+- two functions related to projections
 of Cantor-encoded sequences: the projection function `proj` and
 the suffix tuple function `s_tup`.
-
-An extended variant of the system allows for some more basic functions:
-see below under Directives.
 
 #### Combining functions into new ones
 
@@ -145,18 +164,14 @@ that can be interpreted as the encoding of a pair:
 Thus, composition works in the fully standard way: if `h` is
 defined by composition of `f` and `g` (noted here as `comp f g`)
 then `h(n) = f(g(n))` if `g(n)` is defined and if `f` is defined
-on that value. _Evaluation is eager_.
-
+on that value. 
 The minimization operator takes a test function `f` and creates
 a new function `h = mu f` implementing linear search over `f`.
 More precisely, `h(x)` is computed by testing, in turn, all the
 values `f(<x.0>)`, `f(<x.1>)`, `f(<x.2>)`, and so on, until 
 finding a value `k` such that `f(<x.k>)` is nonzero: then `h(x) = k`.
-
 In `mu f` one expects `f` to be a predicate, that is, a total
-function that only evaluates to 0 or 1. If one of the intermediate
-tests `f(<x.j>)` turns out to be undefined before reaching
-the `k` searched for, then `h(x)` is undefined. Nonzero values
+function that only evaluates to 0 or 1. However, nonzero values
 of `f` are treated as 1.
 
 A slightly nonstandard addition to the partial recursive function schemes
@@ -165,12 +180,122 @@ namely, given two functions `f` and `g`, computing a single
 value pairing up both outputs: it is expressed as `pair f g`
 and defines a function `h` such that `h(x) = <f(x).g(x)>`. 
 
-The traditional scheme of primitive recursion is available in
-an extended version of `prefscript`; see below under Directives.
+_Evaluation is eager_: an undefined value at any intermediate step
+leads to the finally desired value remaining undefined. 
+That is, if `h(n) = f(g(n))` and `g(n)` is undefined then
+`h(n)` is undefined, and if one of the intermediate
+tests `f(<x.j>)` of a minimization turns out to be undefined 
+before reaching the `k` searched for, then `h(x)` is undefined. 
+
+A form of the so-called _primitive recursion_ is also available. Whereas it can
+be proved that it is redundant in the presence of the given 
+schemes, its lack leads to some computations being inadmissibly
+slow. We postpone briefly the discussion of this point.
 
 ### Running the interpreter on a script in a text file
 
-Function definitions in these scripts start with an _arbitrary
+Scripts contain mainly function definitions.
+
+They may contain as well comments and docstrings, starting 
+at either the mark `#` or the mark `\\` and spanning until 
+the end of the line. They may contain also `#pragma` instructions, 
+handled by an ad-hoc preprocessor and explained below, and the 
+word `import` followed by a filename in double quotes: it will 
+search for a script of that name, adding the ".prfs" extension 
+if necessary, and will read and have subsequently available all 
+the function definitions there. It is expected that many uses
+will be `import "std"` which will bring in all the function
+definitions in the file `std.prfs` provided at installation
+time in a folder under the name `stdprfs`.
+
+Scripts intended to be run must include a function definition
+under the name `main`. In scripts that become imported into
+other scripts, that name is silently ignored. Running a script
+amounts to calling that `main` function, feeding it a value 
+read from standard input.
+
+Function definitions in these scripts are syntactically very simple:
+a name for the function followed by a colon, followed by zero or
+more docstrings in double quotes, finally followed by a specification
+of how the function is defined. Specifications can be other function
+names (thus creating aliases, that is, different names of the same 
+function) or the keywords `comp`, `pair`, `mu`, or `rec` (this last 
+one to be clarified below) followed by the adequate number of function 
+specifications: two for `comp` and `pair`, one for `mu` (the test 
+function), and three for `rec`.
+
+Parentheses surrounding any function specification are always allowed
+but never compulsory; users can employ them to clarify their code.
+Parentheses surrounding anything that does not conform syntactically
+to a function specification are disallowed.
+
+From a CLI (command line interface) simply call the `prefscript`
+interpreter followed by the name of the file containing the script.
+The file extension is assumed to be `.prfs` if nonexistent. 
+CLI flags are available for 
+fine-tuning: `-R`, `--read` changes the criterion by which input 
+is read; `-W`, `--write` changes the criterion by which output 
+is written. Allowed values can be inspected by calling 
+`prefscript --help`. Also `-I`, `--import_folder` allows one 
+to specify where additional, necessary function definitions can be found. These
+three flags can be also handled from pragmas within the source
+code (see below).
+
+Additional flags are `-P`, `--show_parsing` that shows the 
+abstract syntax tree of the script and `-G`, `--Goedel_nums`
+that will provide Gödel numbers of the functions until they
+skyrocket to over about 300 decimal digits (1000 bits actually). 
+In both cases, the task is done without running the script. 
+
+### Recursion
+
+The `rec f g h` construction implements so-called _parameterized 
+course-of-values primitive recursion_. Let's switch to better names:
+the function defined by `rec recurse base is_base` receives an
+integer `z`, tests it to distinguish recursion basis from recursion
+step, and proceeds accordingly.
+
+For the test, `z` is interpreted as a pair `<param.input>`, 
+where the input part is the actual inductive value and the 
+parameter provides extra information. That is, `is_base` 
+should expect to receive only the `input` part (fetched 
+internally with `pr_R`) leaving the `param` out for the moment.
+
+If the outcome is nonzero, `z` is considered to be a basis case
+and the result is computed as `base(z)`; otherwise, the function 
+`recurse` is applied to a pair consisting of `z` and the whole
+sequence of values of the function itself that is being defined 
+for all pairs `<param.val>` for `val` between 0 and `input-1`, 
+leaving `param` always invariant. Using these values, `recurse`
+must obtain the value of the function for `z = <param.input>`.
+
+<!--- 
+
+EXAMPLES!
+
+ISSUE: IMPORT FOLDER SHOULD BE INCREMENTAL
+
+---> 
+
+### Preprocessor directives
+
+These are used to provide default values to the command line flags
+`-R`, `--read`,
+`-W`, `--write`, and
+`-I`, `--import_folder`. They will be superseded in case the 
+corresponding CLI flags are present. Thus, for each of these
+three options, there is a default in case neither pragmas nor
+CLI flags apply (namely, `int`, `int`, and `stdprfs`); if exactly
+one of them, pragma or flag, is present, it is enforced; and
+if both are present, the `#pragma` declaration is ignored,
+being inhibited by the CLI flag.
+Call `prefscript --help` to see the allowed pragma values.
+
+
+
+<!--- 
+
+start with an _arbitrary
 natural number_ (that might be useful for human readers to label and
 reorder parts of the script) followed by the keyword "define:" 
 (with the colon) and then, in sequence, the _name_ of the function
@@ -444,3 +569,6 @@ The current version has seen also quite some refactoring
 of the source code, with a view to the future, planned
 version 2.0 which we hope to ship out by the early fall
 of 2026.
+
+
+---> 
