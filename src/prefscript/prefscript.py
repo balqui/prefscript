@@ -99,7 +99,6 @@ if (f := app.filename) is not None:
         run = False
     if run:
         "Handle first input and output formats"
-        print(app.__dict__)
         cp.ensure.that(
             app.read in ("int", "intpair", "intseq", "nothing"), 
             f"Unknown --read value {app.read}")
