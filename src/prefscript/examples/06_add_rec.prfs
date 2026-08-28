@@ -1,6 +1,6 @@
 # Recursive construction of addition on top of successor.
-# We are only allowed to use add within the program to get 
-# the successor by adding 1.
+# We are only allowed to use add within the program to get the 
+# successor by adding 1 via the function succ in the std import.
 
 import "std"
 

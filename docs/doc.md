@@ -18,92 +18,14 @@ Deprecated documentation for previous versions can be found in
 
 ### Installation
 
-The usual options should work: pipx (less fussy), pip (which might 
-complain about breaking system packages), or uv. Version 2.0 offers
-only functionality compatible with pipx, a feature in which it differs
+The usual options should work: `pipx` (less fussy), `pip` (which might 
+complain about breaking system packages), or `uv`. Version 2.0 offers
+only functionality compatible with `pipx`, a feature in which it differs
 from V1.*.
 
 The install command will create a command `prefscript` that you can 
 call from the command line. It is suggested that your very first call 
 is `prefscript --help`.
-
-
-<!--- 
-
-Make sure some example scripts become available.
-
-On Windows it will be also 
-possible to launch a minimal GUI hopefully in the near future.
-
-Test whether it brought in pytokr and cantorpairs
-in an importable form, also if pytokr wasn't there
-and maybe now is, stand-alone.
-
-Think how to avoid the no-main pragma complaint upon importing.
-
-Mention somewhere that repeated consistent definitions are ignored.
-
-TEST: `pip install --index-url https://test.pypi.org/simple/ --no-deps prefscript`
-
-FROM V1 DOCS:
-
-There are two installation options.
-
-#### Installing only the stand-alone interpreter
-
-Make sure you have `pipx`; then, installation proceeds 
-in the standard manner: `pipx install prefscript` 
-will create a command `prefscript` that you can call 
-from the command line. It is suggested that
-your very first call is `prefscript --help`.
-
-If you don't have `pipx` yet, installing it globally 
-via `pip` should be possible but may require you to 
-accept responsibility for mixing up `apt`-installed 
-things with `pip`-installed things. The option of 
-installing `pipx` in a virtual environment will leave 
-the global environment without it; another possibility 
-on Ubuntu/Debian is to install `pipx` via `apt`.
-
-This installation form is appropriate if you plan only
-to run the interpreter on third-party PReFScript files 
-or if you are already familiar with this particular form 
-of functional programming. To learn to write scripts of
-partial recursive functions and understand well that
-formal model of computation, the next installation 
-option may be preferable.
-
-#### Installing the system in an importable form
-
-Use the usual mechanism `pip install prefscript`
-(maybe preceded by super-user identification).
-This way, besides making the interpreter available
-as described in the previous section, you will be 
-able to `import prefscript` into your own code.
-
-It is recommended that the installation is made in a
-virtual environment. It will install as well the module
-`pytokr` unless it is already installed. If you have
-`pytokr` already in a virtual environment, consider 
-using the same environment to install also `prefscript`.
-
-It may be easier to learn to use PReFScript by installing
-it in this way and then importing its main objects as
-explained below, rather than from the stand-alone interpreter.
-
- = = =
- 
-An extended variant of the system allows for some more basic functions:
-see below under Directives.
-
- = = =
- 
-The traditional scheme of primitive recursion is available in
-an extended version of `prefscript`; see below under Directives.
-
-
----> 
-
 
 
 ### Elementary notions
@@ -134,18 +56,18 @@ The always available basic functions include:
 
 - `id`, the identity function;
 
+- two functions related to projections
+of Cantor-encoded sequences: the projection function `proj` and
+the suffix tuple function `s_tup`;
+
 - addition and multiplication, `add` and `mul` respectively,
 that interpret the single number received as the Cantor encoding
 of a pair `<x.y>` and compute the corresponding operation on `x` and 
-`y`; 
+`y`; and
 
 - modified difference `diff` that receives likewise a Cantor-encoded
 pair  `<x.y>` and computes `max(0, x - y)` so that we always stay
-within the natural numbers; and 
-
-- two functions related to projections
-of Cantor-encoded sequences: the projection function `proj` and
-the suffix tuple function `s_tup`.
+within the natural numbers.
 
 #### Combining functions into new ones
 
@@ -196,15 +118,15 @@ slow. We postpone briefly the discussion of this point.
 
 Scripts contain mainly function definitions.
 
-They may contain as well comments and docstrings, starting 
+They may contain as well comments, starting 
 at either the mark `#` or the mark `//` and spanning until 
 the end of the line. They may contain also `#pragma` instructions, 
 handled by an ad-hoc preprocessor and explained below, or the 
 word `import` followed by a filename in double quotes: it will 
 search for a script of that name, adding the ".prfs" extension 
 if necessary, and will read and have subsequently available all 
-the function definitions there. It is expected that many uses
-will be `import "std"` which will bring in all the function
+the function definitions there. It is expected that many scripts
+will specify `import "std"` which will bring in all the function
 definitions in the file `std.prfs` provided at installation
 time in a folder called `stdprfs`. Accordingly, in 
 order not to "shadow" that file, it is not allowed that a 
@@ -216,7 +138,7 @@ under the name `main`. In scripts that become imported into
 other scripts, that name may be missing and, if found, 
 is silently ignored. Running a script
 amounts to calling that `main` function, feeding it a value 
-read from standard input.
+read from standard input, and writing the outcome to standard output.
 
 Function definitions in these scripts are syntactically very simple:
 a name for the function followed by a colon, followed by zero or
@@ -360,6 +282,82 @@ The same effect is obtained if the script only contains the two
 last lines, without the pragmas, but the call to the interpreter
 from the CLI includes the flags `--read intpair --write bool`.
 
+
+<!--- 
+
+Make sure some example scripts become available.
+
+On Windows it will be also 
+possible to launch a minimal GUI hopefully in the near future.
+
+Test whether it brought in pytokr and cantorpairs
+in an importable form, also if pytokr wasn't there
+and maybe now is, stand-alone.
+
+Think how to avoid the no-main pragma complaint upon importing.
+
+Mention somewhere that repeated consistent definitions are ignored.
+
+TEST: `pip install --index-url https://test.pypi.org/simple/ --no-deps prefscript`
+
+FROM V1 DOCS:
+
+There are two installation options.
+
+#### Installing only the stand-alone interpreter
+
+Make sure you have `pipx`; then, installation proceeds 
+in the standard manner: `pipx install prefscript` 
+will create a command `prefscript` that you can call 
+from the command line. It is suggested that
+your very first call is `prefscript --help`.
+
+If you don't have `pipx` yet, installing it globally 
+via `pip` should be possible but may require you to 
+accept responsibility for mixing up `apt`-installed 
+things with `pip`-installed things. The option of 
+installing `pipx` in a virtual environment will leave 
+the global environment without it; another possibility 
+on Ubuntu/Debian is to install `pipx` via `apt`.
+
+This installation form is appropriate if you plan only
+to run the interpreter on third-party PReFScript files 
+or if you are already familiar with this particular form 
+of functional programming. To learn to write scripts of
+partial recursive functions and understand well that
+formal model of computation, the next installation 
+option may be preferable.
+
+#### Installing the system in an importable form
+
+Use the usual mechanism `pip install prefscript`
+(maybe preceded by super-user identification).
+This way, besides making the interpreter available
+as described in the previous section, you will be 
+able to `import prefscript` into your own code.
+
+It is recommended that the installation is made in a
+virtual environment. It will install as well the module
+`pytokr` unless it is already installed. If you have
+`pytokr` already in a virtual environment, consider 
+using the same environment to install also `prefscript`.
+
+It may be easier to learn to use PReFScript by installing
+it in this way and then importing its main objects as
+explained below, rather than from the stand-alone interpreter.
+
+ = = =
+ 
+An extended variant of the system allows for some more basic functions:
+see below under Directives.
+
+ = = =
+ 
+The traditional scheme of primitive recursion is available in
+an extended version of `prefscript`; see below under Directives.
+
+
+---> 
 
 <!--- 
 
