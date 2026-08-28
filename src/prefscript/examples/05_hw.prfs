@@ -1,0 +1,5 @@
+# Hello World with output ascii and input none pragmas
+#pragma read: nothing
+#pragma write: ascii 
+
+main: ascii_const "Hello, World!"

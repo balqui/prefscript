@@ -197,23 +197,24 @@ slow. We postpone briefly the discussion of this point.
 Scripts contain mainly function definitions.
 
 They may contain as well comments and docstrings, starting 
-at either the mark `#` or the mark `\\` and spanning until 
+at either the mark `#` or the mark `//` and spanning until 
 the end of the line. They may contain also `#pragma` instructions, 
-handled by an ad-hoc preprocessor and explained below, and the 
+handled by an ad-hoc preprocessor and explained below, or the 
 word `import` followed by a filename in double quotes: it will 
 search for a script of that name, adding the ".prfs" extension 
 if necessary, and will read and have subsequently available all 
 the function definitions there. It is expected that many uses
 will be `import "std"` which will bring in all the function
 definitions in the file `std.prfs` provided at installation
-time in a folder under the name `stdprfs`. Accordingly, in 
+time in a folder called `stdprfs`. Accordingly, in 
 order not to "shadow" that file, it is not allowed that a 
 file with name `std.prfs` exists in the user folder (or on
 `import_folder` arguments to the `-I` flag, see below).
 
 Scripts intended to be run must include a function definition
 under the name `main`. In scripts that become imported into
-other scripts, that name is silently ignored. Running a script
+other scripts, that name may be missing and, if found, 
+is silently ignored. Running a script
 amounts to calling that `main` function, feeding it a value 
 read from standard input.
 
@@ -255,7 +256,7 @@ code (see below).
 Additional flags are `-P`, `--show_parsing` that shows the 
 abstract syntax tree of the script and `-G`, `--Goedel_nums`
 that will provide Gödel numbers of the functions until they
-skyrocket to over about 300 decimal digits (1000 bits actually). 
+skyrocket to over about 300 decimal digits (1000 bits, actually). 
 In both cases, the task is done without running the script. 
 
 ### Recursion
@@ -302,8 +303,7 @@ the most recent one and add 1 to it: a call to `pr_R`
 selects `sq`, then the composition with `pr_L` fetches its 
 leftmost value, namely `x+y-1`, to which we must add 1.
 
-'''
-
+```
 main: add_recurs
 
 add_recurs:
@@ -318,8 +318,7 @@ base_case:
 
 add_1_to_prev:
     comp succ comp pr_L pr_R
-
-'''
+```
 
 <!--- 
 
@@ -340,9 +339,26 @@ three options, there is a default in case neither pragmas nor
 CLI flags apply (namely, `int`, `int`, and `stdprfs`); if exactly
 one of them, pragma or flag, is present, it is enforced; and
 if both are present, the `#pragma` declaration is ignored,
-being inhibited by the CLI flag.
-Call `prefscript --help` to see the allowed pragma values.
+being inhibited by the CLI flag. A `#pragma` definition must
+be placed at the very beginning of a line of its own, with
+the pragma name immediately followed by a colon and the pragma 
+value being declared.
 
+Call `prefscript --help` to see the allowed pragma values.
+Here is an exemple that runs the equality test function on
+two user-provided integers and writes the answer as a Boolean:
+
+```
+#pragma read: intpair
+#pragma write: bool
+import "std"
+main: eq
+```
+
+Of course `eq` is one of the functions defined in `std.prfs`.
+The same effect is obtained if the script only contains the two
+last lines, without the pragmas, but the call to the interpreter
+from the CLI includes the flags `--read intpair --write bool`.
 
 
 <!--- 

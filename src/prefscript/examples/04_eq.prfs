@@ -1,0 +1,4 @@
+#pragma read: intpair
+#pragma write: bool
+import "std"
+main: eq
