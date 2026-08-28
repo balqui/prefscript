@@ -1,0 +1,4 @@
+main: f
+f: pair comp rec
+comp: add 
+rec: add

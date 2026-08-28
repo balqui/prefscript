@@ -206,7 +206,10 @@ if necessary, and will read and have subsequently available all
 the function definitions there. It is expected that many uses
 will be `import "std"` which will bring in all the function
 definitions in the file `std.prfs` provided at installation
-time in a folder under the name `stdprfs`.
+time in a folder under the name `stdprfs`. Accordingly, in 
+order not to "shadow" that file, it is not allowed that a 
+file with name `std.prfs` exists in the user folder (or on
+`import_folder` arguments to the `-I` flag, see below).
 
 Scripts intended to be run must include a function definition
 under the name `main`. In scripts that become imported into
@@ -223,6 +226,14 @@ function) or the keywords `comp`, `pair`, `mu`, or `rec` (this last
 one to be clarified below) followed by the adequate number of function 
 specifications: two for `comp` and `pair`, one for `mu` (the test 
 function), and three for `rec`.
+
+Function names follow the standard conventions of alphanumeric 
+characters not starting with a digit, except that names
+that consist just of digits preceded by three underscores (like
+`___123`, called "trunders") are not allowed as they are used
+internally to provide names to functions that the user code leaves
+anonymous. Trying to use `comp`, `pair`, `mu`, or `rec` as a 
+function name is a syntax error.
 
 Parentheses surrounding any function specification are always allowed
 but never compulsory; users can employ them at will to clarify their code.
