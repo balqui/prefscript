@@ -40,12 +40,9 @@ def mu(x, test):
 
 def rec(recurse, base, is_base):
     '''
-    primitive recursion with parameters: base receives input pair
-    <param.val>, base only val, recurse receives
-    <param.<indval.sq>> for sq the course of values up to indval-1
-    NOW I BELIEVE I CANNOT AFFORD THAT STRUCTURE AND ACTUALLY NEED
-    <<param.indval>.sq>> for sq the course of values up to indval
-    as o/w I don't grab the indval correctly in base cases of fib.
+    Primitive recursion with parameters: is_base and base receive 
+    input pair <param.indval>, recurse receives <<param.indval>.sq> 
+    for sq the course of values up to indval-1.
     '''
 
     def c_of_v(z):
@@ -55,7 +52,7 @@ def rec(recurse, base, is_base):
         sq = 0 # empty sequence
         for y in range(x + 1):
             z = cp.dp(p, y)
-            new = base(z) if is_base(y) else recurse(cp.dp(z, sq))
+            new = base(z) if is_base(z) else recurse(cp.dp(z, sq))
             sq = cp.dp(new, sq)
         return sq
 

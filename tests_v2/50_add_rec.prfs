@@ -7,13 +7,13 @@ main: add_recurs
 add_recurs:
     "gets <x.y>, finds x+y via a recursive construction"
     "x remains as parameter, y as inductive variable"
-    rec add_1_to_prev base is_zero
+    rec add_1_to_prev base_case is_zero_R
 
-is_zero:
+is_zero_R:
     "is the relevant part of input zero, that is, base case?"
-    comp neg (comp gt pair id k_0)
+    comp neg (comp gt pair pr_R k_0)
 
-base:
+base_case:
     "gets called on <x.y> when y is zero hence sum is x"
     pr_L
 

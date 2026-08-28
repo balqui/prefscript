@@ -10,7 +10,7 @@ mul_recurs:
 
 is_zero:
     "is the relevant part of input zero, that is, base case?"
-    comp neg (comp gt pair id k_0)
+    comp neg (comp gt pair pr_R k_0)
 
 zero:
     "gets called on <x.y> when y is zero hence product is zero"

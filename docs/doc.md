@@ -255,15 +255,16 @@ the function defined by `rec recurse base is_base` receives an
 integer `z`, tests it to distinguish recursion basis from recursion
 step, and proceeds accordingly.
 
-For the test, `z` is interpreted as a pair `<param.input>`, 
+For the test and basis, `z` is interpreted as a pair `<param.input>`, 
 where the input part is the actual inductive value and the 
-parameter provides extra information. That is, `is_base` 
-should expect to receive only the `input` part (fetched 
-internally with `pr_R`) leaving the `param` out for the moment.
+parameter provides extra information. Then, `is_base` is
+likely to need to test only `pr_R`, leaving the `param` out
+(an example follows momentarily).
 
-If the outcome is nonzero, `z` is considered to be a basis case
-and the result is computed as `base(z)`; otherwise, the function 
-`recurse` is applied to a pair consisting of `z` and the whole
+If the outcome of `is_base` is true (that is, nonzero), `z` is 
+considered to be a basis case and the result is computed 
+as `base(z)`; otherwise, the function `recurse` is applied to 
+a pair consisting of `z` and the whole
 sequence of values of the function itself that is being defined 
 for all pairs `<param.val>` for `val` between 0 and `input-1`, 
 leaving `param` always invariant. Using these values, `recurse`
@@ -278,8 +279,10 @@ function `succ`. The main function is `add_recurs`, the
 recursive version of addition, which gets `<x.y>` and must
 find `x+y` via a recursive construction. Arbitrarily we
 assign roles: `x` remains as parameter, `y` is taken as 
-inductive variable. To check the base case, `is_zero` will
-receive `y`, and then the sum to be computed is `x`.
+inductive variable. To check the base case, `is_zero_R` 
+checks that the right-hand side of the input number is
+`y == 0`, and then the sum to be computed is `x`, its
+left-hand side.
 
 The recursive step `add_1_to_prev` gets `<<x.y>.sq>` as input, 
 where `sq` is the whole course-of-values sequence; that is,
@@ -293,12 +296,12 @@ leftmost value, namely `x+y-1`, to which we must add 1.
 main: add_recurs
 
 add_recurs:
-    rec add_1_to_prev base is_zero
+    rec add_1_to_prev base_case is_zero
 
-is_zero:
-    comp neg (comp gt pair id k_0)
+is_zero_R:
+    comp neg (comp gt pair pr_R k_0)
 
-base:
+base_case:
     "gets called on <x.y> when y is zero hence sum is x"
     pr_L
 

@@ -12,7 +12,8 @@ fib:
 fib_extra_param:
     "apply the recursive scheme on step to recurse, base case, and"
     "is_base test, which will be checked just for pr_R"
-    rec fib_step pr_R is_zero_or_one
+    "if case is base, the answer is the same 0 or 1 as pr_R"
+    rec fib_step pr_R is_zero_or_one_R
 
 # fib step receives info coded as <<param.induct_val>.induct_seq>>
 
@@ -25,7 +26,7 @@ pr_LRR:
     "pr_L on pr_RR" 
     comp pr_L pr_RR
 
-is_zero_or_one:
+is_zero_or_one_R:
     "is the relevant part of input below 2, that is, base case?"
-    comp neg comp gt pair id k_1
+    comp neg comp gt pair pr_R k_1
 
