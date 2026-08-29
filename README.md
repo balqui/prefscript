@@ -11,7 +11,7 @@ A Python-based environment to explore and experiment with partial
 recursive functions; naturally doubles as a (purely functional) 
 programming language, but it is not intended to be used much as such.
 
-Current version: 2.0, early Fructidor 2026. Previous 
+Current version: 2.0.1, early Fructidor 2026. Previous 
 documented, *incompatible* version: 1.2, mid Messidor 2026.
 
 ### Scripts
@@ -40,7 +40,7 @@ of Cantor-encoded sequences.
 ### Installation and ways to use PReFScript functions
 
 The usual `pip`-based process should work. Differently from
-previous versions, all functionality in 2.0 is fully compatible
+previous versions, all functionality in 2.0.1 is fully compatible
 with a `pipx` installation. You may need to specify `--upgrade`
 flags, depending on your previous installation. LLMs say that
 `uv` should work as well.
@@ -48,10 +48,10 @@ flags, depending on your previous installation. LLMs say that
 The current version installs a stand-alone interpreter.
 See [doc.md](https://github.com/balqui/prefscript/blob/main/docs/doc.md).
 
-*The following applies to the previous version 1.2*:
+*The following applied to the previous version 1.2*:
 Scripts were maintained in objects of the class PReFScript,
 that could be imported into your own Python program. 
 Thus, you had available two main ways of programming in 
-PReFScript. All this does not apply anymore to version 2.0.
+PReFScript. All this does not apply anymore to version 2.0.1.
 
 

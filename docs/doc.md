@@ -10,7 +10,8 @@ partial recursive functions; naturally doubles as a (stateless,
 purely functional) programming language, although it is not 
 intended to be used much as such.
 
-Documentation for version: 2.0, **not** backwards-compatible.
+Documentation for version: 2.0.1, **not** backwards-compatible
+with 1.* **at all**.
 
 Deprecated documentation for previous versions can be found in
 [doc_v1.md](https://github.com/balqui/prefscript/blob/main/docs/doc_v1.md).
@@ -19,7 +20,7 @@ Deprecated documentation for previous versions can be found in
 ### Installation
 
 The usual options should work: `pipx` (less fussy), `pip` (which might 
-complain about breaking system packages), or `uv`. Version 2.0 offers
+complain about breaking system packages), or `uv`. Version 2.0.1 offers
 only functionality compatible with `pipx`, a feature in which it differs
 from V1.*.
 
@@ -161,7 +162,11 @@ function name is a syntax error.
 Parentheses surrounding any function specification are always allowed
 but never compulsory; users can employ them at will to clarify their code.
 Parentheses surrounding anything that does not conform syntactically
-to a function specification are disallowed.
+to a function specification are disallowed. Repeated definitions are
+allowed (e.g. by redefining an imported function) but _only_ if they
+are identical. It is planned for the future to allow them if it can
+be proved by transitivity that they define the same function, but this 
+feature is not implemented yet.
 
 From a CLI (command line interface) simply call the `prefscript`
 interpreter followed by the name of the file containing the script.
@@ -242,13 +247,9 @@ add_1_to_prev:
     comp succ comp pr_L pr_R
 ```
 
-<!--- 
 
-EXAMPLES!
+<!--- More examples? ---> 
 
-ISSUE: IMPORT FOLDER SHOULD BE INCREMENTAL
-
----> 
 
 ### Preprocessor directives
 
@@ -285,16 +286,9 @@ from the CLI includes the flags `--read intpair --write bool`.
 
 <!--- 
 
-Make sure some example scripts become available.
-
-On Windows it will be also 
-possible to launch a minimal GUI hopefully in the near future.
-
 Test whether it brought in pytokr and cantorpairs
 in an importable form, also if pytokr wasn't there
 and maybe now is, stand-alone.
-
-Think how to avoid the no-main pragma complaint upon importing.
 
 Mention somewhere that repeated consistent definitions are ignored.
 

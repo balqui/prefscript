@@ -1,24 +1,39 @@
 [build-system]
-requires = ["setuptools >= 61.0"]
+requires = ["setuptools>=68.0"]
 build-backend = "setuptools.build_meta"
 
 [project]
 name = "prefscript"
-version = "1.2"
-authors = [ { name = "José Luis Balcázar", email = "jose.luis.balcazar@upc.edu" }, ]
+version = "2.0"
+authors = [
+    { name = "José Luis Balcázar", email = "jose.luis.balcazar@upc.edu" }
+]
 description = "Partial Recursive Functions for Scripting"
 readme = "README.md"
-requires-python = ">=3.10"
+requires-python = ">=3.12"
 classifiers = [
     "Programming Language :: Python :: 3",
     "License :: OSI Approved :: MIT License",
     "Operating System :: OS Independent",
-    ]
-dependencies = [ "pytokr>=1.0" ]
+]
+dependencies = [
+    "pytokr>=1.0",
+    "cantorpairs",
+]
 
 [project.urls]
 "Homepage" = "https://github.com/balqui/prefscript"
 "Bug Tracker" = "https://github.com/balqui/prefscript/issues"
 
 [project.scripts]
-prefscript = "prefscript:run"
+prefscript = "prefscript.prefscript:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.package-data]
+prefscript = [
+    "stdprfs/*.prfs",
+    "examples/*.prfs",
+]
+

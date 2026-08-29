@@ -23,7 +23,7 @@ from script import PReFScript
 from ascii7io import int2str
 from praprepro import PraPrePro # pragma pre-processor
 
-__version__ = "2.0"
+__version__ = "2.0.1"
 
 ap = ArgumentParser(
     description = 'An interpreter of a scripting language '
