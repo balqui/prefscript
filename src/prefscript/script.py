@@ -24,10 +24,10 @@ Lark offers for handling errors.
 Remember that now cp.seq and cp.ensure are available.
 '''
 
-import cantorpairs as cp
-from fundata import FunData
-from basicfun import BasicFun
-from ascii7io import str2int
+from . import cantorpairs as cp
+from .fundata import FunData
+from .basicfun import BasicFun
+from .ascii7io import str2int
 
 # A handful of ancillary functions
 

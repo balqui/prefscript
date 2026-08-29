@@ -30,7 +30,7 @@ Open: do I really need the copy() method?
 
 from dataclasses import dataclass #, replace #, field # for copy...
 from typing import Tuple
-from cantorpairs import ensure
+from .cantorpairs import ensure
 
 @dataclass
 class FunData:

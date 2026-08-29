@@ -350,10 +350,7 @@ see below under Directives.
 The traditional scheme of primitive recursion is available in
 an extended version of `prefscript`; see below under Directives.
 
-
----> 
-
-<!--- 
+ = = =
 
 start with an _arbitrary
 natural number_ (that might be useful for human readers to label and

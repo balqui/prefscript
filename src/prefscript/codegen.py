@@ -12,10 +12,10 @@ Copyleft: MIT License (https://en.wikipedia.org/wiki/MIT_
 from lark import Transformer, v_args
 from pathlib import Path            # for handling imported files
 
-from cantorpairs import ensure
-from fundata import FunData
-from parser import prfsparser
-from script import PReFScript       # for the recursive calls on imports
+from .cantorpairs import ensure
+from .fundata import FunData
+from .parser import prfsparser
+from .script import PReFScript       # for the recursive calls on imports
 
 # A handful of ancillary functions
 

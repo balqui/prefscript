@@ -20,7 +20,6 @@ class PraPrePro:
 
     def __init__(self):
         "group names require Python >= 3.11"
-        # ~ from re import compile as re_compile, finditer as re_finditer
         pragma = r"^#pragma\s+(?P<which>\w+):\s*(?P<what>[\.\w]+)\s*$"
         self.process = re_compile(pragma, MULTILINE)
 
