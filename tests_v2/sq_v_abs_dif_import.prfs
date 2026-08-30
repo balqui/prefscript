@@ -1,0 +1,12 @@
+# Same as sq_v_abs_dif but importing the standard functions from std
+
+import "std"
+
+main: sqd
+
+vabsdif: 
+  "docstrings are allowed"
+  "more than one if you wish"
+  comp add pair diff (comp diff swap)
+
+sqd: comp mul comp dupl vabsdif
