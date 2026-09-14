@@ -3,7 +3,7 @@
 Project started mid Germinal 2003:
 PReFScript: A Partial Recursive Functions Lab
 
-Module version early Fructidor 2026:
+Module version late Fructidor 2026:
 prefscript.py main program.
 
 Author: Jose L Balcazar, ORCID 0000-0003-4248-4528, april 2023 onwards 

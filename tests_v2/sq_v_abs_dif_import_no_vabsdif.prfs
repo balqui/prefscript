@@ -1,0 +1,7 @@
+#pragma import_folder: ..
+
+import "vabsdif"
+
+main: sqd
+
+sqd: comp mul comp dupl vabsdif
