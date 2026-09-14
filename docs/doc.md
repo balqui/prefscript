@@ -121,10 +121,22 @@ Scripts contain mainly function definitions.
 
 They may contain as well comments, starting 
 at either the mark `#` or the mark `//` and spanning until 
-the end of the line. They may contain also `#pragma` instructions, 
+the end of the line. 
+
+This allows one to use a "shebang line" in systems having
+this option: start your `.prfs` file with 
+
+`#! /your/path/to/bin/prefscript`
+
+(appropriately tuned) and make sure to mark that `.prfs` file 
+as executable. Then you may run it directly. The examples include 
+one such case. If you don't know what a shebang line is,
+just ignore this paragraph.
+
+They may contain also `#pragma` instructions, 
 handled by an ad-hoc preprocessor and explained below, or the 
 word `import` followed by a filename in double quotes: it will 
-search for a script of that name, adding the ".prfs" extension 
+search for a script of that name, adding the `.prfs` extension 
 if necessary, and will read and have subsequently available all 
 the function definitions there. It is expected that many scripts
 will specify `import "std"` which will bring in all the function
@@ -137,8 +149,11 @@ file with name `std.prfs` exists in the user folder (or on
 Scripts intended to be run must include a function definition
 under the name `main`. In scripts that become imported into
 other scripts, that name may be missing and, if found, 
-is silently ignored. Running a script
-amounts to calling that `main` function, feeding it a value 
+is silently ignored. Running a script consists in calling 
+from the CLI the `prefscript` interpreter with the name of
+the file containing the script and, optionally, an input integer.
+The process amounts to calling the `main` function in the script, 
+feeding it the value provided in the CLI call or, alternatively,
 read from standard input, and writing the outcome to standard output.
 
 Function definitions in these scripts are syntactically very simple:
@@ -156,8 +171,8 @@ characters not starting with a digit, except that names
 that consist just of digits preceded by three underscores (like
 `___123`, called "trunders") are not allowed as they are used
 internally to provide names to functions that the user code leaves
-anonymous. Trying to use `comp`, `pair`, `mu`, or `rec` as a 
-function name is a syntax error.
+anonymous. Trying to use `import`, `comp`, `pair`, `mu`, or `rec` 
+as a function name is a syntax error.
 
 Parentheses surrounding any function specification are always allowed
 but never compulsory; users can employ them at will to clarify their code.
@@ -177,8 +192,12 @@ CLI flags are available for fine-tuning:
 `-W`, `--write` changes the criterion by which output is written. 
 Allowed values can be inspected by calling 
 `prefscript --help`. 
-If no input is provided at the call line, reading from standard input 
-is attempted, as with the default `-R` or `--read` flags.
+If no input is provided in the call line, reading from standard input 
+is attempted, as with the default `-R`, `--read` flag.
+Reading from standard input is particularly convenient if you
+need to call the same script several times on different inputs.
+Also, it allows a choice of criteria to simplify the way multiple
+inputs are to be provided.
 
 Also `-I`, `--import_folder` allows one to specify where additional, 
 necessary function definitions can be found. These three flags can be 
