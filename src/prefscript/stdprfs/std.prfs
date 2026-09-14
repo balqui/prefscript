@@ -73,5 +73,9 @@ eq:
     "Is it <x.x> for some x?"
     comp neg ineq
 
+is_zero:
+    "first alternative was comp neg (comp gt pair id k_0)"
+    comp neg sign
+
 
 

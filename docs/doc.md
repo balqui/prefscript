@@ -10,7 +10,7 @@ partial recursive functions; naturally doubles as a (stateless,
 purely functional) programming language, although it is not 
 intended to be used much as such.
 
-Documentation for version: 2.0.1, **not** backwards-compatible
+Documentation for version: 2.0.2, **not** backwards-compatible
 with 1.* **at all**.
 
 Deprecated documentation for previous versions can be found in
@@ -20,9 +20,9 @@ Deprecated documentation for previous versions can be found in
 ### Installation
 
 The usual options should work: `pipx` (less fussy), `pip` (which might 
-complain about breaking system packages), or `uv`. Version 2.0.1 offers
+complain about breaking system packages), or `uv`. Version 2.0.2 offers
 only functionality compatible with `pipx`, a feature in which it differs
-from V1.*.
+from versions 1.*.
 
 The install command will create a command `prefscript` that you can 
 call from the command line. It is suggested that your very first call 
@@ -169,15 +169,20 @@ be proved by transitivity that they define the same function, but this
 feature is not implemented yet.
 
 From a CLI (command line interface) simply call the `prefscript`
-interpreter followed by the name of the file containing the script.
+interpreter followed by the name of the file containing the script,
+possibly followed by the input.
 The file extension is assumed to be `.prfs` if nonexistent. 
-CLI flags are available for 
-fine-tuning: `-R`, `--read` changes the criterion by which input 
-is read; `-W`, `--write` changes the criterion by which output 
-is written. Allowed values can be inspected by calling 
-`prefscript --help`. Also `-I`, `--import_folder` allows one 
-to specify where additional, necessary function definitions can be found. These
-three flags can be also handled from pragmas within the source
+CLI flags are available for fine-tuning: 
+`-R`, `--read` changes the criterion by which input is read; 
+`-W`, `--write` changes the criterion by which output is written. 
+Allowed values can be inspected by calling 
+`prefscript --help`. 
+If no input is provided at the call line, reading from standard input 
+is attempted, as with the default `-R` or `--read` flags.
+
+Also `-I`, `--import_folder` allows one to specify where additional, 
+necessary function definitions can be found. These three flags can be 
+also handled from pragmas within the source
 code (see below).
 
 Additional flags are `-P`, `--show_parsing` that shows the 

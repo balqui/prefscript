@@ -13,6 +13,7 @@ add_recurs:
 
 is_zero_R:
     "is the relevant part of input zero, that is, base case?"
+    "see stdprfs for a simpler formulation"
     comp neg (comp gt pair pr_R k_0)
 
 base_case:
