@@ -239,7 +239,7 @@ leftmost value, namely `x+y-1`, to which we must add 1.
 main: add_recurs
 
 add_recurs:
-    rec add_1_to_prev base_case is_zero
+    rec add_1_to_prev base_case is_zero_R
 
 is_zero_R:
     comp neg (comp gt pair pr_R k_0)
