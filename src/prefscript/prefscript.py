@@ -14,7 +14,7 @@ from argparse import ArgumentParser
 from pathlib import Path
 from sys import stdin
 
-from .pytokr.pytokr import pytokr
+from .pytokr.src.pytokr import pytokr
 
 from . import cantorpairs as cp
 from .parser import prfsparser
@@ -23,7 +23,7 @@ from .script import PReFScript
 from .ascii7io import int2str
 from .praprepro import PraPrePro # pragma pre-processor
 
-__version__ = "2.0.2"
+__version__ = "2.0.5"
 
 def main():
 
@@ -94,7 +94,6 @@ def main():
         else:
             import_folder = import_folder[0]
 
-        print(app)
         ast = prfsparser(script_text)
         run = True
         if app.show_parsing:

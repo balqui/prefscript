@@ -11,7 +11,7 @@ A Python-based environment to explore and experiment with partial
 recursive functions; naturally doubles as a (purely functional) 
 programming language, but it is not intended to be used much as such.
 
-Current version: 2.0.2, late Fructidor 2026. Previous version 1.2 
+Current version: 2.0.5, late Fructidor 2026. Previous version 1.2 
 of mid Messidor 2026 is *incompatible*.
 
 ### Scripts
