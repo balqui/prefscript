@@ -167,7 +167,9 @@ offered.
 
 On the other hand, installations via `pip` into a virtual
 environment leave `cantorpairs` importable from anywhere 
-provided that the virtual environment is up.
+provided that the virtual environment is up:
+
+`from prefscript import cantorpairs as cp`
 
 ### Running the interpreter on a script in a text file
 
