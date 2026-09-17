@@ -5,7 +5,7 @@ Author: Jose Luis Balcazar, ORCID 0000-0003-4248-4528
 
 Project started: mid Germinal 2003.
 
-Copyleft: MIT License (https://en.wikipedia.org/wiki/MIT_License)
+Copyleft: [MIT License](https://en.wikipedia.org/wiki/MIT_License)
 
 A Python-based environment to explore and experiment with partial 
 recursive functions; naturally doubles as a (purely functional) 

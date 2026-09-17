@@ -152,6 +152,12 @@ easier-to-remember place. The author harbors hopes that
 all this will be much easier and more streamlined in
 future versions of PReFScript.
 
+#### Alternatively,
+
+you can always grab the examples directly from source:
+
+[`https://github.com/balqui/prefscript/tree/main/src/prefscript/examples`](https://github.com/balqui/prefscript/tree/main/src/prefscript/examples)
+
 On a different but related note, if PReFScript was installed 
 via `pipx`, one can find nearby a path like
 
