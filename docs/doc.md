@@ -10,7 +10,7 @@ partial recursive functions; naturally doubles as a (stateless,
 purely functional) programming language, although it is not 
 intended to be used much as such.
 
-Documentation for version: 2.0.5, **not** backwards-compatible
+Documentation for version: 2.0.6, **not** backwards-compatible
 with 1.* **at all**.
 
 Deprecated documentation for previous versions can be found in

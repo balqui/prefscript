@@ -22,8 +22,9 @@ from .codegen import ScriptMaker
 from .script import PReFScript
 from .ascii7io import int2str
 from .praprepro import PraPrePro # pragma pre-processor
+from .gnums import ShowGNums
 
-__version__ = "2.0.5"
+__version__ = "2.0.6"
 
 def main():
 
@@ -100,7 +101,6 @@ def main():
             print(ast.pretty())
             run = False
         if app.Goedel_nums:
-            from gnums import ShowGNums
             gen_gnums = ShowGNums(PReFScript(), 
                                   Path(f).resolve(), import_folder)
             gen_gnums.gprint(ast)
