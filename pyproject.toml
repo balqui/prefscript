@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "prefscript"
-version = "2.0.6"
+dynamic = ["version"]
 authors = [
     { name = "José Luis Balcázar", email = "jose.luis.balcazar@upc.edu" }
 ]
@@ -18,7 +18,9 @@ classifiers = [
 ]
 
 dependencies = [
-    "lark",
+    "lark>=1.3.1",
+    "pytokr>=1.2.1",
+    "cantorpairs>=1.3.1",
 ]
 
 [project.urls]
@@ -37,3 +39,5 @@ prefscript = [
     "examples/*.prfs",
 ]
 
+[tool.setuptools.dynamic]
+version = {attr = "prefscript._version.__version__"}

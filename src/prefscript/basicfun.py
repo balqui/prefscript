@@ -10,8 +10,8 @@ Author: Jose L Balcazar, ORCID 0000-0003-4248-4528
 Copyleft: MIT License (https://en.wikipedia.org/wiki/MIT_License)
 '''
 
-from . import cantorpairs as cp
-from .fundata import FunData
+import cantorpairs as cp
+from prefscript.fundata import FunData
     
 class BasicFun(dict):
     '''

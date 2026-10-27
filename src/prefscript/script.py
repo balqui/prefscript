@@ -24,10 +24,10 @@ Lark offers for handling errors.
 Remember that now cp.seq and cp.ensure are available.
 '''
 
-from . import cantorpairs as cp
-from .fundata import FunData
-from .basicfun import BasicFun
-from .ascii7io import str2int
+import cantorpairs as cp
+from prefscript.fundata import FunData
+from prefscript.basicfun import BasicFun
+from prefscript.ascii7io import str2int
 
 # A handful of ancillary functions
 
@@ -58,6 +58,22 @@ def rec(recurse, base, is_base):
 
     return lambda x: cp.pr_L(c_of_v(x))
 
+
+def trec(recurse, base, is_base):
+    '''
+    Tail recursion in loop form: all three functions expect as
+    input a pair <param.indval> where param carries the partial
+    result and indval is the inductively progressing value.
+    NOT IN USE YET.
+    '''
+
+    def loop(z):
+        "create the looping version of tail recursion"
+        while not is_base(z):
+            z = recurse(z)
+        return base(z)
+
+    return lambda x: loop(x)
 
 class PReFScript(dict):
 

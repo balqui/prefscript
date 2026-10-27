@@ -20,12 +20,12 @@ and the whole Gemini program of Aug 17th 2026;
 from lark import Lark, Transformer, v_args # Tree, Token
 from pathlib import Path                   # for handling imported files
 
-from . import cantorpairs as cp
+import cantorpairs as cp
 
-from .fundata import FunData
-from .parser import prfsparser
-from .codegen import funfact, seemsfactgen
-from .script import PReFScript       # for the recursive calls on imports
+from prefscript.fundata import FunData
+from prefscript.parser import prfsparser
+from prefscript.codegen import funfact, seemsfactgen
+from prefscript.script import PReFScript       # for the recursive calls on imports
 
 # A handful of ancillary constants and functions
 

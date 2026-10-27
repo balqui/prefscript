@@ -1,0 +1,26 @@
+# Factorial via loop-implemented tail recursion.
+
+import "std"
+
+main: fact
+
+fact: 
+    "initialize at 1 the 'result' parameter"
+    comp fact_extra_param piggyfront_1
+
+fact_extra_param:
+    "tail-recursive function on step to recurse, base case, is_base test"
+    "the is_base test will be checked just for pr_R"
+    "if case is base, zero, the answer is the other parameter"
+    trec fact_step pr_L is_zero_R
+
+# if init value was n, then fact step receives info coded as <p.m>
+# where n! = p * n!, fact step is moving into n! = p * (n-1)!
+
+fact_step:
+    pair (comp mul pair pr_L pr_R) (comp diff pair pr_R k_1)
+
+is_zero_R:
+    "is the relevant part of input zero, that is, base case?"
+    comp neg comp gt pair pr_R k_0
+

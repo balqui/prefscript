@@ -14,23 +14,25 @@ from argparse import ArgumentParser
 from pathlib import Path
 from sys import stdin
 
-from .pytokr.src.pytokr import pytokr
+from pytokr import pytokr
 
-from . import cantorpairs as cp
-from .parser import prfsparser
-from .codegen import ScriptMaker
-from .script import PReFScript
-from .ascii7io import int2str
-from .praprepro import PraPrePro # pragma pre-processor
-from .gnums import ShowGNums
+import cantorpairs as cp
+from prefscript._version import __version__
+from prefscript.parser import prfsparser
+from prefscript.codegen import ScriptMaker
+from prefscript.script import PReFScript
+from prefscript.ascii7io import int2str
+from prefscript.praprepro import PraPrePro # pragma pre-processor
+from prefscript.gnums import ShowGNums
 
-__version__ = "2.0.6"
+# ~ __version__ = "2.0.6" # ~ bumped and moved to src/prefscript/__init__.py
 
 def main():
 
     ap = ArgumentParser(
         description = 'An interpreter of a scripting language '
-                      'based on the partial recursive functions.')
+                      'based on the partial recursive functions;'
+                      )
     
     # CLI-only arguments:
 

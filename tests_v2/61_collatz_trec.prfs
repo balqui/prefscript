@@ -1,0 +1,52 @@
+# Count length of Collatz sequence via loop-implemented tail recursion.
+
+import "std"
+
+main: collatz
+
+collatz: 
+    "initialize at 1 the 'result' parameter"
+    comp collatz_count piggyfront_0
+
+collatz_count:
+    "tail-recursive function on step to recurse, base case, is_base test"
+    "the is_base test, = 1, will be checked just for pr_R"
+    "if case is base then the answer is the other parameter"
+    trec collatz_step pr_L is_one_R
+
+# collatz_step receives <p.n> current value in seq and count so far
+
+collatz_step:
+    pair (comp succ pr_L) (comp collatz_choose pr_R)
+
+collatz_choose:
+    "given p: 3*p + 1 if p % 2 else p // 2"
+    "odd(p) * (3*p + 1) + even(p) * (p // 2)"
+    comp add pair collatz_lhs collatz_rhs
+
+collatz_lhs:
+    "given p: odd(p) * (3*p + 1)"
+    comp mul pair odd comp add pair (comp mul pair k_3 id) k_1
+
+collatz_rhs:
+    "given p: even(p) * (p // 2)"
+    comp mul pair (comp neg odd) half
+
+half:
+    "approx by default, double is one less if odd"
+    "given p find min q such that p < 2(q+1)"
+    mu comp lt pr_L (comp mul pair k_2 (comp add pair pr_R k_1))
+
+odd:
+    comp lt pair id (comp mul pair k_2 half)
+
+is_one_R:
+    "is the relevant part of input 1, that is, base case?"
+    comp eq pair pr_R k_1
+
+k_2:
+    comp add pair k_1 k_1
+
+k_3:
+    comp add pair k_2 k_1
+
