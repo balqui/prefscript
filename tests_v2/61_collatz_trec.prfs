@@ -5,7 +5,7 @@ import "std"
 main: collatz
 
 collatz: 
-    "initialize at 1 the 'result' parameter"
+    "initialize cnt to 0 in <cnt.curr> count so far and current value in seq"
     comp collatz_count piggyfront_0
 
 collatz_count:
@@ -14,7 +14,7 @@ collatz_count:
     "if case is base then the answer is the other parameter"
     trec collatz_step pr_L is_one_R
 
-# collatz_step receives <p.n> current value in seq and count so far
+# collatz_step receives <cnt.curr> count so far and current value in seq
 
 collatz_step:
     pair (comp succ pr_L) (comp collatz_choose pr_R)
@@ -34,19 +34,20 @@ collatz_rhs:
 
 half:
     "approx by default, double is one less if odd"
-    "given p find min q such that p < 2(q+1)"
-    mu comp lt pr_L (comp mul pair k_2 (comp add pair pr_R k_1))
+    "given p find min q such that p < 2(q+1), CAREFUL, for 0 does not stop"
+    mu comp lt pair pr_L (comp mul pair k_2 (comp add pair pr_R k_1))
 
 odd:
-    comp lt pair id (comp mul pair k_2 half)
+    comp gt pair id (comp mul pair k_2 half)
 
 is_one_R:
     "is the relevant part of input 1, that is, base case?"
     comp eq pair pr_R k_1
 
-k_2:
-    comp add pair k_1 k_1
 
-k_3:
-    comp add pair k_2 k_1
+k_2: comp add pair k_1 k_1
+
+k_3: comp add pair k_2 k_1
+
+piggyfront_0: pair k_0 id
 

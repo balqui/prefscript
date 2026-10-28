@@ -39,6 +39,7 @@ funspec   : CNAME                            -> single
           | "pair" funspec funspec           -> pair
           | "mu" funspec                     -> mu
           | "rec" funspec funspec funspec    -> rec
+          | "trec" funspec funspec funspec   -> trec
           | "(" funspec ")"                  -> parenth
           | "ascii_const" ESCAPED_STRING     -> ascii_const
 

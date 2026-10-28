@@ -62,6 +62,8 @@ class FunData:
                 self.rawpy = f"lambda x: mu(x, {self.defon[0]})"
             case 'rec' if len(self.defon) == 3: 
                 self.rawpy = f"lambda x: rec({self.defon[0]}, {self.defon[1]}, {self.defon[2]})(x)"
+            case 'trec' if len(self.defon) == 3: 
+                self.rawpy = f"lambda x: trec({self.defon[0]}, {self.defon[1]}, {self.defon[2]})(x)"
             # ~ case 'pr' | 'ppr': pass     # deprecated!
             case _:
                 ensure.that(False, (f"Bad 'how defined' or wrong number "

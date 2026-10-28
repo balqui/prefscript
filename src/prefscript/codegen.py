@@ -112,6 +112,12 @@ class ScriptMaker(Transformer):
         self.script.define(fdat)
         return nm
 
+    def trec(self, recurse, base, is_base):
+        nm = funfact()
+        fdat = FunData(nm, howdf = "trec", defon = (recurse, base, is_base))
+        self.script.define(fdat)
+        return nm
+
     def program(self, *imports_and_defuns):
         return self.script
 
