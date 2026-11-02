@@ -1,0 +1,53 @@
+# Constructing the tuple value update function using trec.
+# Signature as in the 'store'-related problems in the C-MPAL problems.
+#
+# Explored the option, probably eternally slow, of using rec but
+# did not really complete the task - in case of getting back to it
+# one day, I must remember that the rhs of the input to a rec
+# definition must be the inductive decreasing value.
+
+
+import "std"
+
+piggyfront_0: pair k_0 id
+
+pr_LLR:
+    comp pr_L comp pr_L pr_R
+
+pr_RLL:
+    comp pr_R comp pr_L pr_L
+
+pr_RLR:
+    comp pr_R comp pr_L pr_R
+
+main: store
+
+store:
+    "on <v.i.s> stores v at s[i], that is,"
+    "s[i] = v as follows: v in front of s[i+1:]" 
+    "and in front of that we recover s[0:i] "
+    "via a separate, reversed copy."
+    comp dump_front_rev 
+         pair (pair pr_L comp s_tup pair pr_RR comp add pair k_1 pr_LR)
+              (comp rev_pref_tup pair pr_RR pr_LR)
+
+rev_pref_tup:
+    "given <s.i> constructs the reverse of s[0:i]"
+    comp rev_pref_tup_loop piggyfront_0
+
+rev_pref_tup_loop:
+    "gets partial result r together with <s.i> as <r.<s.i>>,"
+    "then passes head of s into head of r and goes onwards"
+    trec
+        pair (pair pr_LLR pr_L)
+             (pair pr_RLR comp ant pr_RR)
+        pr_L
+        comp is_zero pr_RR
+
+dump_front_rev:
+    "on <t.s>, puts back s reversed in front of t;"
+    "that is, on <t.<h.s>>, moves to <<h.t>.s> and onwards"
+    trec
+        pair pair pr_LR pr_L pr_RR
+        pr_L
+        comp is_zero pr_R
