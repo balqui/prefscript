@@ -1,0 +1,21 @@
+# Further functions to import
+
+import "std"
+
+piggyfront_0:
+    "Pairs up 0 with given u: <1.u>"
+    pair k_0 id
+
+ge:
+    "x >= y in <x.y>"
+    comp neg lt
+
+le:
+    "x <= y in <x.y>"
+    comp neg gt
+
+ite: 
+    "maps <x.<y.z>> to if x then y else z"
+    comp add pair (comp mul pair (comp sign pr_L) pr_LR) (comp mul pair (comp neg pr_L) pr_RR)
+
+

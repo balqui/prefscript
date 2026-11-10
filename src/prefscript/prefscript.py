@@ -114,10 +114,13 @@ def main():
                 app.read in ("int", "intpair", "intseq", "nothing"), 
                 f"No input but unknown --read value {app.read}")
             cp.ensure.that(
-                app.write in ("int", "ascii", "bool"), 
+                app.write in ("int", "ascii", "bool", "intseq"), 
                 f"Unknown --write value {app.write}")
-            outf = int2str if app.write == "ascii" \
-                           else lambda x: eval(app.write)(x)
+            # ~ outf = int2str if app.write == "ascii" \
+                           # ~ else lambda x: eval(app.write)(x)
+            if app.write == "ascii": app.write == "int2str"
+            if app.write == "intseq": app.write = "cp.seq"
+            outf = lambda x: eval(app.write)(x)
             scrmk = ScriptMaker(PReFScript(), 
                                 Path(f).resolve(), import_folder)
             scr = scrmk.transform(ast)

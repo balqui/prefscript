@@ -1,0 +1,5 @@
+# Test if-then-else construction
+
+import "further"
+
+main: ite
